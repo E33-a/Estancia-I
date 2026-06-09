@@ -91,7 +91,7 @@ composer install
 ```
 
 ### 2. Configurar el archivo de Entorno
-Si no tienes el archivo `.env` en la raíz, cópialo desde la plantilla (el script `restore_project.sh` ya lo genera automáticamente si usaste la restauración):
+Si no tienes el archivo `.env` en la raíz, créalo copiando el archivo `.env.example`:
 ```bash
 cp .env.example .env
 ```
