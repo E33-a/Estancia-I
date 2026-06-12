@@ -1,0 +1,83 @@
+% modules/1_introduccion.tex
+% ================================================================
+% CAPÍTULO 1 - INTRODUCCIÓN Y CONTEXTO DEL MANTENIMIENTO
+% Referencia SWEBOK V4.0a, Capítulo 7: Software Maintenance
+% ================================================================
+
+\chapter{Introducción}
+
+\section{Propósito del Documento}
+
+El presente documento establece el Plan de Mantenimiento de Software para el sistema
+educativo \textbf{Yoliztli}, una plataforma web interactiva orientada a la enseñanza de
+lenguas originarias --- náhuatl y otomí --- para niños de educación primaria en el estado
+de Hidalgo.
+
+El plan se rige bajo los lineamientos del estándar internacional \textbf{ISO/IEC/IEEE 14764}
+y la guía de conocimiento \textbf{SWEBOK V4.0a (Capítulo 7: Software Maintenance)}, los
+cuales definen las actividades, categorías y procesos requeridos para mantener un producto
+de software en operación continua y satisfactoria.
+
+\section{Alcance}
+
+Este documento aplica a la versión del sistema Yoliztli gestionada como \textit{fork} del
+repositorio original. El alcance del mantenimiento comprende:
+
+\begin{itemize}
+    \item La corrección de defectos reportados en el ciclo de pruebas previo.
+    \item La transición de infraestructura tecnológica (motor de base de datos).
+    \item La incorporación de nuevas funcionalidades requeridas por el SRS original no
+          implementadas en la versión anterior.
+    \item La mejora interna de la calidad y mantenibilidad del código.
+\end{itemize}
+
+\section{Contexto del Proyecto}
+
+\subsection{Descripción General del Sistema}
+
+Yoliztli es una aplicación web construida sobre el stack tecnológico siguiente:
+
+\begin{itemize}
+    \item \textbf{Backend:} Laravel 12 (PHP 8.2+), siguiendo el patrón de arquitectura MVC.
+    \item \textbf{Frontend:} React 18 integrado mediante Inertia.js como adaptador SPA.
+    \item \textbf{Base de Datos:} SQLite (desarrollo local) y PostgreSQL (producción).
+    \item \textbf{Compilación:} Vite 5 con plugin de Laravel y React.
+    \item \textbf{Estilización:} Tailwind CSS 3.
+\end{itemize}
+
+\subsection{Antecedentes de la Versión Anterior}
+
+La versión original del sistema planteaba el uso de \textbf{Firebase} como plataforma
+backend (\textit{Serverless}), con autenticación, base de datos en tiempo real y
+almacenamiento en la nube. El equipo de desarrollo del \textit{fork} actual realizó una
+migración arquitectónica completa hacia una solución autohospedada con Laravel y SQLite,
+lo que otorga mayor independencia del entorno, control del flujo de datos y
+compatibilidad con infraestructura institucional propia.
+
+\subsection{Estado de las Pruebas al Inicio del Mantenimiento}
+
+El reporte de calidad (\textit{5.Pruebas Yoliztli.pdf}) ejecutado el 9 de diciembre de 2025
+registra los siguientes resultados sobre 8 casos de prueba totales:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{clc}
+\toprule
+\textbf{ID} & \textbf{Caso de Prueba} & \textbf{Resultado} \\
+\midrule
+CP001 & Registro de usuario (nombre, correo, contraseña)  & \textcolor{process}{Aprobado} \\
+CP002 & Inicio de sesión                                  & \textcolor{process}{Aprobado} \\
+CP003 & Acceso a recursos interactivos                    & \textcolor{process}{Aprobado} \\
+CP004 & Selección de idioma de interfaz                   & \textcolor{process}{Aprobado} \\
+CP005 & Panel de reportes de docentes                     & \textcolor{process}{Aprobado} \\
+CP006 & Descarga de materiales educativos                 & \textcolor{process}{Aprobado} \\
+CP007 & Verificar filtro por categoría y edad             & \textcolor{red}{Fallido}     \\
+CP008 & Verificar el avance/progreso del usuario          & \textcolor{red}{Fallido}     \\
+\bottomrule
+\end{tabular}
+\caption{Resultados del ciclo de pruebas de aceptación --- Diciembre 2025}
+\label{tab:resultados-pruebas}
+\end{table}
+
+Los casos CP007 y CP008 representan la base de las actividades de
+\textbf{mantenimiento correctivo y aditivo} planificadas en este documento.

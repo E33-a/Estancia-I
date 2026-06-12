@@ -1,0 +1,158 @@
+% modules/2_categorias.tex
+% ================================================================
+% CAPÍTULO 2 - CATEGORÍAS DE MANTENIMIENTO
+% Referencia: SWEBOK V4.0a s1.6 / ISO/IEC/IEEE 14764 s3.1.8
+% ================================================================
+
+\chapter{Categorías de Mantenimiento}
+
+De acuerdo con el estándar \textbf{ISO/IEC/IEEE 14764} y la sección 1.6 de SWEBOK V4.0a,
+existen cinco categorías de mantenimiento que clasifican cualquier solicitud de modificación
+(Modification Request --- MR). A continuación se presenta cada categoría junto con las
+actividades concretas identificadas para el proyecto Yoliztli.
+
+\section{Mantenimiento Correctivo}
+
+\textit{Modificación reactiva del software para corregir defectos descubiertos tras su entrega.}
+
+\medskip
+Las siguientes fallas fueron identificadas en el ciclo de pruebas de aceptación:
+
+\begin{RequisitoFuncional}{MR-C01}{Corrección del registro de avance del alumno (CP008)}
+    \textbf{Problema:} El sistema no almacena correctamente el progreso de las
+    actividades completadas por el alumno en la tabla \texttt{progress} de la base de
+    datos. La prueba CP008 falló durante la validación.
+
+    \textbf{Componentes afectados:}
+    \begin{itemize}
+        \item \texttt{app/Http/Controllers/ProgressController.php} --- método \texttt{store()}.
+        \item \texttt{database/migrations/2025\_12\_05\_055428\_create\_progress\_table.php}.
+        \item Componentes React que invocan el endpoint \texttt{POST /progress}.
+    \end{itemize}
+
+    \textbf{Acción:} Depurar el flujo de petición HTTP entre el frontend y el
+    controlador. Verificar que los campos \texttt{user\_id}, \texttt{item\_id},
+    \texttt{type} y \texttt{score} sean validados y persistidos correctamente.
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-C02}{Resolución de conflicto de dependencias frontend (Inertia vs.\ React Router)}
+    \textbf{Problema:} El archivo \texttt{package.json} declara simultáneamente
+    \texttt{react-router-dom} e \texttt{Inertia.js} como estrategias de navegación,
+    generando una contradicción arquitectónica que puede causar comportamientos
+    indefinidos en la gestión de rutas.
+
+    \textbf{Acción:} Unificar la estrategia de navegación bajo \textbf{Inertia.js}
+    (en concordancia con la implementación actual de los controladores PHP) y eliminar
+    \texttt{react-router-dom} del árbol de dependencias.
+\end{RequisitoFuncional}
+
+% ----------------------------------------------------------------
+\section{Mantenimiento Preventivo}
+
+\textit{Modificaciones destinadas a detectar y corregir fallas latentes antes de que
+se manifiesten en el sistema en producción.}
+
+\begin{RequisitoFuncional}{MR-P01}{Implementación de Form Requests para validación estricta}
+    \textbf{Objetivo:} Crear clases de validación (\texttt{Form Requests}) para los
+    endpoints \texttt{ProgressController} y \texttt{DocenteController}, mitigando
+    riesgos de inyección de datos corruptos o malformados.
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-P02}{Pruebas de regresión automatizadas}
+    \textbf{Objetivo:} Implementar casos de prueba unitarios y de integración con
+    \textbf{Pest} (instalado en \texttt{require-dev} del \texttt{composer.json}) para
+    cubrir los flujos de inicio de sesión, registro de avance y consulta del panel de
+    docentes. La suite de pruebas debe ejecutarse antes de cada fusión a la rama
+    principal (\texttt{main}).
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-P03}{Auditoría periódica de dependencias}
+    \textbf{Objetivo:} Ejecutar \texttt{composer audit} y \texttt{npm audit} en cada
+    ciclo de mantenimiento para identificar y mitigar vulnerabilidades de seguridad
+    conocidas en las librerías del framework.
+\end{RequisitoFuncional}
+
+% ----------------------------------------------------------------
+\section{Mantenimiento Adaptativo}
+
+\textit{Modificaciones para mantener el software operativo ante cambios en el entorno
+tecnológico o de infraestructura.}
+
+\begin{RequisitoFuncional}{MR-A01}{Migración del motor de base de datos: SQLite a PostgreSQL}
+    \textbf{Objetivo:} Cambiar la conexión de base de datos en el archivo \texttt{.env}
+    y en \texttt{config/database.php} de SQLite a \textbf{PostgreSQL} para el despliegue
+    en el entorno de producción institucional. Esta migración no requiere reescribir
+    ninguna línea de lógica de negocio gracias a la abstracción de Eloquent ORM.
+
+    \textbf{Pasos de implementación:}
+    \begin{enumerate}
+        \item Instalar el servidor PostgreSQL en el entorno de producción.
+        \item Actualizar las variables de entorno \texttt{DB\_CONNECTION},
+              \texttt{DB\_HOST}, \texttt{DB\_PORT}, \texttt{DB\_DATABASE},
+              \texttt{DB\_USERNAME} y \texttt{DB\_PASSWORD} en el archivo
+              \texttt{.env}.
+        \item Ejecutar \texttt{php artisan migrate:fresh --seed} en el nuevo entorno.
+    \end{enumerate}
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-A02}{Compatibilidad con actualizaciones de Laravel y Node.js}
+    \textbf{Objetivo:} Monitorear los canales de publicación de \textit{releases} de
+    Laravel 12.x y Node.js LTS para adaptar la sintaxis de archivos de arranque
+    (\texttt{bootstrap/app.php}) y configuración de Vite ante cambios de API mayores.
+\end{RequisitoFuncional}
+
+% ----------------------------------------------------------------
+\section{Mantenimiento Aditivo}
+
+\textit{Incorporación de nuevas funcionalidades no presentes en la versión recibida
+pero requeridas por el documento SRS original.}
+
+\begin{RequisitoFuncional}{MR-AD01}{Filtros por categoría y edad (CP007 --- RF2)}
+    \textbf{Objetivo:} Implementar la lógica de filtrado en \texttt{DashboardController}
+    y los componentes React correspondientes para segmentar el contenido educativo
+    (cuentos, videos, juegos) según el rango de edad del alumno y la categoría
+    lingüística (Náhuatl / Otomí / Español).
+
+    \textbf{Cambios requeridos en base de datos:}
+    \begin{itemize}
+        \item Agregar el campo \texttt{age\_range} (ej. \texttt{6-8}, \texttt{9-12})
+              en las tablas \texttt{stories} y \texttt{videos} mediante una nueva
+              migración.
+        \item Actualizar los seeders \texttt{StorySeeder} y \texttt{VideoSeeder} para
+              incluir datos de clasificación por rango etario.
+    \end{itemize}
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-AD02}{Descarga de materiales en PDF (CP006 --- RF4)}
+    \textbf{Objetivo:} Implementar la generación dinámica de PDFs imprimibles para
+    cuentos y actividades usando una librería compatible con Laravel (ej.
+    \texttt{barryvdh/laravel-dompdf}). Crear una nueva ruta
+    \texttt{GET /cuentos/\{id\}/pdf} con su controlador correspondiente.
+\end{RequisitoFuncional}
+
+% ----------------------------------------------------------------
+\section{Mantenimiento Perfectivo}
+
+\textit{Mejoras orientadas a la eficiencia interna y la calidad del código sin
+alterar las funciones visibles del sistema.}
+
+\begin{RequisitoFuncional}{MR-PF01}{Optimización de consultas: Eager Loading en DocenteController}
+    \textbf{Objetivo:} Refactorizar las consultas SQL en \texttt{DocenteController}
+    para utilizar carga anticipada de relaciones (\texttt{with('progress')}) y
+    eliminar el problema de rendimiento N+1 al listar alumnos y sus avances educativos.
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-PF02}{Limpieza de código JavaScript legado}
+    \textbf{Objetivo:} Revisar y eliminar o migrar los archivos JavaScript residuales
+    de la versión anterior (Vanilla JS) que permanecen en \texttt{resources/js/}
+    (\texttt{document-ready.js}, \texttt{listbox-options.js}, \texttt{types.js}) y
+    que no forman parte de la arquitectura React actual.
+\end{RequisitoFuncional}
+
+\begin{RequisitoFuncional}{MR-PF03}{Centralización de componentes de diseño en React}
+    \textbf{Objetivo:} Crear una biblioteca de componentes reutilizables en
+    \texttt{resources/js/Components/} (botones, tarjetas de contenido, indicadores
+    de progreso) para garantizar uniformidad visual en todas las vistas de alumnos
+    y docentes, siguiendo los lineamientos de diseño del documento
+    \textit{3.DiseñoInterfaces\_Yoliztli.pdf}.
+\end{RequisitoFuncional}

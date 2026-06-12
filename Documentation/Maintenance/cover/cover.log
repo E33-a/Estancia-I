@@ -1,0 +1,804 @@
+This is LuaHBTeX, Version 1.17.0 (TeX Live 2023)  (format=lualatex 2025.12.18)  9 FEB 2026 11:21
+ restricted system commands enabled.
+**cover.tex
+(./cover.tex
+LaTeX2e <2022-11-01> patch level 1
+Lua module: luaotfload 2022-10-03 3.23 Lua based OpenType font support
+Lua module: lualibs 2022-10-04 2.75 ConTeXt Lua standard libraries.
+Lua module: lualibs-extended 2022-10-04 2.75 ConTeXt Lua libraries -- extended c
+ollection.
+luaotfload | conf : Root cache directory is "/home/emmanuel/.texlive2023/texmf-v
+ar/luatex-cache/generic/names".
+luaotfload | init : Loading fontloader "fontloader-2022-10-03.lua" from kpse-res
+olved path "/usr/share/texlive/texmf-dist/tex/luatex/luaotfload/fontloader-2022-
+10-03.lua".
+Lua-only attribute luaotfload@noligature = 1
+luaotfload | init : Context OpenType loader version 3.120
+Inserting `luaotfload.node_processor' in `pre_linebreak_filter'.
+Inserting `luaotfload.node_processor' in `hpack_filter'.
+Inserting `luaotfload.glyph_stream' in `glyph_stream_provider'.
+Inserting `luaotfload.define_font' in `define_font'.
+Lua-only attribute luaotfload_color_attribute = 2
+luaotfload | conf : Root cache directory is "/home/emmanuel/.texlive2023/texmf-v
+ar/luatex-cache/generic/names".
+Inserting `luaotfload.harf.strip_prefix' in `find_opentype_file'.
+Inserting `luaotfload.harf.strip_prefix' in `find_truetype_file'.
+Removing  `luaotfload.glyph_stream' from `glyph_stream_provider'.
+Inserting `luaotfload.harf.glyphstream' in `glyph_stream_provider'.
+Inserting `luaotfload.harf.finalize_vlist' in `post_linebreak_filter'.
+Inserting `luaotfload.harf.finalize_hlist' in `hpack_filter'.
+Inserting `luaotfload.cleanup_files' in `wrapup_run'.
+Inserting `luaotfload.harf.finalize_unicode' in `finish_pdffile'.
+Inserting `luaotfload.glyphinfo' in `glyph_info'.
+Lua-only attribute luaotfload.letterspace_done = 3
+Inserting `luaotfload.aux.set_sscale_dimens' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.set_font_index' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.patch_cambria_domh' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.fixup_fontdata' in `luaotfload.patch_font_unsafe'.
+Inserting `luaotfload.aux.set_capheight' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.set_xheight' in `luaotfload.patch_font'.
+Inserting `luaotfload.rewrite_fontname' in `luaotfload.patch_font'. L3 programm
+ing layer <2023-02-22>
+Inserting `tracingstacklevels' in `input_level_string'.
+
+! LaTeX Error: Environment titlepage undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \begin{titlepage}
+                   
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! LaTeX Error: Environment tikzpicture undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.6 	\begin{tikzpicture}
+                      [remember picture,overlay]
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.6 	\begin{tikzpicture}[
+                       remember picture,overlay]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.8 		\draw
+         [line width=3.5pt, purpleUPP]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 6--11
+[][remember
+ []
+
+! Undefined control sequence.
+l.13 		\draw
+          [line width=3.5pt, purpleUPP]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.13 		\draw[
+           line width=3.5pt, purpleUPP]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 13--16
+[][line
+ []
+
+! Undefined control sequence.
+l.18 		\draw
+          [line width=3.5pt, purpleUPP]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.18 		\draw[
+           line width=3.5pt, purpleUPP]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 18--21
+[][line
+ []
+
+! Undefined control sequence.
+l.23 		\draw
+          [line width=3.5pt, purpleUPP]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.23 		\draw[
+           line width=3.5pt, purpleUPP]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 23--26
+[][line
+ []
+
+! Undefined control sequence.
+l.28 		\node
+          [anchor=north west, xshift=1cm, yshift=-1cm] at (current page.nort...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.28 		\node[
+           anchor=north west, xshift=1cm, yshift=-1cm] at (current page.nort...
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.29 		{\includegraphics
+                      [width=2cm]{img/logos/UPP_logo.png}};
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing $ inserted.
+<inserted text> 
+$
+l.29 		{\includegraphics[width=2cm]{img/logos/UPP_
+                                                logo.png}};
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 29.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 29.
+! Extra }, or forgotten $.
+l.29 ...egraphics[width=2cm]{img/logos/UPP_logo.png}
+                                                  };
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.29 ...graphics[width=2cm]{img/logos/UPP_logo.png}}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+$
+l.30 		
+     
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 28--30
+[][anchor=north
+ []
+
+
+Overfull \hbox (39.61002pt too wide) in paragraph at lines 28--30
+[width=2cm]img/logos/UPP$[][]\OML/cmm/m/it/10 ogo:png\OT1/cmr/m/n/10 ;$ 
+ []
+
+! Undefined control sequence.
+l.32 		\node
+          [anchor=north east, xshift=-1cm, yshift=-1cm] at (current page.nor...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.32 		\node[
+           anchor=north east, xshift=-1cm, yshift=-1cm] at (current page.nor...
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.33 		{\includegraphics
+                      [width=2cm]{img/logos/SOFT_logo.png}};
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing $ inserted.
+<inserted text> 
+$
+l.33 		{\includegraphics[width=2cm]{img/logos/SOFT_
+                                                 logo.png}};
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Extra }, or forgotten $.
+l.33 ...graphics[width=2cm]{img/logos/SOFT_logo.png}
+                                                  };
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.33 ...raphics[width=2cm]{img/logos/SOFT_logo.png}}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+! LaTeX Error: \begin{document} ended by \end{tikzpicture}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.34 	\end{tikzpicture}
+                     
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Missing $ inserted.
+<inserted text> 
+$
+l.34 	\end{tikzpicture}
+                     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+}
+l.34 	\end{tikzpicture}
+                     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+}
+l.34 	\end{tikzpicture}
+                     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+}
+l.34 	\end{tikzpicture}
+                     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+}
+l.34 	\end{tikzpicture}
+                     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 32--35
+[][anchor=north
+ []
+
+
+Overfull \hbox (39.61002pt too wide) in paragraph at lines 32--35
+[width=2cm]img/logos/SOFT$[][]\OML/cmm/m/it/10 ogo:png\OT1/cmr/m/n/10 ;$ 
+ []
+
+! Undefined control sequence.
+l.40 	\textcolor
+              {purpleUPP}{{\LARGE\textbf{UNIVERSIDAD POLITÉCNICA DE PACHUCA...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.40 	\textcolor{p
+                urpleUPP}{{\LARGE\textbf{UNIVERSIDAD POLITÉCNICA DE PACHUCA...
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.40 	\textcolor{purpleUPP}{{\LARGE
+                                 \textbf{UNIVERSIDAD POLITÉCNICA DE PACHUCA...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+luaotfload | db : Font names database loaded from /home/emmanuel/.texlive2023/te
+xmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz
+Overfull \hbox (83.85002pt too wide) in paragraph at lines 40--40
+ []purpleUPP\TU/lmr/bx/n/10 UNIVERSIDAD 
+ []
+
+
+Overfull \hbox (55.48pt too wide) in paragraph at lines 40--40
+ \TU/lmr/bx/n/10 POLITÉC- 
+ []
+
+
+Overfull \hbox (30.36pt too wide) in paragraph at lines 40--40
+ \TU/lmr/bx/n/10 NICA 
+ []
+
+
+Overfull \hbox (16.38pt too wide) in paragraph at lines 40--40
+ \TU/lmr/bx/n/10 DE 
+ []
+
+
+Overfull \hbox (58.43pt too wide) in paragraph at lines 40--40
+ \TU/lmr/bx/n/10 PACHUCA 
+ []
+
+! Undefined control sequence.
+l.42 	{\LARGE
+           \textbf{INGENIERÍA EN SOFTWARE}}\\[2em]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.42 	{\LARGE\textbf{INGENIERÍA EN SOFTWARE}
+                                           }\\[2em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (17.19pt too wide) in paragraph at lines 42--42
+ []\TU/lmr/bx/n/10 IN- 
+ []
+
+
+Overfull \hbox (20.43pt too wide) in paragraph at lines 42--42
+ \TU/lmr/bx/n/10 GE- 
+ []
+
+
+Overfull \hbox (42.6pt too wide) in paragraph at lines 42--42
+ \TU/lmr/bx/n/10 NIERÍA 
+ []
+
+
+Overfull \hbox (16.56pt too wide) in paragraph at lines 42--42
+ \TU/lmr/bx/n/10 EN 
+ []
+
+
+Overfull \hbox (34.1pt too wide) in paragraph at lines 42--42
+ \TU/lmr/bx/n/10 SOFT- 
+ []
+
+
+Overfull \hbox (35.49pt too wide) in paragraph at lines 42--42
+ \TU/lmr/bx/n/10 WARE 
+ []
+
+! Undefined control sequence.
+l.43 	{\LARGE
+           \textbf{ESTANCIA II}}\\[2em]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.43 	{\LARGE\textbf{ESTANCIA II}
+                               }\\[2em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (17.78pt too wide) in paragraph at lines 43--43
+ []\TU/lmr/bx/n/10 ES- 
+ []
+
+
+Overfull \hbox (46.09pt too wide) in paragraph at lines 43--43
+ \TU/lmr/bx/n/10 TANCIA 
+ []
+
+
+Overfull \hbox (9.04001pt too wide) in paragraph at lines 43--43
+ \TU/lmr/bx/n/10 II 
+ []
+
+! Undefined control sequence.
+l.46 	{\Large
+           \textbf{DOCUMENTO DE DESARROLLO DE SOFTWARE}}\\[3em]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.46 ...\textbf{DOCUMENTO DE DESARROLLO DE SOFTWARE}
+                                                  }\\[3em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (29.6pt too wide) in paragraph at lines 46--46
+ []\TU/lmr/bx/n/10 DOC- 
+ []
+
+
+Overfull \hbox (12.68001pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 U- 
+ []
+
+
+Overfull \hbox (44.12pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 MENTO 
+ []
+
+
+Overfull \hbox (16.38pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 DE 
+ []
+
+
+Overfull \hbox (20.21pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 DE- 
+ []
+
+
+Overfull \hbox (27.54001pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 SAR- 
+ []
+
+
+Overfull \hbox (39.43pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 ROLLO 
+ []
+
+
+Overfull \hbox (16.38pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 DE 
+ []
+
+
+Overfull \hbox (34.1pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 SOFT- 
+ []
+
+
+Overfull \hbox (35.49pt too wide) in paragraph at lines 46--46
+ \TU/lmr/bx/n/10 WARE 
+ []
+
+! Undefined control sequence.
+l.47 	{\Large
+           \textbf{PROYECTO: ATTUNE}}\\[3em]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.47 	{\Large\textbf{PROYECTO: ATTUNE}
+                                    }\\[3em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (68.87999pt too wide) in paragraph at lines 47--47
+ []\TU/lmr/bx/n/10 PROYECTO: 
+ []
+
+
+Overfull \hbox (19.56pt too wide) in paragraph at lines 47--47
+ \TU/lmr/bx/n/10 AT- 
+ []
+
+
+Overfull \hbox (33.41pt too wide) in paragraph at lines 47--47
+ \TU/lmr/bx/n/10 TUNE 
+ []
+
+! Undefined control sequence.
+l.49 	\large
+          \textbf{EQUIPO DE DESARROLLO:}\\[1em]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.49 	\large\textbf{EQUIPO DE DESARROLLO:}
+                                        \\[1em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (45.91pt too wide) in paragraph at lines 49--49
+ []\TU/lmr/bx/n/10 EQUIPO 
+ []
+
+
+Overfull \hbox (16.38pt too wide) in paragraph at lines 49--49
+ \TU/lmr/bx/n/10 DE 
+ []
+
+
+Overfull \hbox (20.21pt too wide) in paragraph at lines 49--49
+ \TU/lmr/bx/n/10 DE- 
+ []
+
+
+Overfull \hbox (27.54001pt too wide) in paragraph at lines 49--49
+ \TU/lmr/bx/n/10 SAR- 
+ []
+
+
+Overfull \hbox (42.62pt too wide) in paragraph at lines 49--49
+ \TU/lmr/bx/n/10 ROLLO: 
+ []
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.50 	\begin{tabular}
+                   {c}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.59 	\large
+          \textbf{CATEDRÁTICO:}\\[1em]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.59 	\large\textbf{CATEDRÁTICO:}
+                                \\[1em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (27.87pt too wide) in paragraph at lines 59--59
+ []\TU/lmr/bx/n/10 CAT- 
+ []
+
+
+Overfull \hbox (11.39pt too wide) in paragraph at lines 59--59
+ \TU/lmr/bx/n/10 E- 
+ []
+
+
+Overfull \hbox (57.68001pt too wide) in paragraph at lines 59--59
+ \TU/lmr/bx/n/10 DRÁTICO: 
+ []
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 	\uppercase{OCOTLAN DÍAZ PARRA}
+                                    \\ [3em]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.62 	\large
+          \textbf{\MakeUppercase{Pachuca de Soto, Hidalgo  \today}}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.62 ...Uppercase{Pachuca de Soto, Hidalgo  \today}}
+                                                  
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+<inserted text> PACHUCA DE SOTO, HIDALGO \today 
+                                
+l.62 ...Uppercase{Pachuca de Soto, Hidalgo  \today}}
+                                                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: \begin{document} ended by \end{titlepage}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.63 \end{titlepage}
+                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+)
+! Emergency stop.
+<*> cover.tex
+          
+*** (job aborted, no legal \end found)
+
+
+
+Here is how much of LuaTeX's memory you used:
+ 25 strings out of 478285
+ 100000,1977958 words of node,token memory allocated 11363 words of node memory still in use:
+   81 hlist, 1 vlist, 5 rule, 26 disc, 16 local_par, 1 dir, 6 math, 299 glue, 30
+ kern, 44 penalty, 1035 glyph, 67 attribute, 39 glue_spec, 67 attribute_list, 1 
+temp nodes
+   avail lists: 2:3,3:3,4:14,5:7,8:10,9:2,10:13
+ 20349 multiletter control sequences out of 65536+600000
+ 25 fonts using 1345055 bytes
+ 26i,6n,40p,124b,135s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!

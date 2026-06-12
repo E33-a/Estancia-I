@@ -1,0 +1,148 @@
+% config/preamble.tex
+
+% --- Configuración Base y Idioma ---
+\usepackage{fontspec} % Esencial para LuaLaTeX
+\usepackage[spanish,es-tabla]{babel} % Español con "Tabla" en lugar de "Cuadro"
+\usepackage{csquotes} % Recomendado con babel
+\AtBeginDocument{\shorthandoff{>}} % Evita conflicto de babel/spanish con pgfplots
+
+% --- Fuentes (Reemplaza inputenc/fontenc) ---
+% Si tienes EB Garamond instalada en el sistema (Fedora), usa esto:
+% \setmainfont{EB Garamond} 
+% Si usas la versión de TeX Live, mantenemos el paquete:
+\usepackage{ebgaramond}
+
+% --- Diseño y Gráficos ---
+\usepackage[top=2.5cm, bottom=3cm, left=2.5cm, right=2.5cm, headheight=1.6cm]{geometry}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs} % Para tablas más bonitas
+\usepackage{longtable} % Para tablas largas (metodología COSMIC)
+\usepackage{amsmath} % Para fórmulas matemáticas (COCOMO)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{url}
+\usepackage{pdflscape}
+\usepackage{pdfpages}
+\usepackage{hyperref} % Siempre al final (casi siempre)
+
+% --- TikZ Libraries ---
+\usetikzlibrary{positioning, arrows.meta, bending, backgrounds, shapes, calc}
+
+% --- Colores Personalizados (Tu paleta) ---
+\definecolor{purpleUPP}{RGB}{64,0,128}
+\definecolor{quality}{RGB}{0,102,204}
+\definecolor{process}{RGB}{0,153,76}
+\definecolor{value}{RGB}{204,102,0}
+\definecolor{control}{RGB}{153,0,153}
+
+% --- Definición de Entornos para Requisitos (Tus macros) ---
+\usepackage{xparse}
+
+\newlist{reqbody}{itemize}{1}
+\setlist[reqbody]{
+	label=, 
+	leftmargin=2em, 
+	topsep=0pt, 
+	partopsep=0pt, 
+	parsep=0pt
+}
+
+% Requisito Funcional
+\NewDocumentEnvironment{RequisitoFuncional}{ m m }
+{
+	\par\medskip
+	\noindent\textbf{#1. #2} 
+	\begin{reqbody}\item[] 
+	}
+	{
+	\end{reqbody} 
+	\par\vspace{1.3em}
+}
+
+% Requisito No Funcional
+\NewDocumentEnvironment{RequisitoNoFuncional}{ m m }
+{
+	\par\medskip
+	\noindent\textbf{#1. #2} 
+	\begin{reqbody}\item[] 
+	}
+	{
+	\end{reqbody} 
+	\par\vspace{1.3em}
+}
+
+% --- Formato de Títulos (Mayúsculas) ---
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\color{purpleUPP}}
+{\chaptertitlename\ \thechapter}
+{20pt}
+{\Huge}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{black}}
+{\thesection}
+{1em}
+{\MakeUppercase}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries}
+{\thesubsection}
+{1em}
+{\MakeUppercase}
+
+\titleformat{\subsubsection}
+{\normalfont\normalsize\bfseries}
+{\thesubsubsection}
+{1em}
+{\MakeUppercase}
+
+% --- Encabezados y Pies de Página (fancyhdr) ---
+\usepackage{fancyhdr}
+
+% 1. Configuración para páginas normales
+\pagestyle{fancy}
+\fancyhf{} % Limpia todos los campos por defecto
+
+% Encabezado
+\fancyhead[L]{\raisebox{-0.3cm}{\includegraphics[height=1.3cm]{img/logos/logo.png}}} 
+\fancyhead[R]{\includegraphics[height=0.7cm]{img/logos/icon.png}}
+
+% Pie de página
+\fancyfoot[R]{\thepage} % Número de página a la derecha
+
+% Líneas (0pt para quitar la línea superior)
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% 2. Configuración para páginas de inicio de Capítulo (estilo 'plain')
+% Esto fuerza a que las portadas de capítulo se vean IGUAL que las demás
+\fancypagestyle{plain}{
+	\fancyhf{} % Limpia
+	\fancyhead[L]{\includegraphics[height=1.3cm]{img/logos/logo.png}}
+	\fancyhead[R]{\includegraphics[height=0.9cm]{img/logos/icon.png}}
+	\fancyfoot[R]{\thepage}
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\footrulewidth}{0pt}
+}
+
+% --- Captions ---
+\DeclareCaptionLabelFormat{boldlabel}{\textbf{#1~#2}}
+\captionsetup{
+	font={small},
+	labelfont=bf,
+	labelsep=period,
+	justification=centering,
+	labelformat=boldlabel
+}
+
+% --- Profundidad ---
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}

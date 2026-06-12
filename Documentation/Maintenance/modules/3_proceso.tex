@@ -1,0 +1,94 @@
+% modules/3_proceso.tex
+% ================================================================
+% CAPÍTULO 3 - PROCESO DE MANTENIMIENTO
+% Referencia: SWEBOK V4.0a s2 / ISO/IEC/IEEE 14764
+% ================================================================
+
+\chapter{Proceso de Mantenimiento}
+
+La sección 2 del SWEBOK V4.0a describe el proceso de mantenimiento como un conjunto
+de actividades estructuradas que garantizan que cada modificación al software preserve
+su integridad. A continuación se define el proceso adoptado para el proyecto Yoliztli.
+
+\section{Ciclo de Vida de una Solicitud de Modificación (MR)}
+
+Toda solicitud de modificación --- ya sea una corrección de defecto (Problem Report --- PR)
+o una mejora (Enhancement Request) --- sigue el ciclo de seis etapas definido en
+ISO/IEC/IEEE 14764:
+
+\begin{enumerate}
+    \item \textbf{Registro de la solicitud:} El problema o mejora se documenta en el
+          gestor de issues del repositorio Git con una descripción clara, el componente
+          afectado y el tipo de mantenimiento (Correctivo, Preventivo, Adaptativo,
+          Aditivo o Perfectivo).
+
+    \item \textbf{Análisis de Impacto:} Antes de iniciar cualquier codificación, se
+          evalúa cómo el cambio propuesto afecta a otros módulos del sistema, a la base
+          de datos y a las pruebas existentes. Este análisis determina la estimación de
+          esfuerzo.
+
+    \item \textbf{Diseño e Implementación:} El desarrollo se realiza en una rama Git
+          dedicada siguiendo la convención de nombres:
+          \begin{itemize}
+              \item \texttt{bugfix/<descripcion>} para mantenimiento correctivo.
+              \item \texttt{feat/<descripcion>} para mantenimiento aditivo.
+              \item \texttt{refactor/<descripcion>} para mantenimiento perfectivo.
+              \item \texttt{chore/<descripcion>} para mantenimiento adaptativo y preventivo.
+          \end{itemize}
+
+    \item \textbf{Revisión y Aceptación:} Se ejecuta la suite de pruebas automatizadas
+          (\texttt{php artisan test}) y se verifica manualmente el caso de prueba
+          afectado. El código se fusiona a \texttt{main} solo si todas las pruebas pasan.
+
+    \item \textbf{Migración y Despliegue:} Se aplican las nuevas migraciones de base
+          de datos (\texttt{php artisan migrate}) en el entorno de destino y se
+          recompila el frontend (\texttt{npm run build}).
+
+    \item \textbf{Cierre y Documentación:} El issue se cierra en el gestor de
+          repositorio y se documenta el cambio en el historial de revisiones de este
+          plan.
+\end{enumerate}
+
+\section{Convención de Commits}
+
+Todos los commits del proyecto siguen la especificación de \textbf{Conventional Commits}
+para mantener un historial de cambios legible y estructurado:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Prefijo} & \textbf{Categoría SWEBOK} & \textbf{Ejemplo de uso} \\
+\midrule
+\texttt{fix:}      & Correctivo  & \texttt{fix: corregir almacenamiento en tabla progress} \\
+\texttt{feat:}     & Aditivo     & \texttt{feat: agregar filtros por edad en dashboard} \\
+\texttt{refactor:} & Perfectivo  & \texttt{refactor: optimizar consultas en DocenteController} \\
+\texttt{chore:}    & Adaptativo / Preventivo & \texttt{chore: migrar conexion a postgresql} \\
+\texttt{docs:}     & Documentación & \texttt{docs: actualizar plan de mantenimiento} \\
+\texttt{test:}     & Preventivo  & \texttt{test: agregar pruebas para ProgressController} \\
+\bottomrule
+\end{tabular}
+\caption{Convención de mensajes de commit por categoría de mantenimiento}
+\label{tab:commits}
+\end{table}
+
+\section{Gestión de la Configuración del Software (SCM)}
+
+De acuerdo con la relación que SWEBOK establece entre mantenimiento y
+\textit{Software Configuration Management} (SCM), el repositorio Git del proyecto
+aplica las siguientes prácticas:
+
+\begin{itemize}
+    \item \textbf{Control de versiones centralizado:} Repositorio alojado en GitHub
+          bajo la organización \texttt{E33-a/Estancia-I}.
+    \item \textbf{Rama estable:} La rama \texttt{main} representa siempre el estado
+          del sistema en producción. Ningún cambio se fusiona a esta rama sin haber
+          pasado las pruebas de regresión.
+    \item \textbf{Archivo \texttt{.gitignore}:} Excluye credenciales sensibles
+          (\texttt{.env}), dependencias de terceros (\texttt{/vendor},
+          \texttt{/node\_modules}) y archivos de base de datos locales
+          (\texttt{*.sqlite}).
+    \item \textbf{Etiquetado de versiones:} Cada entrega al catedrático se etiqueta
+          con \texttt{git tag} siguiendo el esquema \texttt{v1.x.y} (versionado
+          semántico).
+\end{itemize}

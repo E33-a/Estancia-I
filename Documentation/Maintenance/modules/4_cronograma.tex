@@ -1,0 +1,76 @@
+% modules/4_cronograma.tex
+% ================================================================
+% CAPÍTULO 4 - CRONOGRAMA Y PRIORIZACIÓN
+% ================================================================
+
+\chapter{Cronograma y Priorización de Actividades}
+
+\section{Matriz de Prioridad de Solicitudes de Modificación}
+
+La siguiente tabla clasifica cada solicitud de modificación (MR) según su
+\textbf{prioridad} (Alta, Media, Baja), su \textbf{complejidad estimada} y la
+\textbf{fase} en que debe ejecutarse:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llccc}
+\toprule
+\textbf{ID} & \textbf{Descripción} & \textbf{Tipo} & \textbf{Prioridad} & \textbf{Fase} \\
+\midrule
+MR-C01  & Corrección registro de avance (CP008)        & Correctivo   & Alta   & 1 \\
+MR-C02  & Resolver conflicto Inertia vs.\ React Router & Correctivo   & Alta   & 1 \\
+MR-A01  & Migración SQLite $\rightarrow$ PostgreSQL     & Adaptativo   & Alta   & 1 \\
+MR-P01  & Form Requests para validación de entradas     & Preventivo   & Media  & 2 \\
+MR-AD01 & Filtros por categoría y edad (CP007)          & Aditivo      & Alta   & 2 \\
+MR-AD02 & Descarga de materiales en PDF (RF4)           & Aditivo      & Media  & 2 \\
+MR-P02  & Pruebas de regresión con Pest                 & Preventivo   & Media  & 2 \\
+MR-PF01 & Eager Loading en DocenteController            & Perfectivo   & Media  & 3 \\
+MR-PF02 & Limpieza de código JavaScript legado          & Perfectivo   & Baja   & 3 \\
+MR-PF03 & Centralización de componentes React           & Perfectivo   & Baja   & 3 \\
+MR-P03  & Auditoría periódica de dependencias           & Preventivo   & Baja   & 3 \\
+MR-A02  & Seguimiento de actualizaciones de Laravel     & Adaptativo   & Baja   & 3 \\
+\bottomrule
+\end{tabular}
+\caption{Matriz de priorización de solicitudes de modificación}
+\label{tab:cronograma}
+\end{table}
+
+\section{Descripción de Fases}
+
+\subsection{Fase 1 --- Estabilización (Corrección y Adaptación Base)}
+
+Esta fase tiene como objetivo dejar el sistema en un estado funcional y ejecutable
+correctamente sobre la infraestructura de producción. Incluye las actividades de
+mayor urgencia identificadas a partir del ciclo de pruebas:
+
+\begin{itemize}
+    \item Resolución de la contradicción arquitectónica entre Inertia.js y React Router
+          Dom en el frontend (MR-C02).
+    \item Depuración y corrección del flujo de almacenamiento de progreso (MR-C01).
+    \item Configuración y prueba de la conexión a PostgreSQL (MR-A01).
+\end{itemize}
+
+\subsection{Fase 2 --- Completitud Funcional (Nuevas Características y Robustez)}
+
+Una vez estabilizado el núcleo del sistema, esta fase incorpora las funcionalidades
+que fallaron en las pruebas de aceptación y refuerza la seguridad del sistema:
+
+\begin{itemize}
+    \item Implementación de los filtros de contenido por edad e idioma (MR-AD01).
+    \item Generación de PDFs de cuentos descargables (MR-AD02).
+    \item Implementación de validación estricta de peticiones (MR-P01).
+    \item Escritura de pruebas automatizadas de regresión (MR-P02).
+\end{itemize}
+
+\subsection{Fase 3 --- Calidad Interna y Sostenibilidad}
+
+Esta fase aborda la salud a largo plazo del código y la preparación del sistema
+para su evolución continua, conforme a las leyes de Lehman sobre evolución de
+software citadas en SWEBOK V4.0a:
+
+\begin{itemize}
+    \item Optimización de rendimiento en consultas (MR-PF01).
+    \item Limpieza de código legado y reorganización de componentes (MR-PF02, MR-PF03).
+    \item Establecimiento de proceso de auditoría de dependencias y seguimiento de
+          versiones del framework (MR-P03, MR-A02).
+\end{itemize}
