@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (TeX Live 2026)  (format=lualatex 2026.5.30)  12 JUN 2026 12:58
+This is LuaHBTeX, Version 1.24.0 (TeX Live 2026)  (format=lualatex 2026.5.30)  12 JUN 2026 13:17
  restricted system commands enabled.
 **Maintenance_plan.tex
 (./Maintenance_plan.tex
@@ -1518,9 +1518,9 @@ LaTeX Font Info:    Font shape `TU/EBGaramond(0)/m/n' will be
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}<./img/logos/UPP_logo.png><./
 img/logos/SOFT_logo.png>])
 LaTeX Font Info:    Font shape `TU/EBGaramond(0)/m/n' will be
-(Font)              scaled to size 24.88pt on input line 30.
+(Font)              scaled to size 24.88pt on input line 32.
 LaTeX Font Info:    Font shape `TU/EBGaramond(0)/b/n' will be
-(Font)              scaled to size 24.88pt on input line 30.
+(Font)              scaled to size 24.88pt on input line 32.
  (./Maintenance_plan.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
@@ -1534,30 +1534,28 @@ LaTeX Font Info:    Font shape `TU/EBGaramond(0)/m/n' will be
 \tf@toc=\write5
 
 \openout5 = Maintenance_plan.toc
-<img/logos/logo.png, id=138, 447.92343pt x 436.63126pt>
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 31.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-<img/logos/icon.png, id=139, 378.66469pt x 338.01282pt>
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 31.
-(luatex.def)             Requested size: 28.68173pt x 25.6073pt.
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 34.
+(luatex.def)             Requested size: 23.78448pt x 28.45274pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 34.
+(luatex.def)             Requested size: 22.67305pt x 28.45274pt.
  [2
 
-<./img/logos/logo.png><./img/logos/icon.png>] (./modules/1_introduccion.tex
+] (./modules/1_introduccion.tex
 Capítulo 1.
 LaTeX Font Info:    Font shape `TU/EBGaramond(0)/m/it' will be
 (Font)              scaled to size 12.0pt on input line 23.
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 44.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 44.
-(luatex.def)             Requested size: 28.68173pt x 25.6073pt.
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 44.
+(luatex.def)             Requested size: 23.78448pt x 28.45274pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 44.
+(luatex.def)             Requested size: 22.67305pt x 28.45274pt.
 [3
 
 ]
@@ -1566,14 +1564,14 @@ LaTeX Font Info:    Font shape `TU/EBGaramond(0)/m/n' will be
 LaTeX Font Info:    Font shape `TU/EBGaramond(0)/b/n' will be
 (Font)              scaled to size 10.95pt on input line 78.
 ) (./modules/2_categorias.tex
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 7.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 7.
-(luatex.def)             Requested size: 22.30865pt x 19.91684pt.
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 7.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 7.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
  [4]
 Capítulo 2.
 
@@ -1584,35 +1582,53 @@ U/lmtt/m/n/12 package.json \TU/EBGaramond(0)/m/n/12 de-cla-ra si-mul-tá-nea-men
  Inertia.js
  []
 
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 55.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 55.
-(luatex.def)             Requested size: 28.68173pt x 25.6073pt.
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 50.
+(luatex.def)             Requested size: 23.78448pt x 28.45274pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 50.
+(luatex.def)             Requested size: 22.67305pt x 28.45274pt.
 [5
 
 ]
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 110.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 110.
-(luatex.def)             Requested size: 22.30865pt x 19.91684pt.
- [6]) (./modules/3_proceso.tex
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 7.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 7.
-(luatex.def)             Requested size: 22.30865pt x 19.91684pt.
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 77.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 77.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+ [6]
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 107.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 107.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
  [7]
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 137.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 137.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+ [8]) (./modules/3_proceso.tex
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 7.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 7.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+ [9]
 Capítulo 3.
 
 Overfull \hbox (24.04292pt too wide) in paragraph at lines 43--46
@@ -1621,31 +1637,48 @@ Overfull \hbox (24.04292pt too wide) in paragraph at lines 43--46
  artisan migrate\TU/EBGaramond(0)/m/n/12 )
  []
 
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 50.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 50.
-(luatex.def)             Requested size: 28.68173pt x 25.6073pt.
-[8
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 50.
+(luatex.def)             Requested size: 23.78448pt x 28.45274pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 50.
+(luatex.def)             Requested size: 22.67305pt x 28.45274pt.
+[10
 
 ]
-Overfull \hbox (38.61629pt too wide) in paragraph at lines 59--71
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 52.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 52.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+ [11]
+Overfull \hbox (38.61629pt too wide) in paragraph at lines 60--72
  [][] 
  []
 
-
-Overfull \hbox (27.83643pt too wide) in paragraph at lines 75--75
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 76.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 76.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+[12]
+Overfull \hbox (27.83643pt too wide) in paragraph at lines 77--77
 |[]\TU/EBGaramond(0)/b/n/17.28 GES-TIÓN DE LA CON-FI-GU-RA-CIÓN DEL SOFT-WA-RE
  (SCM)| 
  []
 
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 87.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 89.
 
-Overfull \hbox (0.89984pt too wide) in paragraph at lines 87--91
+Overfull \hbox (0.89984pt too wide) in paragraph at lines 89--93
 []\TU/EBGaramond(0)/b/n/12 Ar-chi-vo \TU/lmtt/b/n/12 .gitignore\TU/EBGaramond(0
 )/b/n/12 : \TU/EBGaramond(0)/m/n/12 Ex-clu-ye cre-den-cia-les sen-si-bles (\TU/
 lmtt/m/n/12 .env\TU/EBGaramond(0)/m/n/12 ), de-pen-den-cias de ter-ce-ros (\TU/
@@ -1653,45 +1686,45 @@ lmtt/m/n/12 /vendor\TU/EBGaramond(0)/m/n/12 ,
  []
 
 ) (./modules/4_cronograma.tex
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 6.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 6.
-(luatex.def)             Requested size: 22.30865pt x 19.91684pt.
- [9]
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 6.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 6.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+ [13]
 Capítulo 4.
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 47.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 47.
-(luatex.def)             Requested size: 28.68173pt x 25.6073pt.
-[10
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 38.
+(luatex.def)             Requested size: 23.78448pt x 28.45274pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 38.
+(luatex.def)             Requested size: 22.67305pt x 28.45274pt.
+[14
 
 ])
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 45.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 45.
-(luatex.def)             Requested size: 22.30865pt x 19.91684pt.
- [11]
-File: img/logos/logo.png Graphic file (type png)
-<use img/logos/logo.png>
-Package luatex.def Info: img/logos/logo.png  used on input line 66.
-(luatex.def)             Requested size: 37.9397pt x 36.98866pt.
-File: img/logos/icon.png Graphic file (type png)
-<use img/logos/icon.png>
-Package luatex.def Info: img/logos/icon.png  used on input line 66.
-(luatex.def)             Requested size: 28.68173pt x 25.6073pt.
- [12
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 48.
+(luatex.def)             Requested size: 30.9192pt x 36.98866pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 48.
+(luatex.def)             Requested size: 20.40546pt x 25.6073pt.
+ [15]
+File: img/logos/UPP_logo.png Graphic file (type png)
+<use img/logos/UPP_logo.png>
+Package luatex.def Info: img/logos/UPP_logo.png  used on input line 69.
+(luatex.def)             Requested size: 23.78448pt x 28.45274pt.
+File: img/logos/SOFT_logo.png Graphic file (type png)
+<use img/logos/SOFT_logo.png>
+Package luatex.def Info: img/logos/SOFT_logo.png  used on input line 69.
+(luatex.def)             Requested size: 22.67305pt x 28.45274pt.
+ [16
 
 ] (./Maintenance_plan.aux
 LaTeX Info: Redefining \. on input line 11.
@@ -1706,15 +1739,15 @@ Package rerunfilecheck Info: File `Maintenance_plan.out' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 32221 strings out of 475900
+ 32235 strings out of 475900
  100000,1373583 words of node,token memory allocated
  602 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 4 glue, 4 kern, 1 glyph, 15 attribute, 66 glue_spec
 , 8 attribute_list, 2 write nodes
-   avail lists: 1:3,2:1216,3:291,4:188,5:499,6:86,7:5330,8:2,9:555,10:11,11:660
- 53835 multiletter control sequences out of 65536+600000
+   avail lists: 1:3,2:1117,3:291,4:188,5:405,6:86,7:4433,8:2,9:522,10:11,11:559
+ 53821 multiletter control sequences out of 65536+600000
  67 fonts using 14385943 bytes
- 89i,17n,118p,466b,791s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,16n,118p,466b,791s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf></us
 r/share/texlive/texmf-dist/fonts/opentype/public/lm/lmmono12-regular.otf></usr/s
 hare/texlive/texmf-dist/fonts/opentype/public/ebgaramond/EBGaramond-Italic.otf><
@@ -1722,10 +1755,10 @@ hare/texlive/texmf-dist/fonts/opentype/public/ebgaramond/EBGaramond-Italic.otf><
 r.otf></usr/share/texlive/texmf-dist/fonts/opentype/public/ebgaramond/EBGaramond
 -Bold.otf></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.p
 fb>
-Output written on Maintenance_plan.pdf (12 pages, 179050 bytes).
+Output written on Maintenance_plan.pdf (16 pages, 159328 bytes).
 
-PDF statistics: 248 PDF objects out of 1000 (max. 8388607)
- 207 compressed objects within 3 object streams
- 50 named destinations out of 1000 (max. 1048576)
+PDF statistics: 260 PDF objects out of 1000 (max. 8388607)
+ 219 compressed objects within 3 object streams
+ 54 named destinations out of 1000 (max. 1048576)
  208 words of extra memory for PDF output out of 10000 (max. 100000000)
 

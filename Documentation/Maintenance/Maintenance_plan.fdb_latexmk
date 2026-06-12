@@ -1,0 +1,21 @@
+# Fdb version 4
+["pdflatex"] 1781291865.95024 "/home/emmanuel/Desktop/Projects/Estancia-I/Documentation/Maintenance/Maintenance_plan.tex" "Maintenance_plan.pdf" "Maintenance_plan" 1781291866.27364 2
+  "/home/emmanuel/Desktop/Projects/Estancia-I/Documentation/Maintenance/Maintenance_plan.tex" 1781291385.9809 2253 5d4a72b1d599007668e097c0adf1a482 ""
+  "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1136768653 1288 655e228510b4c2a1abe905c368440826 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/bk12.clo" 1777593600 8285 eb2e07a9e456f2e445aaaabcc61b0d24 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/book.cls" 1777593600 23268 0045640547c14751e547e94fe4a0e0a8 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.sty" 1759176595 3804 debc05110ffb506cef68ea4e72c7bcee ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1774899586 30909 7dedb28cb21a1e79c47a35a35ae3c507 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty" 1774899615 6558 f72ebe51bdca4990db99e72c8133397c ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty" 1761248321 10176 c2fc1c663b3f3899ddac6e6ed3fb1d7e ""
+  "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1777593600 43785 66587115382950aca692b5f6e3c2fb74 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1780201229 3520834 618f293ca422b395ee010764c3ad1407 ""
+  "Maintenance_plan.aux" 1781291857.94893 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "Maintenance_plan.tex" 1781291385.9809 2253 5d4a72b1d599007668e097c0adf1a482 ""
+  "config/preamble.tex" 1781291858.43566 3844 3ad9f4930e7f8db371945f0a51267ae9 ""
+  (generated)
+  "Maintenance_plan.aux"
+  "Maintenance_plan.log"
+  "Maintenance_plan.pdf"
+  (rewritten before read)
