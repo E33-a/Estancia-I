@@ -1,0 +1,173 @@
+% Video_script.tex
+% ================================================================
+% Guion del Video de Propuesta de Mantenimiento - Proyecto Yoliztli
+% Compilar con: lualatex Video_script.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+\input{../config/preamble}
+
+\hypersetup{
+    pdftitle={Guion del Video de la Propuesta de Mantenimiento --- Yoliztli},
+    pdfauthor={Equipo de Mantenimiento},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+}
+
+\begin{document}
+\sloppy
+
+% ---- Portada ----
+\begin{titlepage}
+    \thispagestyle{empty}
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=3cm,yshift=-5.5cm]current page.north west) --
+        ([xshift=-10cm,yshift=-5.5cm]current page.north east);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=10cm,yshift=3.5cm]current page.south west) --
+        ([xshift=-3cm,yshift=3.5cm]current page.south east);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=3cm,yshift=-13cm]current page.north west) --
+        ([xshift=3cm,yshift=4cm]current page.south west);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=-3cm,yshift=-6cm]current page.north east) --
+        ([xshift=-3cm,yshift=11cm]current page.south east);
+        \node[anchor=north west, xshift=1cm, yshift=-1cm] at (current page.north west)
+        {\includegraphics[width=2cm]{../img/logos/UPP_logo.png}};
+        \node[anchor=north east, xshift=-1cm, yshift=-1cm] at (current page.north east)
+        {\includegraphics[width=2cm]{../img/logos/SOFT_logo.png}};
+    \end{tikzpicture}
+    \centering
+    \vspace*{7.5em}
+    
+    \textcolor{purpleUPP}{{\huge\textbf{UNIVERSIDAD POLITÉCNICA \\[0.7em]DE PACHUCA}}}\\[3em]
+    {\LARGE\textbf{INGENIERÍA EN SOFTWARE}}\\[1.5em]
+    {\LARGE\textbf{MANTENIMIENTO DE SOFTWARE}}\\[2em]
+    {\Large\textbf{GUION DE PRESENTACIÓN DE PROPUESTA}}\\[1.5em]
+    {\Large\textbf{PROYECTO: YOLIZTLI}}\\[2em]
+    \large\textbf{EQUIPO DE MANTENIMIENTO:}\\[1em]
+    \begin{tabular}{c}
+        CHAVARRÍA ÁNGELES BRANDON \\
+        ISLAS LOZADA EMMANUEL \\
+        MORÁN GÓMEZ KENNETH \\
+        SÁNCHEZ ROMERO JOSÉ ENRIQUE \\
+    \end{tabular}
+    
+    \vspace{1.8em}
+    
+    \large\textbf{CATEDRÁTICO:}\\[0.8em]
+    \uppercase{Alicia Ortiz Montes} \\ [1.5em]
+    \large\textbf{\MakeUppercase{Pachuca de Soto, Hidalgo \today}}
+\end{titlepage}
+
+% ---- Índice ----
+\newpage
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+
+% ================================================================
+\section{Introducción y Estructura del Video}
+
+El propósito de este documento es proporcionar el libreto y guion técnico detallado para la grabación del video de presentación de la propuesta de mantenimiento del sistema educativo \textbf{Yoliztli}. 
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+\textbf{Participante} & \textbf{Rol en la Presentación} & \textbf{Módulo Temático} \\
+\midrule
+Emmanuel Islas & Coordinador del Proyecto & Introducción, contexto y metodología. \\
+Brandon Chavarría & Ingeniero de Pruebas & Análisis estático de código y SonarQube. \\
+Kenneth Morán & Ingeniero de Software & Reportes de Problemas y Modificaciones. \\
+José Enrique Sánchez & Gestor de Configuración & Estimación de esfuerzo, SCM y Cierre. \\
+\bottomrule
+\end{tabularx}
+\caption{Roles y distribución del equipo en el video}
+\end{table}
+
+\subsection{Instrucciones Técnicas para la Grabación}
+\begin{itemize}
+    \item \textbf{Duración total objetivo}: 4 a 6 minutos.
+    \item \textbf{Léxico}: Formal y académico, empleando terminología estándar de ingeniería de software (SWEBOK v4.0 e ISO/IEC/IEEE 14764).
+    \item \textbf{Apoyo visual}: Se grabará la pantalla mostrando las herramientas de diagnóstico (SonarQube) y las secciones clave de los PDFs generados.
+\end{itemize}
+
+\newpage
+
+% ================================================================
+\section{Guion Técnico (Script del Video)}
+
+% ----------------------------------------------------------------
+\subsection{Parte 1: Introducción, Contexto y Marco Metodológico \texorpdfstring{\\}{---} (0:00 - 1:15) --- Emmanuel Islas}
+
+\noindent \textbf{[Visual de apoyo]}: \textit{Emmanuel a cámara y luego compartiendo pantalla con la portada del Plan de Mantenimiento de Software.}
+\medskip
+
+\begin{sloppypar}
+\noindent \textbf{Emmanuel}: Hola a todos. A nombre del equipo de mantenimiento del proyecto \textbf{Yoliztli}, presentamos nuestra propuesta formal para la evolución y estabilización del software. Yoliztli es una aplicación web educativa diseñada para el aprendizaje infantil de lenguas originarias, estructurada sobre una arquitectura monolítica híbrida empleando \textbf{Laravel 10} en el backend, \textbf{React.js} en el frontend y la biblioteca de comunicación reactiva \textbf{Inertia.js}.
+\end{sloppypar}
+
+\begin{sloppypar}
+Nuestra estrategia de mantenimiento está rigurosamente alineada con la guía del cuerpo de conocimiento de ingeniería de software \textbf{SWEBOK v4.0} y el estándar internacional \textbf{ISO/IEC/IEEE 14764}. Hemos clasificado las intervenciones requeridas en cuatro categorías principales: correctivo, perfectivo, adaptativo y aditivo. El punto de partida de este proceso ha sido la ejecución de pruebas estáticas de código para evaluar la calidad del software entregado y mapear su deuda técnica. A continuación, mi compañero Brandon detallará este diagnóstico.
+\end{sloppypar}
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection{Parte 2: Diagnóstico mediante Análisis Estático con SonarQube \texorpdfstring{\\}{---} (1:15 - 2:30) --- Brandon Chavarría}
+
+\noindent \textbf{[Visual de apoyo]}: \textit{Captura de pantalla de la interfaz local de SonarQube mostrando las métricas del proyecto Yoliztli.}
+\medskip
+
+\noindent \textbf{Brandon}: Gracias, Emmanuel. Para la auditoría de calidad de código, configuramos y levantamos una instancia local de \textbf{SonarQube Community Edition v25.2.0}. El análisis abarcó el código fuente escrito en PHP y JavaScript, revelando áreas críticas de intervención:
+
+\begin{enumerate}
+    \item \textbf{Bugs de Fiabilidad}: Identificamos \textbf{67 bugs} que resultaron en una calificación de fiabilidad (Reliability) de \textbf{C}. Entre ellos destaca un bug de severidad \textbf{Alta} en el frontend y 6 de severidad \textbf{Media}, que representan vulnerabilidades en ejecución y potenciales excepciones no controladas.
+    \item **Deuda Técnica e Mantenibilidad**: Se detectaron \textbf{115 Code Smells}, equivalentes a una deuda técnica estimada de \textbf{6 horas y 54 minutos}, distribuidos en violaciones de consistencia (formato de archivos) y comentarios \texttt{TODO} pendientes de resolución.
+    \item **Capa de Presentación Inoperativa**: El hallazgo crítico original fue la ausencia total de las vistas React en el directorio \path{resources/js/Pages/}. Esta anomalía impedía la ejecución del sistema y obligó al equipo a implementar un mantenimiento correctivo de emergencia para reconstituir la interfaz web antes de proceder con las pruebas estáticas.
+\end{enumerate}
+
+Le cedo la palabra a Kenneth, quien explicará cómo formalizamos estos hallazgos a través de reportes técnicos.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection{Parte 3: Gestión de PR (Problem Reports) y MR (Modification Requests) \texorpdfstring{\\}{---} (2:30 - 3:45) --- Kenneth Morán}
+
+\noindent \textbf{[Visual de apoyo]}: \textit{Kenneth mostrando los archivos Problem\_report.pdf y Modification\_request.pdf, resaltando las tablas de resumen de PR y MR.}
+\medskip
+
+\noindent \textbf{Kenneth}: Gracias, Brandon. Siguiendo el flujo del proceso de mantenimiento establecido por el estándar ISO/IEC/IEEE 14764, documentamos cada hallazgo mediante un \textbf{Problem Report (PR)} y propusimos su solución con su respectivo \textbf{Modification Request (MR)}:
+
+\begin{itemize}
+    \item \textbf{PR-001 y MR-001 (Capa de Presentación)}: Catalogado como correctivo urgente, implicó la reconstitución de las vistas React y la corrección de errores de entrada en \path{public/index.php}, logrando pasar el estado del sistema de inoperativo a funcional.
+    \item \textbf{PR-002 y MR-002 (Bugs de Fiabilidad)}: Mantenimiento correctivo planificado para refactorizar los 67 bugs señalados en SonarQube, priorizando el bug de severidad Alta.
+    \item \textbf{PR-003 y MR-003 (Estándares de Código)}: Mantenimiento perfectivo enfocado en mitigar la deuda técnica. Proponemos automatizar el formato con herramientas de *linting* como \textbf{PHP-CS-Fixer} (bajo el estándar PSR-12) y \textbf{ESLint} para JavaScript.
+    \item \textbf{PR-004 y MR-004 (Filtro por Perfil)}: Derivado de la falla del caso de prueba de aceptación \textbf{CP007}. Consiste en un mantenimiento correctivo y aditivo en \texttt{DashboardController} para aplicar filtros SQL basados en la edad y la lengua configuradas por el alumno.
+    \item \textbf{PR-005 y MR-005 (Registro de Progreso)}: Asociado a la falla del caso \textbf{CP008}. Requiere la creación de un nuevo endpoint POST \path{/progress}, un controlador dedicado y una tabla en la base de datos para almacenar el progreso del estudiante de forma persistente.
+\end{itemize}
+
+A continuación, Enrique expondrá la estimación de esfuerzos y el control de calidad en la configuración.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection{Parte 4: Estimación de Esfuerzo, Gestión SCM y Conclusión \texorpdfstring{\\}{---} (3:45 - 5:00) --- José Enrique Sánchez}
+
+\noindent \textbf{[Visual de apoyo]}: \textit{Enrique compartiendo pantalla con las fórmulas de estimación y el modelo de ramificación de Git.}
+\medskip
+
+\noindent \textbf{José Enrique}: Gracias, Kenneth. Para garantizar la viabilidad y control de los cambios propuestos, realizamos estimaciones cuantitativas del esfuerzo requerido:
+
+\begin{itemize}
+    \item \textbf{Estimación Funcional (COSMIC FFP)}: Identificamos y medimos las funciones de movimiento de datos (entradas, salidas, lecturas y escrituras) de los nuevos módulos de progreso y filtros, totalizando el tamaño funcional en Puntos de Función COSMIC.
+    \item \textbf{Estimación de Esfuerzo (COCOMO II)}: Utilizando el modelo COCOMO para proyectos de tamaño pequeño a mediano, estimamos un esfuerzo total de desarrollo y mantenimiento correctivo/aditivo que nos permite proyectar un cronograma de ejecución controlado.
+\end{itemize}
+
+Asimismo, establecimos un esquema de \textbf{Gestión de la Configuración del Software (SCM)} utilizando Git. Para evitar la regresión de código, implementaremos un modelo de ramas donde las correcciones de fiabilidad se desarrollen en ramas \path{fix/}, las mejoras estéticas en \path{style/} o \path{refactor/}, y las nuevas características de filtrado y progreso en ramas \path{feature/}, requiriendo aprobación mediante *Pull Requests* verificados antes de integrarse a la rama principal.
+
+Concluimos que la implementación integrada de este plan de mantenimiento no solo corregirá los fallos heredados del sistema de pruebas de aceptación, sino que elevará el estándar de calidad interna del software a niveles óptimos para su producción y posterior escalabilidad. Agradecemos su atención.
+
+\end{document}
