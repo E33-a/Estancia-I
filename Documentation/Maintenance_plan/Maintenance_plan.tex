@@ -1,0 +1,69 @@
+% Maintenance_plan.tex
+% ================================================================
+% Plan de Mantenimiento de Software - Proyecto Yoliztli
+% Compilar con: lualatex Maintenance_plan.tex
+% ================================================================
+
+\documentclass[12pt, openany]{book}
+
+% --- Cargar configuración y paquetes ---
+\input{../config/preamble}
+
+% --- Metadatos del PDF ---
+\hypersetup{
+    pdftitle={Plan de Mantenimiento de Software --- Yoliztli},
+    pdfauthor={Islas Lozada Emmanuel},
+    pdfsubject={SWEBOK V4.0a / ISO/IEC/IEEE 14764},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+    citecolor=purpleUPP
+}
+
+% ================================================================
+\begin{document}
+
+% --- Portada ---
+\input{cover/cover}
+
+% --- Tabla de contenidos ---
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+}
+\newpage
+
+% ================================================================
+% MÓDULOS DEL DOCUMENTO
+% ================================================================
+
+\input{modules/1_introduccion}
+\input{modules/2_categorias}
+\input{modules/3_proceso}
+\input{modules/4_cronograma}
+
+% ================================================================
+% REFERENCIAS
+% ================================================================
+\chapter*{Referencias}
+\addcontentsline{toc}{chapter}{Referencias}
+
+\begin{itemize}
+    \item IEEE Computer Society. (2024). \textit{SWEBOK Guide V4.0a, Chapter 7:
+          Software Maintenance}. Institute of Electrical and Electronics Engineers.
+
+    \item ISO/IEC/IEEE. (2022). \textit{ISO/IEC/IEEE 14764:2022 --- Software Engineering:
+          Software Life Cycle Processes --- Maintenance}. International Organization
+          for Standardization.
+
+    \item Lehman, M. M. (1980). \textit{Programs, life cycles, and laws of software
+          evolution}. Proceedings of the IEEE, 68(9), 1060--1076.
+
+    \item Yoliztli Development Team. (2025). \textit{Especificación de Requisitos de
+          Software (SRS) --- Revisión 1.0}. Universidad Politécnica de Pachuca.
+
+    \item Galván, C. (2025). \textit{Reporte de Pruebas Yoliztli --- Corrida del
+          9 de diciembre de 2025}. Universidad Politécnica de Pachuca.
+\end{itemize}
+
+\end{document}

@@ -2,6 +2,8 @@
 /vendor
 /public/build
 /public/hot
+/.scannerwork
+/.sonar
 
 .env
 .env.backup
@@ -35,3 +37,4 @@
 !/storage/framework/sessions/.gitignore
 !/storage/framework/views/.gitignore
 !/storage/logs/.gitignore
+/Documentation/Static_test/

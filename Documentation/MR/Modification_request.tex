@@ -1,0 +1,320 @@
+% Modification_request.tex
+% ================================================================
+% Solicitudes de Modificación (MR) - Proyecto Yoliztli
+% Compilar con: lualatex Modification_request.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+\input{../config/preamble}
+
+\hypersetup{
+    pdftitle={Solicitudes de Modificación (MR) --- Yoliztli},
+    pdfauthor={Equipo de Mantenimiento},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+}
+
+\begin{document}
+\sloppy
+
+% ---- Portada ----
+\begin{titlepage}
+    \thispagestyle{empty}
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=3cm,yshift=-5.5cm]current page.north west) --
+        ([xshift=-10cm,yshift=-5.5cm]current page.north east);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=10cm,yshift=3.5cm]current page.south west) --
+        ([xshift=-3cm,yshift=3.5cm]current page.south east);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=3cm,yshift=-13cm]current page.north west) --
+        ([xshift=3cm,yshift=4cm]current page.south west);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=-3cm,yshift=-6cm]current page.north east) --
+        ([xshift=-3cm,yshift=11cm]current page.south east);
+        \node[anchor=north west, xshift=1cm, yshift=-1cm] at (current page.north west)
+        {\includegraphics[width=2cm]{../img/logos/UPP_logo.png}};
+        \node[anchor=north east, xshift=-1cm, yshift=-1cm] at (current page.north east)
+        {\includegraphics[width=2cm]{../img/logos/SOFT_logo.png}};
+    \end{tikzpicture}
+    \centering
+    \vspace*{8em}
+    
+    \textcolor{purpleUPP}{{\huge\textbf{UNIVERSIDAD POLITÉCNICA \\[0.7em]DE PACHUCA}}}\\[3em]
+    {\LARGE\textbf{INGENIERÍA EN SOFTWARE}}\\[1.5em]
+    {\LARGE\textbf{MANTENIMIENTO DE SOFTWARE}}\\[2em]
+    {\Large\textbf{SOLICITUDES DE MODIFICACIÓN (MR)}}\\[1.5em]
+    {\Large\textbf{PROYECTO: YOLIZTLI}}\\[2em]
+    \large\textbf{EQUIPO DE MANTENIMIENTO:}\\[1em]
+    \begin{tabular}{c}
+        CHAVARRÍA ÁNGELES BRANDON \\
+        ISLAS LOZADA EMMANUEL \\
+        MORÁN GÓMEZ KENNETH \\
+        SÁNCHEZ ROMERO JOSÉ ENRIQUE \\
+    \end{tabular}
+    
+    \vspace{1.8em}
+    
+    \large\textbf{CATEDRÁTICO:}\\[0.8em]
+    \uppercase{Alicia Ortiz Montes} \\ [1.5em]
+    \large\textbf{\MakeUppercase{Pachuca de Soto, Hidalgo \today}}
+\end{titlepage}
+
+% ---- Índice ----
+\newpage
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+
+% ================================================================
+\section{Introducción}
+
+El presente documento contiene las \textbf{Solicitudes de Modificación (MR)} derivadas
+del análisis de los Reportes de Problema (PR) identificados en el sistema educativo
+\textbf{Yoliztli}. Cada MR especifica la intervención técnica requerida, el tipo de
+mantenimiento al que pertenece según la clasificación \textbf{ISO/IEC/IEEE 14764},
+la prioridad de atención y el esfuerzo estimado de implementación.
+
+Las MRs se clasifican en los siguientes tipos de mantenimiento:
+
+\begin{itemize}
+    \item \textbf{Correctivo}: Corrección de defectos que causan fallos en ejecución.
+    \item \textbf{Perfectivo}: Mejora de la calidad interna sin alterar funcionalidad.
+    \item \textbf{Adaptativo}: Ajustes requeridos por cambios en el entorno tecnológico.
+    \item \textbf{Aditivo}: Incorporación de funcionalidades nuevas requeridas por el SRS.
+\end{itemize}
+
+% ================================================================
+\section{Solicitudes de Modificación}
+
+% ----------------------------------------------------------------
+\subsection[MR-001: Reconstitución de la capa de presentación]{MR-001 --- Reconstitución de la capa de presentación}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}               & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                  & MR-001 \\
+\textbf{PR Asociado}         & PR-001 \\
+\textbf{Tipo de Mantenimiento}& Correctivo \\
+\textbf{Prioridad}           & Urgente \\
+\textbf{Módulo(s) afectado(s)}& \path{resources/js/Pages/}, \path{public/index.php},
+                               \path{resources/js/bootstrap.js} \\
+\textbf{Esfuerzo estimado}   & 16 horas \\
+\textbf{Estado}              & Completado \\
+\bottomrule
+\end{tabularx}
+\caption{MR-001: Reconstitución de archivos de vista ausentes}
+\end{table}
+
+\textbf{Descripción del cambio}: Dado que el repositorio carecía de los archivos de
+interfaz de usuario, se procedió a reconstruir la capa de presentación completa:
+
+\begin{enumerate}
+    \item Creación del controlador frontal \path{public/index.php} de Laravel.
+    \item Generación de los componentes base de autenticación mediante
+    \texttt{php artisan breeze:install react}.
+    \item Creación del archivo de bootstrapping \path{resources/js/bootstrap.js}
+    con la configuración estándar de Axios.
+    \item Desarrollo del componente \path{resources/js/Pages/Dashboard.jsx}
+    que consume los datos enviados por \texttt{DashboardController}.
+    \item Resolución de conflictos de versiones en dependencias de Node.js
+    (\texttt{vite}, \texttt{laravel-vite-plugin}, \texttt{@vitejs/plugin-react}).
+\end{enumerate}
+
+\textbf{Criterio de aceptación}: La aplicación responde con código HTTP 200 en
+todas las rutas definidas y renderiza la interfaz de usuario en el navegador.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[MR-002: Bugs de fiabilidad en el frontend]{MR-002 --- Corrección de bugs de fiabilidad en el frontend}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}               & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                  & MR-002 \\
+\textbf{PR Asociado}         & PR-002 \\
+\textbf{Tipo de Mantenimiento}& Correctivo \\
+\textbf{Prioridad}           & Alta \\
+\textbf{Módulo(s) afectado(s)}& \path{resources/js/} (archivos .jsx) \\
+\textbf{Esfuerzo estimado}   & 5 horas 35 minutos (según SonarQube) \\
+\textbf{Estado}              & Pendiente \\
+\bottomrule
+\end{tabularx}
+\caption{MR-002: Corrección de 67 bugs de fiabilidad en componentes React}
+\end{table}
+
+\textbf{Descripción del cambio}: Revisar y corregir individualmente los 67 issues de
+fiabilidad (Reliability rating C) detectados por SonarQube en los archivos de
+componentes React. El proceso de corrección debe seguir el siguiente orden de prioridad:
+
+\begin{enumerate}
+    \item Corregir el \textbf{1 bug de severidad Alta (High)} identificado en el
+    análisis, accediendo a la pestaña \textit{Issues} de SonarQube y filtrando
+    por severidad High.
+    \item Corregir los \textbf{6 bugs de severidad Media (Medium)}.
+    \item Corregir los \textbf{60 bugs de severidad Baja (Low)} restantes.
+\end{enumerate}
+
+Cada corrección debe ser verificada ejecutando \texttt{sonar-scanner} nuevamente
+para confirmar que el issue ya no aparece en el reporte.
+
+\textbf{Criterio de aceptación}: Rating de Reliability mejorado de C a A o B en
+SonarQube. Cero bugs de severidad Alta o Media.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[MR-003: Linting y estándares de codificación]{MR-003 --- Aplicación de estándares de codificación (linting)}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}               & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                  & MR-003 \\
+\textbf{PR Asociado}         & PR-003 \\
+\textbf{Tipo de Mantenimiento}& Perfectivo \\
+\textbf{Prioridad}           & Baja \\
+\textbf{Módulo(s) afectado(s)}& Todos los archivos fuente PHP y JavaScript \\
+\textbf{Esfuerzo estimado}   & 1 hora 19 minutos + configuración de herramientas \\
+\textbf{Estado}              & Pendiente \\
+\bottomrule
+\end{tabularx}
+\caption{MR-003: Aplicación de linters para eliminación de Code Smells}
+\end{table}
+
+\textbf{Descripción del cambio}: Configurar y ejecutar herramientas de análisis
+estático local para corregir de forma automatizada los 115 Code Smells detectados:
+
+\begin{enumerate}
+    \item \textbf{PHP}: Instalar y ejecutar \texttt{PHP-CS-Fixer} con el estándar
+    PSR-12 para corregir los archivos del directorio \path{app/} y \path{routes/}.
+    \item \textbf{JavaScript/JSX}: Configurar \texttt{ESLint} con las reglas
+    estándar de React para corregir los archivos de \path{resources/js/}.
+    \item \textbf{Comentarios TODO}: Revisar manualmente los 10 comentarios
+    \texttt{TODO} identificados y o bien resolverlos o eliminarlos del código.
+\end{enumerate}
+
+\textbf{Criterio de aceptación}: El número de Code Smells en SonarQube se reduce
+a menos de 20. Rating de Maintainability se mantiene en A o mejora.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[MR-004: Filtro de contenido por perfil de alumno]{MR-004 --- Implementación del filtro de contenido por perfil de alumno}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}               & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                  & MR-004 \\
+\textbf{PR Asociado}         & PR-004 \\
+\textbf{Tipo de Mantenimiento}& Correctivo / Aditivo \\
+\textbf{Prioridad}           & Media \\
+\textbf{Módulo(s) afectado(s)}& \path{app/Http/Controllers/DashboardController.php},
+                               \path{resources/js/Pages/Dashboard.jsx} \\
+\textbf{Esfuerzo estimado}   & 8 horas \\
+\textbf{Estado}              & Pendiente \\
+\bottomrule
+\end{tabularx}
+\caption{MR-004: Filtrado dinámico de contenido por categoría y rango de edad}
+\end{table}
+
+\textbf{Descripción del cambio}: Modificar \texttt{DashboardController@index} para
+que las consultas a la base de datos incluyan cláusulas \texttt{WHERE} basadas en
+los atributos del usuario autenticado:
+
+\begin{enumerate}
+    \item Agregar al modelo \texttt{User} los atributos \texttt{age\_range} y
+    \texttt{language\_category} si no existen, o verificar su presencia en la
+    migración correspondiente.
+    \item Modificar las consultas de \texttt{Story}, \texttt{Video} y actividades
+    para que apliquen \texttt{->where('language\_category', \$user->language\_category)}
+    y el filtro de rango de edad correspondiente.
+    \item Actualizar el componente \texttt{Dashboard.jsx} para mostrar un mensaje
+    informativo cuando no exista contenido disponible para el perfil del alumno.
+\end{enumerate}
+
+\textbf{Criterio de aceptación}: El caso de prueba CP007 pasa exitosamente.
+Los alumnos con diferentes categorías de lengua visualizan únicamente el contenido
+correspondiente a su perfil.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[MR-005: Registro de progreso del alumno]{MR-005 --- Implementación del registro de progreso del alumno}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}               & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                  & MR-005 \\
+\textbf{PR Asociado}         & PR-005 \\
+\textbf{Tipo de Mantenimiento}& Correctivo / Aditivo \\
+\textbf{Prioridad}           & Alta \\
+\textbf{Módulo(s) afectado(s)}& \path{app/Http/Controllers/ProgressController.php},
+                               \path{routes/web.php},
+                               \path{resources/js/Pages/Dashboard.jsx} \\
+\textbf{Esfuerzo estimado}   & 10 horas \\
+\textbf{Estado}              & Pendiente \\
+\bottomrule
+\end{tabularx}
+\caption{MR-005: Implementación del módulo de seguimiento de progreso}
+\end{table}
+
+\textbf{Descripción del cambio}: Crear la infraestructura completa para registrar
+el avance del alumno al completar actividades interactivas:
+
+\begin{enumerate}
+    \item \textbf{Backend}: Crear \texttt{ProgressController} con el método
+    \texttt{store(Request \$request)} que valide y persista en la tabla
+    \texttt{progress} los campos: \texttt{user\_id}, \texttt{activity\_type}
+    (story, video, exercise, game) y \texttt{activity\_id}.
+    \item \textbf{Ruta}: Registrar en \path{routes/web.php} la ruta:
+    \texttt{Route::post('/progress', [ProgressController::class, 'store'])}.
+    \item \textbf{Frontend}: Agregar en \texttt{Dashboard.jsx} una llamada
+    \texttt{axios.post('/progress', \{...\})} al evento de completado de cada
+    tipo de actividad.
+    \item \textbf{Verificación}: Confirmar que la tabla \texttt{progress} recibe
+    registros correctamente consultando la base de datos después de completar
+    una actividad de prueba.
+\end{enumerate}
+
+\textbf{Criterio de aceptación}: El caso de prueba CP008 pasa exitosamente.
+La tabla \texttt{progress} contiene registros al completar actividades.
+El panel del docente refleja datos reales de avance por alumno.
+
+% ================================================================
+\section*{Resumen de Solicitudes de Modificación}
+\addcontentsline{toc}{section}{Resumen de Solicitudes de Modificación}
+
+\begin{table}[H]
+\centering
+\caption{Consolidado de Solicitudes de Modificación (MR)}
+\begin{tabularx}{\textwidth}{llXcc}
+\toprule
+\textbf{MR} & \textbf{PR} & \textbf{Descripción} & \textbf{Tipo} & \textbf{Estado} \\
+\midrule
+MR-001 & PR-001 & Reconstitución de vistas y entradas    & Correctivo          & Completado \\
+MR-002 & PR-002 & Corrección de 67 bugs de fiabilidad    & Correctivo          & Pendiente  \\
+MR-003 & PR-003 & Linting y estándares de codificación   & Perfectivo          & Pendiente  \\
+MR-004 & PR-004 & Filtro de contenido por perfil alumno  & Correctivo/Aditivo  & Pendiente  \\
+MR-005 & PR-005 & Módulo de registro de progreso         & Correctivo/Aditivo  & Pendiente  \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}

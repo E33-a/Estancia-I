@@ -1,0 +1,303 @@
+% Problem_report.tex
+% ================================================================
+% Reporte de Problemas (PR) - Proyecto Yoliztli
+% Compilar con: lualatex Problem_report.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+\input{../config/preamble}
+
+\hypersetup{
+    pdftitle={Reporte de Problemas (PR) --- Yoliztli},
+    pdfauthor={Equipo de Mantenimiento},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+}
+
+\begin{document}
+\sloppy
+
+% ---- Portada ----
+\begin{titlepage}
+    \thispagestyle{empty}
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=3cm,yshift=-5.5cm]current page.north west) --
+        ([xshift=-10cm,yshift=-5.5cm]current page.north east);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=10cm,yshift=3.5cm]current page.south west) --
+        ([xshift=-3cm,yshift=3.5cm]current page.south east);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=3cm,yshift=-13cm]current page.north west) --
+        ([xshift=3cm,yshift=4cm]current page.south west);
+        \draw[line width=3.5pt, purpleUPP]
+        ([xshift=-3cm,yshift=-6cm]current page.north east) --
+        ([xshift=-3cm,yshift=11cm]current page.south east);
+        \node[anchor=north west, xshift=1cm, yshift=-1cm] at (current page.north west)
+        {\includegraphics[width=2cm]{../img/logos/UPP_logo.png}};
+        \node[anchor=north east, xshift=-1cm, yshift=-1cm] at (current page.north east)
+        {\includegraphics[width=2cm]{../img/logos/SOFT_logo.png}};
+    \end{tikzpicture}
+    \centering
+    \vspace*{8em}
+    
+    \textcolor{purpleUPP}{{\huge\textbf{UNIVERSIDAD POLITÉCNICA \\[0.7em]DE PACHUCA}}}\\[3em]
+    {\LARGE\textbf{INGENIERÍA EN SOFTWARE}}\\[1.5em]
+    {\LARGE\textbf{MANTENIMIENTO DE SOFTWARE}}\\[2em]
+    {\Large\textbf{REPORTE DE PROBLEMAS (PR)}}\\[1.5em]
+    {\Large\textbf{PROYECTO: YOLIZTLI}}\\[2em]
+    \large\textbf{EQUIPO DE MANTENIMIENTO:}\\[1em]
+    \begin{tabular}{c}
+        CHAVARRÍA ÁNGELES BRANDON \\
+        ISLAS LOZADA EMMANUEL \\
+        MORÁN GÓMEZ KENNETH \\
+        SÁNCHEZ ROMERO JOSÉ ENRIQUE \\
+    \end{tabular}
+    
+    \vspace{1.8em}
+    
+    \large\textbf{CATEDRÁTICO:}\\[0.8em]
+    \uppercase{Alicia Ortiz Montes} \\ [1.5em]
+    \large\textbf{\MakeUppercase{Pachuca de Soto, Hidalgo \today}}
+\end{titlepage}
+
+% ---- Índice ----
+\newpage
+{\hypersetup{linkcolor=black}\tableofcontents}
+\newpage
+
+% ================================================================
+\section{Introducción}
+
+El presente documento recopila los \textbf{Reportes de Problema (PR)} identificados
+durante la fase de pruebas estáticas y de aceptación del sistema educativo
+\textbf{Yoliztli}. Los PRs provienen de dos fuentes principales:
+
+\begin{enumerate}
+    \item El análisis estático de código realizado con \textbf{SonarQube Community
+    Edition v25.2.0}, que detectó 120 issues en el código fuente.
+    \item El reporte de pruebas de aceptación (diciembre 2025), que registró
+    \textbf{2 casos de prueba fallidos} (CP007 y CP008) de un total de 8.
+\end{enumerate}
+
+Cada PR contiene: identificador único, fuente de detección, descripción del problema,
+severidad, módulo afectado y estado de resolución.
+
+% ================================================================
+\section{Reportes de Problema}
+
+% ----------------------------------------------------------------
+\subsection[PR-001: Vistas de UI ausentes en el repositorio]{PR-001 --- Vistas de la interfaz de usuario ausentes en el repositorio}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}             & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                & PR-001 \\
+\textbf{Fecha de detección}& Junio 2026 \\
+\textbf{Reportado por}     & Equipo de Mantenimiento \\
+\textbf{Fuente}            & Revisión de entregables del repositorio \\
+\textbf{Severidad}         & Crítica \\
+\textbf{Módulo afectado}   & \path{resources/js/Pages/} (Frontend completo) \\
+\textbf{Estado}            & Resuelto \\
+\bottomrule
+\end{tabularx}
+\caption{PR-001: Ausencia de archivos de vista en el repositorio}
+\end{table}
+
+\begin{sloppypar}
+\textbf{Descripción}: El repositorio entregado carecía completamente de los archivos
+de componentes React (\texttt{.jsx}) en el directorio \path{resources/js/Pages/},
+a pesar de que los controladores Laravel utilizaban \texttt{Inertia::render()} para
+enviarles datos. Adicionalmente, faltaba el archivo de entrada \path{public/index.php}
+y el bootstrapper \path{resources/js/bootstrap.js}, lo que provocaba que el servidor
+retornara error 500 en cualquier petición.
+\end{sloppypar}
+
+\textbf{Impacto}: Ningún caso de prueba era ejecutable en el estado original del
+repositorio. La aplicación era completamente inoperable.
+
+\begin{sloppypar}
+\textbf{Resolución}: Se reconstruyeron los componentes de interfaz basándose en
+los controladores y SRS existentes. Se creó \path{public/index.php} y
+\path{resources/js/bootstrap.js} desde cero.
+\end{sloppypar}
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[PR-002: Bug de alta severidad en JavaScript]{PR-002 --- Bug de severidad Alta en componentes JavaScript}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}             & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                & PR-002 \\
+\textbf{Fecha de detección}& Junio 2026 \\
+\textbf{Reportado por}     & SonarQube Community Edition \\
+\textbf{Fuente}            & Análisis estático automatizado \\
+\textbf{Severidad}         & Alta (High) \\
+\textbf{Módulo afectado}   & \path{resources/js/} (componentes React/JSX) \\
+\textbf{Estado}            & Abierto --- Pendiente de corrección \\
+\bottomrule
+\end{tabularx}
+\caption{PR-002: Bug de alta severidad en el frontend React}
+\end{table}
+
+\textbf{Descripción}: El análisis de SonarQube identificó \textbf{1 bug de severidad
+Alta (High)} y \textbf{6 bugs de severidad Media (Medium)} distribuidos en los
+archivos \texttt{.jsx} del directorio \path{resources/js/}. Estos errores de
+fiabilidad (Reliability) resultaron en una calificación global de \textbf{C} para
+esta dimensión, con un esfuerzo de remediación estimado de \textbf{5 horas y 35 minutos}.
+
+\textbf{Impacto}: Los bugs de fiabilidad representan puntos en el código donde la
+aplicación podría comportarse de manera inesperada o lanzar excepciones no controladas
+durante la ejecución normal del sistema, afectando la experiencia del usuario final.
+
+\textbf{Resolución propuesta}: Revisar y corregir individualmente los 67 issues de
+fiabilidad detectados por SonarQube, priorizando el bug de severidad Alta.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[PR-003: 115 violaciones de estándares]{PR-003 --- 115 violaciones de estándares de codificación}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}             & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                & PR-003 \\
+\textbf{Fecha de detección}& Junio 2026 \\
+\textbf{Reportado por}     & SonarQube Community Edition \\
+\textbf{Fuente}            & Análisis estático automatizado \\
+\textbf{Severidad}         & Baja (Low) \\
+\textbf{Módulo afectado}   & Todos los archivos fuente (PHP y JSX) \\
+\textbf{Estado}            & Abierto --- Mantenimiento perfectivo \\
+\bottomrule
+\end{tabularx}
+\caption{PR-003: Code Smells y violaciones de convención de código}
+\end{table}
+
+\textbf{Descripción}: Se detectaron \textbf{115 Code Smells} (malas prácticas de
+codificación) clasificados como sigue: 107 de tipo \textit{Consistency} (ausencia
+de línea al final de archivos y espacios en blanco innecesarios), 10 de tipo
+\textit{Intentionality} (comentarios \texttt{TODO} sin resolver) y 3 de tipo
+\textit{Adaptability}. El esfuerzo de remediación total estimado es de
+\textbf{1 hora y 19 minutos}.
+
+\textbf{Impacto}: Aunque ninguno de estos issues genera fallos en ejecución de forma
+directa, su acumulación incrementa la deuda técnica y dificulta la legibilidad y
+mantenibilidad del código a largo plazo.
+
+\textbf{Resolución propuesta}: Aplicar correcciones de formato automatizadas
+(linters como PHP-CS-Fixer y ESLint) para resolver la mayoría de los issues de
+\textit{Consistency} de forma masiva. Resolver manualmente los comentarios TODO.
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[PR-004: Filtro de contenido (CP007)]{PR-004 --- CP007: Filtro de contenido por categoría y edad}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}             & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                & PR-004 \\
+\textbf{Fecha de detección}& Diciembre 2025 \\
+\textbf{Reportado por}     & Equipo de QA (Galván, C.) \\
+\textbf{Fuente}            & Pruebas de aceptación --- Caso CP007 \\
+\textbf{Severidad}         & Media \\
+\textbf{Módulo afectado}   & \path{app/Http/Controllers/DashboardController.php}, frontend \\
+\textbf{Estado}            & Abierto --- Pendiente de corrección \\
+\bottomrule
+\end{tabularx}
+\caption{PR-004: Filtro de contenido por categoría de lengua y rango de edad inoperativo}
+\end{table}
+
+\textbf{Descripción}: El caso de prueba CP007 verificaba que el sistema filtrara el
+contenido mostrado en el dashboard del alumno según su rango de edad y la categoría
+de lengua configurada. El filtro no se aplica: el controlador \texttt{DashboardController}
+devuelve contenido aleatorio sin considerar los atributos del perfil del alumno
+autenticado.
+
+\textbf{Impacto}: Los alumnos visualizan material que puede no corresponder a su
+nivel de edad ni a la lengua de su interés, reduciendo la efectividad pedagógica
+del sistema.
+
+\begin{sloppypar}
+\textbf{Resolución propuesta}: Modificar \texttt{DashboardController@index} para
+filtrar las consultas a la base de datos usando los atributos \texttt{age\_range} y
+\texttt{language\_category} del modelo \texttt{User} autenticado.
+\end{sloppypar}
+
+\newpage
+
+% ----------------------------------------------------------------
+\subsection[PR-005: Progreso del alumno (CP008)]{PR-005 --- CP008: Progreso del alumno no se registra}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo}             & \textbf{Detalle} \\
+\midrule
+\textbf{ID}                & PR-005 \\
+\textbf{Fecha de detección}& Diciembre 2025 \\
+\textbf{Reportado por}     & Equipo de QA (Galván, C.) \\
+\textbf{Fuente}            & Pruebas de aceptación --- Caso CP008 \\
+\textbf{Severidad}         & Alta \\
+\textbf{Módulo afectado}   & Tabla \texttt{progress}, controladores de actividades \\
+\textbf{Estado}            & Abierto --- Pendiente de corrección \\
+\bottomrule
+\end{tabularx}
+\caption{PR-005: El progreso del alumno no se almacena en la base de datos}
+\end{table}
+
+\textbf{Descripción}: El caso de prueba CP008 verificaba que al completar un módulo
+interactivo (cuento, ejercicio o video), el sistema registrara el avance en la tabla
+\texttt{progress} de la base de datos. La verificación posterior mostró que dicha
+tabla permanece vacía independientemente de las actividades completadas por el alumno.
+No existe una ruta o controlador que reciba la señal de ``actividad completada'' y
+persista el registro correspondiente.
+
+\textbf{Impacto}: El panel de reportes del docente (CP005) no puede mostrar datos
+reales de avance por alumno. La funcionalidad de seguimiento educativo, que es central
+al propósito del sistema, es completamente inoperativa.
+
+\begin{sloppypar}
+\textbf{Resolución propuesta}: Crear una ruta POST \texttt{/progress} y un método
+\texttt{store()} en un controlador dedicado \texttt{ProgressController}, que inserte
+un registro en la tabla \texttt{progress} con \texttt{user\_id}, \texttt{activity\_type}
+y \texttt{activity\_id} al recibir la señal de completado desde el frontend.
+\end{sloppypar}
+
+% ================================================================
+\section*{Resumen de Reportes}
+\addcontentsline{toc}{section}{Resumen de Reportes}
+
+\begin{table}[H]
+\centering
+\caption{Consolidado de Reportes de Problema (PR)}
+\begin{tabularx}{\textwidth}{lXcc}
+\toprule
+\textbf{ID} & \textbf{Descripción} & \textbf{Severidad} & \textbf{Estado} \\
+\midrule
+PR-001 & Vistas de UI ausentes en repositorio           & Crítica & Resuelto \\
+PR-002 & Bug de alta severidad en componentes React     & Alta    & Abierto  \\
+PR-003 & 115 Code Smells y violaciones de convención    & Baja    & Abierto  \\
+PR-004 & Filtro por categoría y edad inoperativo (CP007)& Media   & Abierto  \\
+PR-005 & Progreso del alumno no se registra (CP008)     & Alta    & Abierto  \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}
