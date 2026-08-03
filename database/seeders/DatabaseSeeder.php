@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,40 +13,57 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. CREAR AL DOCENTE (MAESTRO)
-        // Este es el usuario con el que entrarás al Panel Docente
+        // 1. CREAR ADMINISTRADOR GENERAL
         User::factory()->create([
-            'name' => 'Profesor Admin',
-            'email' => 'profe@yolitzli.com',
-            'password' => bcrypt('password'), // Contraseña: password
-            'role' => 1, // <--- EL 1 SIGNIFICA DOCENTE
+            'name'     => 'José Sánchez',
+            'email'    => 'jesanchezrom@gmail.com',
+            'password' => Hash::make('password'),
+            'role'     => User::ROLE_ADMIN, // 'admin'
         ]);
 
-        // 2. CREAR ALUMNOS DE PRUEBA
-        // Estos usuarios entrarán al Dashboard Mágico de niños
+        // 2. CREAR AL DOCENTE (MAESTRO)
         User::factory()->create([
-            'name' => 'Juanito Pérez',
-            'email' => 'juan@alumno.com',
-            'password' => bcrypt('password'),
-            'role' => 0, // <--- EL 0 SIGNIFICA ALUMNO
+            'name'     => 'Profesor Admin',
+            'email'    => 'profe@yolitzli.com',
+            'password' => Hash::make('password'),
+            'role'     => User::ROLE_TEACHER, // 'teacher'
         ]);
 
-        User::factory()->create([
-            'name' => 'María González',
-            'email' => 'maria@alumno.com',
-            'password' => bcrypt('password'),
-            'role' => 0,
-        ]);
+        // 3. CREAR ALUMNOS DE PRUEBA
+        $students = [
+            [
+                'name'  => 'Juanito Pérez',
+                'email' => 'juan@alumno.com',
+            ],
+            [
+                'name'  => 'María González',
+                'email' => 'maria@alumno.com',
+            ],
+            [
+                'name'  => 'Pedrito López',
+                'email' => 'pedro@alumno.com',
+            ],
+        ];
 
-        User::factory()->create([
-            'name' => 'Pedrito López',
-            'email' => 'pedro@alumno.com',
-            'password' => bcrypt('password'),
-            'role' => 0,
-        ]);
+        foreach ($students as $data) {
+            $student = User::factory()->create([
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'password' => Hash::make('password'),
+                'role'     => User::ROLE_STUDENT, // 'student'
+            ]);
 
-        // 3. LLAMAR A LOS OTROS SEMBRADORES
-        // Esto llena los videos y cuentos automáticamente
+            // Perfil de estudiante para gamificación
+            $student->studentProfile()->create([
+                'level'            => 1,
+                'level_progress'   => 0,
+                'stars'            => 10,
+                'stories_read'     => 0,
+                'selected_dialect' => 'Español',
+            ]);
+        }
+
+        // 4. OTROS SEEDERS
         $this->call([
             VideoSeeder::class,
             StorySeeder::class,

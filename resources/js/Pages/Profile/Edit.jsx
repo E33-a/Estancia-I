@@ -1,16 +1,33 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import { Link } from '@inertiajs/react';
 
 export default function Edit({ mustVerifyEmail, status }) {
+    // Obtenemos el usuario autenticado desde los props globales
     const user = usePage().props.auth.user;
-    
-    // Estados para controlar qué modal o formulario flotante está abierto
-    const [activeModal, setActiveModal] = useState(null); // 'profile', 'password', 'delete' or null
+
+    // Extraemos los datos del perfil de estudiante con fallback si no existe (ej. docentes)
+    const profile = user?.student_profile || {
+        level: 1,
+        level_progress: 0,
+        stars: 0,
+        stories_read: 0,
+        selected_dialect: 'Español'
+    };
+
+    // Colección de insignias
+    const badges = user?.badges || [];
+
+    // Estado para controlar qué modal o formulario flotante está abierto
+    const [activeModal, setActiveModal] = useState(null);
+
+    // Formatear el nombre del rol para mostrarlo de forma vistosa
+    const formattedRole = user.role 
+        ? user.role.charAt(0).toUpperCase() + user.role.slice(1) 
+        : 'Estudiante';
 
     return (
         <AuthenticatedLayout>
@@ -56,7 +73,9 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 <h1 className="text-2xl font-bold text-primary mt-4" style={{ fontFamily: 'Bricolage Grotesque' }}>
                                     {user.name}
                                 </h1>
-                                <p className="text-sm font-semibold text-secondary uppercase tracking-widest mt-1">Estudiante</p>
+                                <p className="text-sm font-semibold text-secondary uppercase tracking-widest mt-1">
+                                    {formattedRole}
+                                </p>
                             </div>
 
                             {/* Info Grid */}
@@ -72,7 +91,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                     <label className="text-xs font-semibold text-on-surface-variant block mb-1">Dialecto Preferido</label>
                                     <div className="flex items-center gap-3 bg-surface-container p-3 rounded-lg border border-outline-variant/30">
                                         <span className="material-symbols-outlined text-secondary">auto_stories</span>
-                                        <span className="text-on-surface text-sm">Náhuatl</span>
+                                        <span className="text-on-surface text-sm">{profile.selected_dialect}</span>
                                     </div>
                                 </div>
                             </div>
@@ -140,47 +159,57 @@ export default function Edit({ mustVerifyEmail, status }) {
                             </div>
                         )}
 
-                        {/* Bento Grid de Progreso Fijo del Alumno */}
+                        {/* Bento Grid de Progreso del Alumno */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Nivel Card */}
+                            
+                            {/* Nivel Card Dinámico */}
                             <div className="bg-surface-container-high p-6 rounded-xl border border-outline-variant flex flex-col justify-between relative overflow-hidden group">
                                 <div className="absolute -right-4 -bottom-4 text-secondary/10 transform rotate-12 transition-transform group-hover:rotate-0 pointer-events-none">
                                     <span className="material-symbols-outlined text-[120px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                                 </div>
                                 <div>
                                     <h3 className="text-xs font-bold bg-secondary text-white px-3 py-1 rounded-full inline-block mb-4">Nivel Actual</h3>
-                                    <div className="text-4xl font-extrabold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Nivel 5</div>
+                                    <div className="text-4xl font-extrabold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        Nivel {profile.level}
+                                    </div>
                                 </div>
                                 <div className="mt-6 z-10">
                                     <div className="flex justify-between text-xs mb-1">
-                                        <span>Progreso al Nivel 6</span>
-                                        <span className="font-bold">75%</span>
+                                        <span>Progreso al Nivel {profile.level + 1}</span>
+                                        <span className="font-bold">{profile.level_progress}%</span>
                                     </div>
                                     <div className="w-full h-3 bg-surface-container-lowest rounded-full overflow-hidden border border-outline-variant/50">
-                                        <div className="bg-secondary h-full rounded-full" style={{ width: '75%' }}></div>
+                                        <div 
+                                            className="bg-secondary h-full rounded-full transition-all duration-500" 
+                                            style={{ width: `${profile.level_progress}%` }}
+                                        ></div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Estrellas Card */}
+                            {/* Estrellas Card Dinámico */}
                             <div className="bg-tertiary-fixed p-6 rounded-xl border border-outline-variant flex items-center gap-4">
                                 <div className="w-16 h-16 rounded-xl bg-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
                                     <span className="material-symbols-outlined text-tertiary-fixed text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
                                 </div>
                                 <div>
                                     <p className="text-xs font-semibold text-on-tertiary-fixed-variant">Estrellas Ganadas</p>
-                                    <h4 className="text-3xl font-bold text-on-tertiary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>450</h4>
+                                    <h4 className="text-3xl font-bold text-on-tertiary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {profile.stars}
+                                    </h4>
                                 </div>
                             </div>
 
-                            {/* Actividad Card */}
+                            {/* Actividad Card Dinámico */}
                             <div className="bg-secondary-fixed p-6 rounded-xl border border-outline-variant flex items-center gap-4">
                                 <div className="w-16 h-16 rounded-xl bg-on-secondary-fixed flex items-center justify-center flex-shrink-0">
                                     <span className="material-symbols-outlined text-secondary-fixed text-[40px]">menu_book</span>
                                 </div>
                                 <div>
                                     <p className="text-xs font-semibold text-on-secondary-fixed-variant">Actividad</p>
-                                    <h4 className="text-2xl font-bold text-on-secondary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>12 Cuentos Leídos</h4>
+                                    <h4 className="text-2xl font-bold text-on-secondary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {profile.stories_read} {profile.stories_read === 1 ? 'Cuento Leído' : 'Cuentos Leídos'}
+                                    </h4>
                                 </div>
                             </div>
 
@@ -191,30 +220,47 @@ export default function Edit({ mustVerifyEmail, status }) {
                             </div>
                         </div>
 
-                        {/* Insignias Logradas */}
+                        {/* Insignias Logradas Dinámicas */}
                         <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
-                            <h2 className="text-xl font-bold text-on-surface mb-6" style={{ fontFamily: 'Bricolage Grotesque' }}>Insignias Logradas</h2>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="flex flex-col items-center gap-2 group text-center">
-                                    <div className="w-20 h-20 rounded-full bg-secondary-container border-4 border-secondary flex items-center justify-center relative transition-all duration-500 group-hover:rotate-12">
-                                        <span className="material-symbols-outlined text-secondary text-[36px]">grass</span>
-                                        <div className="absolute -top-1 -right-1 bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">1/3</div>
-                                    </div>
-                                    <span className="text-xs font-bold text-secondary">Semilla</span>
+                            <h2 className="text-xl font-bold text-on-surface mb-6" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                Insignias Logradas ({badges.length})
+                            </h2>
+                            
+                            {badges.length > 0 ? (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    {badges.map((badge, idx) => (
+                                        <div key={badge.id || idx} className="flex flex-col items-center gap-2 group text-center">
+                                            <div className="w-20 h-20 rounded-full bg-secondary-container border-4 border-secondary flex items-center justify-center relative transition-all duration-500 group-hover:rotate-12">
+                                                <span className="material-symbols-outlined text-secondary text-[36px]">
+                                                    {badge.icon_name || 'workspace_premium'}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs font-bold text-secondary">{badge.name}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="flex flex-col items-center gap-2 group text-center">
-                                    <div className="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center border-4 border-primary transition-all duration-500 group-hover:-rotate-12">
-                                        <span className="material-symbols-outlined text-primary text-[36px]">eco</span>
+                            ) : (
+                                <div className="grid grid-cols-3 gap-4 opacity-60">
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border-4 border-outline-variant flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-outline text-[36px]">grass</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-outline">Semilla</span>
                                     </div>
-                                    <span className="text-xs font-bold text-primary">Brote</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-2 group text-center">
-                                    <div className="w-20 h-20 rounded-full bg-tertiary-fixed flex items-center justify-center border-4 border-tertiary transition-all duration-500 group-hover:scale-110">
-                                        <span className="material-symbols-outlined text-tertiary text-[36px]">psychology</span>
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border-4 border-outline-variant flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-outline text-[36px]">eco</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-outline">Brote</span>
                                     </div>
-                                    <span className="text-xs font-bold text-tertiary">Raíz</span>
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border-4 border-outline-variant flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-outline text-[36px]">psychology</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-outline">Raíz</span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 

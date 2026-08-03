@@ -1,175 +1,107 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 
-export default function AuthenticatedLayout({ header, children }) {
+export default function Authenticated({ children }) {
+    // Obtenemos el usuario autenticado desde el estado global de Inertia
     const user = usePage().props.auth.user;
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    // Extraemos la información del perfil del estudiante con fallback si no existe (ej. para Docente/Admin)
+    const profile = user?.student_profile || {
+        stars: 0,
+        stories_read: 0,
+        selected_dialect: 'Español'
+    };
+
+    // Si tu usuario tiene una colección de insignias asociadas, la leemos, si no usamos historias leídas
+    const badgesCount = user?.badges ? user.badges.length : profile.stories_read;
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                                </Link>
+        <div className="min-h-screen bg-[#fdf7ff]">
+            {/* Carga de Fuentes y Símbolos de Google */}
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" 
+                rel="stylesheet" 
+            />
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" 
+                rel="stylesheet" 
+            />
+
+            {/* NUEVA BARRA DE NAVEGACIÓN (HEADER) */}
+            <header className="w-full top-0 sticky z-50 bg-surface border-b-2 border-outline-variant shadow-sm px-4 md:px-10 py-3 bg-[#fdf7ff]">
+                <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+                    
+                    {/* Brand & Avatar */}
+                    <div className="flex items-center gap-3">
+                        <Link href={route('profile.edit')} className="relative group cursor-pointer">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-[#9a4028] overflow-hidden bg-[#ffdbd2]">
+                                <img 
+                                    className="w-full h-full object-cover" 
+                                    alt="Avatar de usuario" 
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDV_vbS1UcT8yeB4XaPTPwyI3vi6G2BtN7IF5xVsKGU8QndCNsqhXeQlYo51pIkCc-v8hyTa1f3pT9qTlFTTX95tacWeRvtGzRuBNfkdVa5ICZG0_cmOQ9IuHo8xL665zUWliNrYnMfp8T3encfzGdu8ChGjRoJ9AtBMFiWcf-2v5Sn2TyU4WZPIuAn6svCvi5Q67yRCt1AqtXQjGDgh5_2yB2wqAaLli5rC4o46RyOgBtsD1lftjM" 
+                                />
                             </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
+                            <div className="absolute -bottom-1 -right-1 bg-[#36693e] text-white rounded-full p-1 border-2 border-white flex items-center justify-center">
+                                <span className="material-symbols-outlined text-[14px]">edit</span>
                             </div>
-                        </div>
-
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
+                        </Link>
+                        <div className="hidden sm:block">
+                            <Link href={route('dashboard')}>
+                                <h1 className="font-bold text-[#9a4028] text-xl" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                    Raíces Vivas
+                                </h1>
+                            </Link>
+                            <p className="text-xs text-[#56423d] font-medium">
+                                ¡Hola, {user ? user.name : 'Usuario'}!
+                            </p>
                         </div>
                     </div>
-                </div>
 
-                <div
-                    className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
-                    }
-                >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                    {/* Stats, Idioma y Botón de Salir */}
+                    <div className="flex items-center gap-2 md:gap-6">
+                        {/* Estrellas Dinámicas */}
+                        <div className="flex items-center bg-[#ede5f9] rounded-full px-3 py-1 border border-[#dcc0ba]">
+                            <span className="material-symbols-outlined text-[#a36700] mr-1 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                            <span className="text-sm font-semibold text-[#1d1928]">
+                                {profile.stars}
+                            </span>
+                        </div>
+
+                        {/* Insignias / Medallas Dinámicas */}
+                        <div className="flex items-center bg-[#ede5f9] rounded-full px-3 py-1 border border-[#dcc0ba]">
+                            <span className="material-symbols-outlined text-[#36693e] mr-1 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
+                            <span className="text-sm font-semibold text-[#1d1928]">
+                                {badgesCount}
+                            </span>
+                        </div>
+
+                        {/* Selector de Lengua */}
+                        <div className="hidden md:flex items-center bg-[#f8f1ff] rounded-xl px-2 py-1 border border-[#dcc0ba]">
+                            <span className="material-symbols-outlined text-[#9a4028] mr-2 text-[20px]">language</span>
+                            <select 
+                                defaultValue={profile.selected_dialect}
+                                className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-[#1d1928] py-0 pl-0 pr-8 cursor-pointer"
+                            >
+                                <option value="Español">Español</option>
+                                <option value="Náhuatl">Náhuatl</option>
+                                <option value="Otomí">Otomí</option>
+                            </select>
+                        </div>
+
+                        {/* Botón Salir (Logout) */}
+                        <Link
+                            method="post"
+                            href={route('logout')}
+                            as="button"
+                            className="flex items-center justify-center w-10 h-10 md:w-auto md:px-4 rounded-xl text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors font-semibold text-sm"
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800 dark:text-gray-200">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {user.email}
-                            </div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
+                            <span className="material-symbols-outlined md:mr-2 text-[20px]">logout</span>
+                            <span className="hidden md:inline">Salir</span>
+                        </Link>
                     </div>
                 </div>
-            </nav>
+            </header>
 
-            {header && (
-                <header className="bg-white shadow dark:bg-gray-800">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
-            )}
-
+            {/* Contenido dinámico de las páginas */}
             <main>{children}</main>
         </div>
     );
