@@ -8,6 +8,7 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\VideoController;
+use App\Models\User; // <-- Añadido para hacer referencia a la clase User
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +34,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // ----------------------------------------------------------------------
+    // Impersonación: Salir de la suplantación (Disponible para cualquier usuario autenticado)
+    // ----------------------------------------------------------------------
+    Route::get('/impersonate/leave', function () {
+        auth()->user()->leaveImpersonation();
+        return redirect()->route('admin.dashboard');
+    })->name('impersonate.leave');
+
+    // ----------------------------------------------------------------------
     // Área Exclusiva de Estudiantes (rol: student)
     // ----------------------------------------------------------------------
     Route::middleware(['role:student'])->group(function () {
@@ -56,6 +65,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------------------
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+        // Impersonación: Iniciar suplantación (Solo ejecutable por Admins)
+        Route::get('/impersonate/take/{id}', function ($id) {
+            $userToImpersonate = User::findOrFail($id);
+
+            if (auth()->user()->canImpersonate() && $userToImpersonate->canBeImpersonated()) {
+                auth()->user()->impersonate($userToImpersonate);
+
+                return match ($userToImpersonate->role) {
+                    User::ROLE_TEACHER => redirect()->route('teacher.dashboard'),
+                    User::ROLE_STUDENT => redirect()->route('student.dashboard'),
+                    default            => redirect()->route('dashboard'),
+                };
+            }
+
+            return back()->with('error', 'No tienes permisos para suplantar a este usuario.');
+        })->name('impersonate');
     });
 
     // ----------------------------------------------------------------------

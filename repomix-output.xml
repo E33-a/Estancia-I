@@ -53,22 +53,28 @@ app/
         PasswordResetLinkController.php
         RegisteredUserController.php
         VerifyEmailController.php
+      AdminController.php
       Controller.php
       DashboardController.php
       DocenteController.php
       ProfileController.php
       ProgressController.php
       StoryController.php
+      StudentController.php
+      TeacherController.php
       VideoController.php
     Middleware/
+      CheckRole.php
       HandleInertiaRequests.php
     Requests/
       Auth/
         LoginRequest.php
       ProfileUpdateRequest.php
   Models/
+    Badge.php
     Progress.php
     Story.php
+    StudentProfile.php
     User.php
     Video.php
   Providers/
@@ -97,9 +103,10 @@ database/
     0001_01_01_000001_create_cache_table.php
     0001_01_01_000002_create_jobs_table.php
     2025_12_02_051234_create_videos_table.php
-    2025_12_05_052131_add_role_to_users_table.php
     2025_12_05_052132_create_stories_table.php
     2025_12_05_055428_create_progress_table.php
+    2026_08_02_213440_create_student_profiles_table.php
+    2026_08_02_213441_create_badges_and_user_badges_tables.php
   seeders/
     DatabaseSeeder.php
     StorySeeder.php
@@ -145,11 +152,20 @@ resources/
     app.css
   js/
     Components/
+      Admin/
+        AdminHeader.jsx
+        ImpersonationBanner.jsx
+        QuickActions.jsx
+        ServerMetrics.jsx
+        Sidebar.jsx
+        StatCard.jsx
+        UserTable.jsx
       ApplicationLogo.jsx
       Checkbox.jsx
       DangerButton.jsx
       Dropdown.jsx
       Footer.jsx
+      ImpersonationBanner.jsx
       InputError.jsx
       InputLabel.jsx
       Modal.jsx
@@ -162,6 +178,8 @@ resources/
       AuthenticatedLayout.jsx
       GuestLayout.jsx
     Pages/
+      Admin/
+        Dashboard.jsx
       Auth/
         ConfirmPassword.jsx
         ForgotPassword.jsx
@@ -175,7 +193,10 @@ resources/
           UpdatePasswordForm.jsx
           UpdateProfileInformationForm.jsx
         Edit.jsx
-      Dashboard.jsx
+      Student/
+        Dashboard.jsx
+      Teacher/
+        Dashboard.jsx
       Welcome.jsx
     app.jsx
     bootstrap.js
@@ -221,27 +242,381 @@ yargs-parser
 <files>
 This section contains the contents of the repository's files.
 
-<file path="resources/js/Components/Footer.jsx">
-export default function Footer() {
+<file path="resources/js/Components/Admin/AdminHeader.jsx">
+import { Link } from '@inertiajs/react';
+
+export default function AdminHeader({ user }) {
     return (
-        <footer className="w-full mt-auto bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant">
-            <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 py-6 max-w-7xl mx-auto gap-6">
-                <div className="text-center md:text-left">
-                    <h5 className="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface mb-2" style={{ fontFamily: 'Bricolage Grotesque' }}>
-                        Raíces Vivas
-                    </h5>
-                    <p className="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">
-                        © 2026 Raíces Vivas. Preservando lenguas, celebrando herencia.
-                    </p>
+        <header className="flex justify-between items-center w-full px-xl h-16 sticky top-0 z-30 bg-surface-bright border-b border-outline-variant">
+            <div className="flex items-center gap-md">
+                <span className="font-headline-md text-headline-md font-bold text-primary">
+                    Raíces Vivas Admin
+                </span>
+            </div>
+            <div className="flex items-center gap-lg">
+                <div className="relative hidden lg:block">
+                    <input 
+                        type="text" 
+                        placeholder="Buscar registros..." 
+                        className="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-body-md focus:ring-2 focus:ring-primary w-64"
+                    />
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                        search
+                    </span>
                 </div>
-                <div className="flex flex-wrap justify-center gap-6">
-                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Sobre Nosotros</a>
-                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Privacidad</a>
-                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Términos</a>
-                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Padres</a>
+                <div className="flex items-center gap-sm">
+                    <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors relative">
+                        <span className="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+                        <span className="material-symbols-outlined">help_center</span>
+                    </button>
+                    <div className="h-8 w-px bg-outline-variant mx-sm"></div>
+                    <Link href={route('profile.edit')} className="flex items-center gap-sm hover:opacity-80 transition-opacity">
+                        <div className="text-right hidden sm:block">
+                            <p className="font-label-lg text-label-lg leading-none">{user?.name || 'Usuario'}</p>
+                            <p className="text-xs text-on-surface-variant">{user?.email || ''}</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-full border-2 border-primary-container bg-primary-container/30 flex items-center justify-center font-bold text-primary overflow-hidden">
+                            <span className="material-symbols-outlined">admin_panel_settings</span>
+                        </div>
+                    </Link>
                 </div>
             </div>
-        </footer>
+        </header>
+    );
+}
+</file>
+
+<file path="resources/js/Components/Admin/ImpersonationBanner.jsx">
+import { Link, usePage } from '@inertiajs/react';
+
+export default function ImpersonationBanner() {
+    const { auth } = usePage().props;
+
+    // Solo se muestra si en los props de Inertia detectamos que el usuario está siendo impersonado
+    if (!auth?.is_impersonating) {
+        return null;
+    }
+
+    return (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-tertiary text-on-tertiary px-lg py-sm shadow-lg flex items-center justify-between border-b-2 border-tertiary-container animate-slide-down">
+            <div className="flex items-center gap-md">
+                <span className="material-symbols-outlined text-xl animate-pulse">
+                    incognito
+                </span>
+                <p className="font-label-lg text-sm font-medium">
+                    Estás navegando como: <strong className="underline decoration-2">{auth.user?.name}</strong> ({auth.user?.email})
+                </p>
+            </div>
+
+            <Link
+                href={route('impersonate.leave')}
+                method="post"
+                as="button"
+                className="flex items-center gap-xs bg-on-tertiary text-tertiary hover:bg-surface-bright px-md py-xs rounded-lg font-bold text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95"
+            >
+                <span className="material-symbols-outlined text-sm">
+                    logout
+                </span>
+                Volver a Admin
+            </Link>
+        </div>
+    );
+}
+</file>
+
+<file path="resources/js/Components/Admin/QuickActions.jsx">
+export default function QuickActions() {
+    return (
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant sunset-shadow p-lg">
+            <h3 className="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-lg">Acciones Rápidas</h3>
+            <div className="grid grid-cols-1 gap-md">
+                <button className="w-full flex items-center gap-md p-md rounded-xl bg-surface hover:bg-surface-container transition-all border border-outline-variant text-left group">
+                    <div className="p-sm bg-primary-container/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                        <span className="material-symbols-outlined">manage_accounts</span>
+                    </div>
+                    <span className="font-label-lg text-label-lg">Gestión de Usuarios</span>
+                </button>
+                <button className="w-full flex items-center gap-md p-md rounded-xl bg-surface hover:bg-surface-container transition-all border border-outline-variant text-left group">
+                    <div className="p-sm bg-secondary-container/20 rounded-lg text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+                        <span className="material-symbols-outlined">settings</span>
+                    </div>
+                    <span className="font-label-lg text-label-lg">Configuración del Sistema</span>
+                </button>
+                <button className="w-full flex items-center gap-md p-md rounded-xl bg-surface hover:bg-surface-container transition-all border border-outline-variant text-left group">
+                    <div className="p-sm bg-on-surface-variant/10 rounded-lg text-on-surface-variant group-hover:bg-on-surface-variant group-hover:text-white transition-colors">
+                        <span className="material-symbols-outlined">description</span>
+                    </div>
+                    <span className="font-label-lg text-label-lg">Ver Logs del Sistema</span>
+                </button>
+            </div>
+        </div>
+    );
+}
+</file>
+
+<file path="resources/js/Components/Admin/ServerMetrics.jsx">
+export default function ServerMetrics({ metrics = { cpu: 0, ram: 0 } }) {
+    return (
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant sunset-shadow p-lg">
+            <div className="flex justify-between items-center mb-lg">
+                <h3 className="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Carga del Servidor</h3>
+                <span className="flex items-center gap-xs text-secondary text-xs font-bold">
+                    <span className="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+                    EN VIVO
+                </span>
+            </div>
+            
+            <div className="pt-lg border-t border-outline-variant space-y-md">
+                <div className="flex justify-between items-center">
+                    <span className="text-xs font-medium">Uso de CPU</span>
+                    <span className="text-xs font-bold text-secondary">{metrics.cpu}%</span>
+                </div>
+                <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                    <div className="bg-secondary h-full rounded-full" style={{ width: `${metrics.cpu}%` }}></div>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-xs font-medium">Memoria RAM</span>
+                    <span className="text-xs font-bold text-tertiary">{metrics.ram}%</span>
+                </div>
+                <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                    <div className="bg-tertiary h-full rounded-full" style={{ width: `${metrics.ram}%` }}></div>
+                </div>
+            </div>
+        </div>
+    );
+}
+</file>
+
+<file path="resources/js/Components/Admin/Sidebar.jsx">
+import { Link } from '@inertiajs/react';
+
+export default function Sidebar() {
+    return (
+        <aside className="fixed left-0 top-0 h-screen w-72 flex flex-col z-40 bg-surface dark:bg-inverse-surface shadow-sm p-lg transition-all duration-300">
+            <div className="mb-xl px-sm">
+                <h1 className="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary leading-tight">
+                    Raíces Vivas
+                </h1>
+                <p className="font-label-lg text-label-lg text-on-surface-variant opacity-70">
+                    System Administrator
+                </p>
+            </div>
+
+            <nav className="flex-1 flex flex-col gap-xs overflow-y-auto">
+                <Link 
+                    href="#" 
+                    className="flex items-center gap-md p-md rounded-lg text-primary dark:text-inverse-primary font-bold border-l-4 border-primary dark:border-inverse-primary bg-primary-container/10 transition-colors duration-200"
+                >
+                    <span className="material-symbols-outlined">leaderboard</span>
+                    <span className="font-label-lg text-label-lg">Analytics</span>
+                </Link>
+                <Link 
+                    href="#" 
+                    className="flex items-center gap-md p-md rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container transition-colors duration-200"
+                >
+                    <span className="material-symbols-outlined">manage_accounts</span>
+                    <span className="font-label-lg text-label-lg">User Control</span>
+                </Link>
+                <Link 
+                    href="#" 
+                    className="flex items-center gap-md p-md rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container transition-colors duration-200"
+                >
+                    <span className="material-symbols-outlined">school</span>
+                    <span className="font-label-lg text-label-lg">Educator Matrix</span>
+                </Link>
+                <Link 
+                    href="#" 
+                    className="flex items-center gap-md p-md rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container transition-colors duration-200"
+                >
+                    <span className="material-symbols-outlined">translate</span>
+                    <span className="font-label-lg text-label-lg">Linguistic Data</span>
+                </Link>
+                <Link 
+                    href="#" 
+                    className="flex items-center gap-md p-md rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container transition-colors duration-200"
+                >
+                    <span className="material-symbols-outlined">settings_heart</span>
+                    <span className="font-label-lg text-label-lg">System Health</span>
+                </Link>
+            </nav>
+
+            <div className="mt-auto border-t border-outline-variant pt-lg flex flex-col gap-xs">
+                <button className="w-full bg-error text-on-error flex items-center justify-center gap-sm py-md rounded-xl font-bold border-press mb-md transition-transform active:scale-95">
+                    <span className="material-symbols-outlined">lock</span>
+                    <span className="font-label-lg text-label-lg">Emergency Lock</span>
+                </button>
+                <Link href="#" className="flex items-center gap-md p-md rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors duration-200">
+                    <span className="material-symbols-outlined">history</span>
+                    <span className="font-label-lg text-label-lg">Logs</span>
+                </Link>
+                <Link 
+                    method="post" 
+                    href={route('logout')} 
+                    as="button" 
+                    className="w-full flex items-center gap-md p-md rounded-lg text-on-surface-variant hover:bg-error-container/20 hover:text-error transition-colors duration-200 text-left"
+                >
+                    <span className="material-symbols-outlined">logout</span>
+                    <span className="font-label-lg text-label-lg">Log Out</span>
+                </Link>
+            </div>
+        </aside>
+    );
+}
+</file>
+
+<file path="resources/js/Components/Admin/StatCard.jsx">
+export default function StatCard({ title, value, icon, variant = 'default', badge }) {
+    if (variant === 'highlight') {
+        return (
+            <div className="bg-primary p-lg rounded-xl sunset-shadow-lg text-on-primary flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                <div className="flex justify-between items-start">
+                    <div className="p-sm bg-white/20 rounded-lg text-white">
+                        <span className="material-symbols-outlined">{icon}</span>
+                    </div>
+                </div>
+                <div className="mt-lg">
+                    <p className="font-label-lg text-label-lg opacity-80 uppercase tracking-wider">{title}</p>
+                    <p className="font-display-lg text-display-lg mt-xs">
+                        {value} {badge && <span className="text-lg font-normal">{badge}</span>}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    const iconColorMap = {
+        primary: 'bg-primary-container/10 text-primary',
+        tertiary: 'bg-tertiary-container/10 text-tertiary',
+        secondary: 'bg-secondary-container/20 text-secondary'
+    };
+
+    return (
+        <div className="bg-surface-container-lowest p-lg rounded-xl sunset-shadow border border-outline-variant flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+            <div className="flex justify-between items-start">
+                <div className={`p-sm rounded-lg ${iconColorMap[variant] || iconColorMap.primary}`}>
+                    <span className="material-symbols-outlined">{icon}</span>
+                </div>
+            </div>
+            <div className="mt-lg">
+                <p className="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">{title}</p>
+                <p className="font-display-lg text-display-lg mt-xs">{value}</p>
+            </div>
+        </div>
+    );
+}
+</file>
+
+<file path="resources/js/Components/Admin/UserTable.jsx">
+import { Link } from '@inertiajs/react';
+
+export default function UserTable({ users = [] }) {
+    return (
+        <div className="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant sunset-shadow overflow-hidden">
+            <div className="p-lg border-b border-outline-variant flex justify-between items-center">
+                <h3 className="font-headline-md text-headline-md text-on-surface">Gestión de Cuentas Recientes</h3>
+                <div className="flex gap-sm">
+                    <button className="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+                        <span className="material-symbols-outlined">filter_list</span>
+                    </button>
+                    <button className="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+                        <span className="material-symbols-outlined">more_vert</span>
+                    </button>
+                </div>
+            </div>
+            <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="bg-surface-container-low text-on-surface-variant font-label-lg">
+                            <th className="p-lg font-semibold">Usuario</th>
+                            <th className="p-lg font-semibold">Rol</th>
+                            <th className="p-lg font-semibold">Fecha Registro</th>
+                            <th className="p-lg font-semibold">Estado</th>
+                            <th className="p-lg font-semibold text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-outline-variant">
+                        {users.length > 0 ? (
+                            users.map((item) => (
+                                <tr key={item.id} className="hover:bg-surface-container transition-colors">
+                                    <td className="p-lg flex items-center gap-md">
+                                        <div className="w-10 h-10 rounded-full bg-secondary-container/50 flex items-center justify-center font-bold text-secondary uppercase">
+                                            {item.name?.substring(0, 2)}
+                                        </div>
+                                        <div>
+                                            <p className="font-label-lg">{item.name}</p>
+                                            <p className="text-xs text-on-surface-variant">{item.email}</p>
+                                        </div>
+                                    </td>
+                                    <td className="p-lg text-on-surface-variant">{item.role}</td>
+                                    <td className="p-lg text-on-surface-variant">{item.created_at}</td>
+                                    <td className="p-lg">
+                                        <span className="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-bold text-xs uppercase">
+                                            {item.status}
+                                        </span>
+                                    </td>
+                                    <td className="p-lg text-right space-x-1">
+                                        {/* ACCIÓN DE IMPERSONAR */}
+                                        <Link 
+                                            href={route('impersonate', item.id)} 
+                                            method="post" 
+                                            as="button"
+                                            className="inline-flex items-center gap-1 text-tertiary hover:bg-tertiary-container/20 p-2 rounded-lg transition-colors font-bold text-xs uppercase"
+                                            title="Impersonar Usuario"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">incognito</span>
+                                            Impersonar
+                                        </Link>
+                                        <button className="text-primary hover:bg-primary/5 p-2 rounded-lg transition-colors font-bold text-xs uppercase">Editar</button>
+                                        <button className="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-lg transition-colors font-bold text-xs uppercase">Suspender</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" className="p-lg text-center text-on-surface-variant">
+                                    No hay registros de usuarios recientes.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+            <div className="p-lg bg-surface-container-low text-center">
+                <button className="text-primary font-bold hover:underline">Ver todos los usuarios</button>
+            </div>
+        </div>
+    );
+}
+</file>
+
+<file path="resources/js/Components/ImpersonationBanner.jsx">
+import { Link, usePage } from '@inertiajs/react';
+
+export default function ImpersonationBanner() {
+    const { auth } = usePage().props;
+
+    // Solo se muestra si estamos en modo impersonación
+    if (!auth?.is_impersonating) return null;
+
+    return (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-600 text-white px-4 py-2 flex justify-between items-center shadow-lg animate-bounce-short">
+            <div className="flex items-center gap-2 font-medium text-sm">
+                <span className="material-symbols-outlined text-base">visibility</span>
+                <span>
+                    Estás navegando como: <strong>{auth.user?.name}</strong> ({auth.user?.email})
+                </span>
+            </div>
+            
+            <Link
+                href={route('impersonate.leave')}
+                className="bg-white text-amber-900 hover:bg-amber-100 px-3 py-1 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-sm"
+            >
+                <span className="material-symbols-outlined text-sm">logout</span>
+                Volver a mi cuenta Admin
+            </Link>
+        </div>
     );
 }
 </file>
@@ -459,6 +834,26 @@ class VerifyEmailController extends Controller
 }
 </file>
 
+<file path="app/Http/Controllers/AdminController.php">
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class AdminController extends Controller
+{
+    /**
+     * Muestra el panel de administración
+     */
+    public function dashboard()
+    {
+        return Inertia::render('Admin/Dashboard');
+    }
+}
+</file>
+
 <file path="app/Http/Controllers/Controller.php">
 <?php
 
@@ -467,60 +862,6 @@ namespace App\Http\Controllers;
 abstract class Controller
 {
     //
-}
-</file>
-
-<file path="app/Http/Controllers/DashboardController.php">
-<?php
-
-namespace App\Http\Controllers;
-
-use Inertia\Inertia;
-use App\Models\Video;
-use App\Models\Story;
-use Illuminate\Http\Request;
-
-class DashboardController extends Controller
-{
-    public function index()
-    {
-        // 1. OBTENER DATOS DE LA BASE DE DATOS (ALEATORIOS)
-        // Traemos videos y cuentos desordenados
-        $videos = Video::inRandomOrder()->take(3)->get();
-        $stories = Story::inRandomOrder()->take(3)->get();
-
-        // 2. DATOS ESTÁTICOS (EJERCICIOS Y JUEGOS)
-        // Como estos no están en base de datos aún, los definimos aquí y los mezclamos
-        $exercises = [
-            ['title' => 'Unir palabras', 'img' => '/images/unir.png', 'color' => 'bg-pink-100', 'border' => 'border-pink-200'],
-            ['title' => 'Completar sílaba', 'img' => '/images/completa.png', 'color' => 'bg-blue-100', 'border' => 'border-blue-200'],
-            ['title' => 'Quiz', 'img' => '/images/quiz.png', 'color' => 'bg-yellow-100', 'border' => 'border-yellow-200'],
-            ['title' => 'Aprendiendo', 'img' => '/images/aprediendo.png', 'color' => 'bg-purple-100', 'border' => 'border-purple-200'],
-            ['title' => 'Relación', 'img' => '/images/relacion.png', 'color' => 'bg-green-100', 'border' => 'border-green-200'],
-            ['title' => 'ABC', 'img' => '/images/apredie.png', 'color' => 'bg-orange-100', 'border' => 'border-orange-200'],
-            ['title' => 'Cuentos', 'img' => '/images/completaC.png', 'color' => 'bg-indigo-100', 'border' => 'border-indigo-200'],
-            ['title' => 'Traducción', 'img' => '/images/traduccion.png', 'color' => 'bg-red-100', 'border' => 'border-red-200'],
-            ['title' => 'Dictado', 'img' => '/images/dictado.png', 'color' => 'bg-teal-100', 'border' => 'border-teal-200'],
-        ];
-        shuffle($exercises); // ¡Barajamos los ejercicios!
-
-        $games = [
-             ['title' => 'Memorama', 'img' => '/images/memorama.png'],
-             ['title' => 'Lotería', 'img' => '/images/loteria.png'],
-             ['title' => 'Crucigrama', 'img' => '/images/crucigrama.png'],
-             ['title' => 'Serpientes', 'img' => '/images/serpientes.png'],
-             ['title' => 'Ahorcado', 'img' => '/images/ahorcado.png'], // Asegúrate de tener estas imágenes o repetirá el default
-        ];
-        shuffle($games); // ¡Barajamos los juegos!
-
-        // 3. ENVIAR TODO A LA VISTA
-        return Inertia::render('Dashboard', [
-            'randomVideos' => $videos,
-            'randomStories' => $stories,
-            'randomExercises' => $exercises,
-            'randomGames' => $games,
-        ]);
-    }
 }
 </file>
 
@@ -758,6 +1099,76 @@ class StoryController extends Controller
 }
 </file>
 
+<file path="app/Http/Controllers/StudentController.php">
+<?php
+
+namespace App\Http\Controllers;
+
+use Inertia\Inertia;
+use App\Models\Video;
+use App\Models\Story;
+
+class StudentController extends Controller
+{
+    /**
+     * Renderiza el menú principal del alumno con sus recursos y juegos.
+     */
+    public function dashboard()
+    {
+        // 1. OBTENER DATOS DE LA BASE DE DATOS (ALEATORIOS)
+        $videos = Video::inRandomOrder()->take(3)->get();
+        $stories = Story::inRandomOrder()->take(3)->get();
+
+        // 2. DATOS ESTÁTICOS (EJERCICIOS Y JUEGOS)
+        $exercises = [
+            ['title' => 'Unir palabras', 'img' => '/images/unir.png', 'color' => 'bg-pink-100', 'border' => 'border-pink-200'],
+            ['title' => 'Completar sílaba', 'img' => '/images/completa.png', 'color' => 'bg-blue-100', 'border' => 'border-blue-200'],
+            ['title' => 'Quiz', 'img' => '/images/quiz.png', 'color' => 'bg-yellow-100', 'border' => 'border-yellow-200'],
+            ['title' => 'Aprendiendo', 'img' => '/images/aprediendo.png', 'color' => 'bg-purple-100', 'border' => 'border-purple-200'],
+            ['title' => 'Relación', 'img' => '/images/relacion.png', 'color' => 'bg-green-100', 'border' => 'border-green-200'],
+            ['title' => 'ABC', 'img' => '/images/apredie.png', 'color' => 'bg-orange-100', 'border' => 'border-orange-200'],
+            ['title' => 'Cuentos', 'img' => '/images/completaC.png', 'color' => 'bg-indigo-100', 'border' => 'border-indigo-200'],
+            ['title' => 'Traducción', 'img' => '/images/traduccion.png', 'color' => 'bg-red-100', 'border' => 'border-red-200'],
+            ['title' => 'Dictado', 'img' => '/images/dictado.png', 'color' => 'bg-teal-100', 'border' => 'border-teal-200'],
+        ];
+        shuffle($exercises);
+
+        $games = [
+            ['title' => 'Memorama', 'img' => '/images/memorama.png'],
+            ['title' => 'Lotería', 'img' => '/images/loteria.png'],
+            ['title' => 'Crucigrama', 'img' => '/images/crucigrama.png'],
+            ['title' => 'Serpientes', 'img' => '/images/serpientes.png'],
+            ['title' => 'Ahorcado', 'img' => '/images/ahorcado.png'],
+        ];
+        shuffle($games);
+
+        return Inertia::render('Student/Dashboard', [
+            'randomVideos' => $videos,
+            'randomStories' => $stories,
+            'randomExercises' => $exercises,
+            'randomGames' => $games,
+        ]);
+    }
+}
+</file>
+
+<file path="app/Http/Controllers/TeacherController.php">
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class TeacherController extends Controller
+{
+    public function dashboard()
+    {
+        return Inertia::render('Teacher/Dashboard');
+    }
+}
+</file>
+
 <file path="app/Http/Controllers/VideoController.php">
 <?php
 
@@ -781,44 +1192,66 @@ class VideoController extends Controller
 }
 </file>
 
-<file path="app/Http/Middleware/HandleInertiaRequests.php">
+<file path="app/Http/Middleware/CheckRole.php">
 <?php
 
 namespace App\Http\Middleware;
 
+use Closure;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Inertia\Middleware;
 
-class HandleInertiaRequests extends Middleware
+class CheckRole
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
-    protected $rootView = 'app';
-
-    /**
-     * Determine the current asset version.
-     */
-    public function version(Request $request): ?string
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        return parent::version($request);
+        $user = $request->user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $userRole = strtolower($user->role ?? User::ROLE_STUDENT);
+        $allowedRoles = array_map('strtolower', $roles);
+
+        // Si el rol no coincide con la ruta, redirigimos limpiamente
+        if (!in_array($userRole, $allowedRoles)) {
+            return match ($userRole) {
+                User::ROLE_ADMIN   => redirect()->route('admin.dashboard'),
+                User::ROLE_TEACHER => redirect()->route('teacher.dashboard'),
+                default            => redirect()->route('student.dashboard'),
+            };
+        }
+
+        return $next($request);
     }
+}
+</file>
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
-    public function share(Request $request): array
+<file path="app/Models/Badge.php">
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Badge extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'icon',
+        'description',
+    ];
+
+    public function users(): BelongsToMany
     {
-        return [
-            ...parent::share($request),
-            'auth' => [
-                'user' => $request->user(),
-            ],
-        ];
+        return $this->belongsToMany(User::class, 'user_badges')
+                    ->withPivot('progress', 'completed')
+                    ->withTimestamps();
     }
 }
 </file>
@@ -869,53 +1302,31 @@ class Story extends Model
 }
 </file>
 
-<file path="app/Models/User.php">
+<file path="app/Models/StudentProfile.php">
 <?php
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class User extends Authenticatable
+class StudentProfile extends Model
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'user_id',
+        'level',
+        'level_progress',
+        'stars',
+        'stories_read',
+        'selected_dialect',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function user(): BelongsTo
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(User::class);
     }
 }
 </file>
@@ -968,6 +1379,13 @@ class AppServiceProvider extends ServiceProvider
     'providers' => 
     array (
       0 => 'Inertia\\ServiceProvider',
+    ),
+  ),
+  'lab404/laravel-impersonate' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Lab404\\Impersonate\\ImpersonateServiceProvider',
     ),
   ),
   'laravel/breeze' => 
@@ -1071,17 +1489,18 @@ class AppServiceProvider extends ServiceProvider
     21 => 'Illuminate\\Validation\\ValidationServiceProvider',
     22 => 'Illuminate\\View\\ViewServiceProvider',
     23 => 'Inertia\\ServiceProvider',
-    24 => 'Laravel\\Breeze\\BreezeServiceProvider',
-    25 => 'Laravel\\Pail\\PailServiceProvider',
-    26 => 'Laravel\\Sail\\SailServiceProvider',
-    27 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    28 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    29 => 'Carbon\\Laravel\\ServiceProvider',
-    30 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    31 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    32 => 'Pest\\Laravel\\PestServiceProvider',
-    33 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
+    24 => 'Lab404\\Impersonate\\ImpersonateServiceProvider',
+    25 => 'Laravel\\Breeze\\BreezeServiceProvider',
+    26 => 'Laravel\\Pail\\PailServiceProvider',
+    27 => 'Laravel\\Sail\\SailServiceProvider',
+    28 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    29 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    30 => 'Carbon\\Laravel\\ServiceProvider',
+    31 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    32 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    33 => 'Pest\\Laravel\\PestServiceProvider',
+    34 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    35 => 'App\\Providers\\AppServiceProvider',
   ),
   'eager' => 
   array (
@@ -1096,14 +1515,15 @@ class AppServiceProvider extends ServiceProvider
     8 => 'Illuminate\\Session\\SessionServiceProvider',
     9 => 'Illuminate\\View\\ViewServiceProvider',
     10 => 'Inertia\\ServiceProvider',
-    11 => 'Laravel\\Pail\\PailServiceProvider',
-    12 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    13 => 'Carbon\\Laravel\\ServiceProvider',
-    14 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    15 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    16 => 'Pest\\Laravel\\PestServiceProvider',
-    17 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    18 => 'App\\Providers\\AppServiceProvider',
+    11 => 'Lab404\\Impersonate\\ImpersonateServiceProvider',
+    12 => 'Laravel\\Pail\\PailServiceProvider',
+    13 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    14 => 'Carbon\\Laravel\\ServiceProvider',
+    15 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    16 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    17 => 'Pest\\Laravel\\PestServiceProvider',
+    18 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    19 => 'App\\Providers\\AppServiceProvider',
   ),
   'deferred' => 
   array (
@@ -1318,32 +1738,6 @@ class AppServiceProvider extends ServiceProvider
     ),
   ),
 );
-</file>
-
-<file path="bootstrap/app.php">
-<?php
-
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
-
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-        ]);
-
-        //
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
 </file>
 
 <file path="bootstrap/providers.php">
@@ -2754,58 +3148,6 @@ class UserFactory extends Factory
 }
 </file>
 
-<file path="database/migrations/0001_01_01_000000_create_users_table.php">
-<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
-
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
-    }
-};
-</file>
-
 <file path="database/migrations/0001_01_01_000001_create_cache_table.php">
 <?php
 
@@ -2938,32 +3280,6 @@ return new class extends Migration
 };
 </file>
 
-<file path="database/migrations/2025_12_05_052131_add_role_to_users_table.php">
-<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            // 0 = Alumno, 1 = Docente
-            $table->integer('role')->default(0)->after('email'); 
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
-    }
-};
-</file>
-
 <file path="database/migrations/2025_12_05_052132_create_stories_table.php">
 <?php
 
@@ -3043,61 +3359,71 @@ return new class extends Migration
 };
 </file>
 
-<file path="database/seeders/DatabaseSeeder.php">
+<file path="database/migrations/2026_08_02_213440_create_student_profiles_table.php">
 <?php
 
-namespace Database\Seeders;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-
-class DatabaseSeeder extends Seeder
+return new class extends Migration
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function up(): void
     {
-        // 1. CREAR AL DOCENTE (MAESTRO)
-        // Este es el usuario con el que entrarás al Panel Docente
-        User::factory()->create([
-            'name' => 'Profesor Admin',
-            'email' => 'profe@yolitzli.com',
-            'password' => bcrypt('password'), // Contraseña: password
-            'role' => 1, // <--- EL 1 SIGNIFICA DOCENTE
-        ]);
-
-        // 2. CREAR ALUMNOS DE PRUEBA
-        // Estos usuarios entrarán al Dashboard Mágico de niños
-        User::factory()->create([
-            'name' => 'Juanito Pérez',
-            'email' => 'juan@alumno.com',
-            'password' => bcrypt('password'),
-            'role' => 0, // <--- EL 0 SIGNIFICA ALUMNO
-        ]);
-
-        User::factory()->create([
-            'name' => 'María González',
-            'email' => 'maria@alumno.com',
-            'password' => bcrypt('password'),
-            'role' => 0,
-        ]);
-
-        User::factory()->create([
-            'name' => 'Pedrito López',
-            'email' => 'pedro@alumno.com',
-            'password' => bcrypt('password'),
-            'role' => 0,
-        ]);
-
-        // 3. LLAMAR A LOS OTROS SEMBRADORES
-        // Esto llena los videos y cuentos automáticamente
-        $this->call([
-            VideoSeeder::class,
-            StorySeeder::class,
-        ]);
+        Schema::create('student_profiles', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('level')->default(1);
+            $table->integer('level_progress')->default(0); // Porcentaje de 0 a 100
+            $table->integer('stars')->default(0);
+            $table->integer('stories_read')->default(0);
+            $table->string('selected_dialect')->default('Español');
+            $table->timestamps();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('student_profiles');
+    }
+};
+</file>
+
+<file path="database/migrations/2026_08_02_213441_create_badges_and_user_badges_tables.php">
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('badges', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); // Ejemplo: Semilla, Brote, Raíz
+            $table->string('icon')->nullable();
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('user_badges', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('badge_id')->constrained()->onDelete('cascade');
+            $table->string('progress')->default('0/3'); // Ejemplo: 1/3
+            $table->boolean('completed')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('user_badges');
+        Schema::dropIfExists('badges');
+    }
+};
 </file>
 
 <file path="database/seeders/StorySeeder.php">
@@ -4756,12 +5082,6 @@ require __DIR__.'/../vendor/autoload.php';
     ->handleRequest(Request::capture());
 </file>
 
-<file path="resources/css/app.css">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-</file>
-
 <file path="resources/js/Components/ApplicationLogo.jsx">
 export default function ApplicationLogo(props) {
     return (
@@ -4922,6 +5242,31 @@ Dropdown.Content = Content;
 Dropdown.Link = DropdownLink;
 
 export default Dropdown;
+</file>
+
+<file path="resources/js/Components/Footer.jsx">
+export default function Footer() {
+    return (
+        <footer className="w-full mt-auto bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant">
+            <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 py-6 max-w-7xl mx-auto gap-6">
+                <div className="text-center md:text-left">
+                    <h5 className="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface mb-2" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                        Raíces Vivas
+                    </h5>
+                    <p className="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">
+                        © 2026 Raíces Vivas. Preservando lenguas, celebrando herencia.
+                    </p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-6">
+                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Sobre Nosotros</a>
+                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Privacidad</a>
+                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Términos</a>
+                    <a className="text-on-surface-variant hover:text-primary transition-colors font-label-sm" href="#">Padres</a>
+                </div>
+            </div>
+        </footer>
+    );
+}
 </file>
 
 <file path="resources/js/Components/InputError.jsx">
@@ -5157,101 +5502,6 @@ export default forwardRef(function TextInput(
 });
 </file>
 
-<file path="resources/js/Layouts/AuthenticatedLayout.jsx">
-import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-
-export default function Authenticated({ children }) {
-    // Obtenemos el usuario autenticado desde el estado global de Inertia
-    const user = usePage().props.auth.user;
-
-    return (
-        <div className="min-h-screen bg-[#fdf7ff]">
-            {/* Carga de Fuentes y Símbolos de Google */}
-            <link 
-                href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" 
-                rel="stylesheet" 
-            />
-            <link 
-                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" 
-                rel="stylesheet" 
-            />
-
-            {/* NUEVA BARRA DE NAVEGACIÓN (HEADER) */}
-            <header className="w-full top-0 sticky z-50 bg-surface border-b-2 border-outline-variant shadow-sm px-4 md:px-10 py-3 bg-[#fdf7ff]">
-                <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
-                    
-                    {/* Brand & Avatar */}
-                    <div className="flex items-center gap-3">
-                        <Link href={route('profile.edit')} className="relative group cursor-pointer">
-                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-[#9a4028] overflow-hidden bg-[#ffdbd2]">
-                                <img 
-                                    className="w-full h-full object-cover" 
-                                    alt="Avatar de usuario" 
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDV_vbS1UcT8yeB4XaPTPwyI3vi6G2BtN7IF5xVsKGU8QndCNsqhXeQlYo51pIkCc-v8hyTa1f3pT9qTlFTTX95tacWeRvtGzRuBNfkdVa5ICZG0_cmOQ9IuHo8xL665zUWliNrYnMfp8T3encfzGdu8ChGjRoJ9AtBMFiWcf-2v5Sn2TyU4WZPIuAn6svCvi5Q67yRCt1AqtXQjGDgh5_2yB2wqAaLli5rC4o46RyOgBtsD1lftjM" 
-                                />
-                            </div>
-                            <div className="absolute -bottom-1 -right-1 bg-[#36693e] text-white rounded-full p-1 border-2 border-white flex items-center justify-center">
-                                <span className="material-symbols-outlined text-[14px]">edit</span>
-                            </div>
-                        </Link>
-                        <div className="hidden sm:block">
-                            <Link href={route('dashboard')}>
-                                <h1 className="font-bold text-[#9a4028] text-xl" style={{ fontFamily: 'Bricolage Grotesque' }}>
-                                    Raíces Vivas
-                                </h1>
-                            </Link>
-                            <p className="text-xs text-[#56423d] font-medium">
-                                ¡Hola, {user ? user.name : 'Usuario'}!
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Stats, Idioma y Botón de Salir */}
-                    <div className="flex items-center gap-2 md:gap-6">
-                        {/* Estrellas */}
-                        <div className="flex items-center bg-[#ede5f9] rounded-full px-3 py-1 border border-[#dcc0ba]">
-                            <span className="material-symbols-outlined text-[#a36700] mr-1 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                            <span className="text-sm font-semibold text-[#1d1928]">128</span>
-                        </div>
-
-                        {/* Insignias / Medallas */}
-                        <div className="flex items-center bg-[#ede5f9] rounded-full px-3 py-1 border border-[#dcc0ba]">
-                            <span className="material-symbols-outlined text-[#36693e] mr-1 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
-                            <span className="text-sm font-semibold text-[#1d1928]">12</span>
-                        </div>
-
-                        {/* Selector de Lengua */}
-                        <div className="hidden md:flex items-center bg-[#f8f1ff] rounded-xl px-2 py-1 border border-[#dcc0ba]">
-                            <span className="material-symbols-outlined text-[#9a4028] mr-2 text-[20px]">language</span>
-                            <select className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-[#1d1928] py-0 pl-0 pr-8 cursor-pointer">
-                                <option>Español</option>
-                                <option>Náhuatl</option>
-                                <option>Otomí</option>
-                            </select>
-                        </div>
-
-                        {/* Botón Salir (Logout) */}
-                        <Link
-                            method="post"
-                            href={route('logout')}
-                            as="button"
-                            className="flex items-center justify-center w-10 h-10 md:w-auto md:px-4 rounded-xl text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors font-semibold text-sm"
-                        >
-                            <span className="material-symbols-outlined md:mr-2 text-[20px]">logout</span>
-                            <span className="hidden md:inline">Salir</span>
-                        </Link>
-                    </div>
-                </div>
-            </header>
-
-            {/* Contenido dinámico de las páginas */}
-            <main>{children}</main>
-        </div>
-    );
-}
-</file>
-
 <file path="resources/js/Layouts/GuestLayout.jsx">
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
@@ -5269,6 +5519,100 @@ export default function GuestLayout({ children }) {
                 {children}
             </div>
         </div>
+    );
+}
+</file>
+
+<file path="resources/js/Pages/Admin/Dashboard.jsx">
+import { Head, usePage } from '@inertiajs/react';
+import Sidebar from '@/Components/Admin/Sidebar';
+import AdminHeader from '@/Components/Admin/AdminHeader';
+import StatCard from '@/Components/Admin/StatCard';
+import UserTable from '@/Components/Admin/UserTable';
+import ServerMetrics from '@/Components/Admin/ServerMetrics';
+import QuickActions from '@/Components/Admin/QuickActions';
+
+export default function Dashboard({ 
+    stats = { totalUsers: 0, activeTeachers: 0, students: 0, serverUptime: '0%' }, 
+    recentUsers = [],
+    systemMetrics = { cpu: 0, ram: 0 }
+}) {
+    const { auth } = usePage().props;
+
+    return (
+        <>
+            <Head title="Panel de Administración - Raíces Vivas" />
+
+            {/* Estilos e íconos externos */}
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" 
+                rel="stylesheet" 
+            />
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" 
+                rel="stylesheet" 
+            />
+
+            <style>{`
+                .otomi-pattern {
+                    opacity: 0.04;
+                    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50l-20-20l-10 10l30 30l30-30l-10-10z' fill='%239a4028'/%3E%3C/svg%3E");
+                }
+                .sunset-shadow { box-shadow: 0 12px 32px -8px rgba(154, 64, 40, 0.12); }
+                .sunset-shadow-lg { box-shadow: 0 20px 40px -12px rgba(154, 64, 40, 0.25); }
+                .border-press:active { transform: translateY(2px); }
+            `}</style>
+
+            <div className="bg-surface font-body-md text-on-surface min-h-screen flex relative overflow-x-hidden">
+                {/* Lateral Sidebar */}
+                <Sidebar />
+
+                {/* Main Content */}
+                <div className="ml-72 flex-1 min-h-screen relative flex flex-col">
+                    <AdminHeader user={auth?.user} />
+
+                    <main className="p-xl space-y-xl relative flex-1">
+                        <div className="absolute inset-0 otomi-pattern pointer-events-none"></div>
+
+                        {/* Title Bar & Actions */}
+                        <div className="flex justify-between items-end relative z-10">
+                            <div>
+                                <h2 className="font-headline-lg text-headline-lg text-on-background">Panel de Control</h2>
+                                <p className="font-body-md text-on-surface-variant">Resumen ejecutivo del estado del sistema y actividad de usuarios.</p>
+                            </div>
+                            <div className="flex gap-md">
+                                <button className="flex items-center gap-xs px-lg py-sm rounded-xl border-2 border-secondary bg-transparent text-secondary font-bold border-press transition-all hover:bg-secondary/5">
+                                    <span className="material-symbols-outlined">download</span>
+                                    Exportar Reporte
+                                </button>
+                                <button className="flex items-center gap-xs px-lg py-sm rounded-xl bg-primary text-on-primary font-bold border-press transition-all hover:opacity-90">
+                                    <span className="material-symbols-outlined">add</span>
+                                    Nuevo Docente
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Metrics Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg relative z-10">
+                            <StatCard title="Total de Usuarios" value={stats.totalUsers} icon="group" variant="primary" />
+                            <StatCard title="Docentes Activos" value={stats.activeTeachers} icon="school" variant="tertiary" />
+                            <StatCard title="Estudiantes" value={stats.students} icon="face" variant="secondary" />
+                            <StatCard title="Estado del Servidor" value={stats.serverUptime} icon="dns" variant="highlight" badge="Online" />
+                        </div>
+
+                        {/* Main Grid Section */}
+                        <div className="grid grid-cols-12 gap-lg relative z-10">
+                            <UserTable users={recentUsers} />
+                            
+                            <div className="col-span-12 lg:col-span-4 space-y-lg">
+                                <ServerMetrics metrics={systemMetrics} />
+                                <QuickActions />
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </>
     );
 }
 </file>
@@ -5323,103 +5667,6 @@ export default function ConfirmPassword() {
                 <div className="mt-4 flex items-center justify-end">
                     <PrimaryButton className="ms-4" disabled={processing}>
                         Confirm
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
-}
-</file>
-
-<file path="resources/js/Pages/Auth/ResetPassword.jsx">
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
-
-export default function ResetPassword({ token, email }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        token: token,
-        email: email,
-        password: '',
-        password_confirmation: '',
-    });
-
-    const submit = (e) => {
-        e.preventDefault();
-
-        post(route('password.store'), {
-            onFinish: () => reset('password', 'password_confirmation'),
-        });
-    };
-
-    return (
-        <GuestLayout>
-            <Head title="Reset Password" />
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
-
-                    <TextInput
-                        type="password"
-                        id="password_confirmation"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                    />
-
-                    <InputError
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Reset Password
                     </PrimaryButton>
                 </div>
             </form>
@@ -5604,14 +5851,26 @@ export default function DeleteUserForm({ className = '' }) {
 }
 </file>
 
-<file path="resources/js/Pages/Dashboard.jsx">
+<file path="resources/js/Pages/Student/Dashboard.jsx">
 import { Head, Link, usePage } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
 
 export default function Dashboard() {
     // Obtenemos el usuario autenticado desde el estado global de Inertia
     const { auth } = usePage().props;
-    const user = auth.user;
+    const user = auth?.user;
+
+    // Extraemos los datos dinámicos del perfil de estudiante (con valores por defecto por si no se han creado)
+    const profile = user?.student_profile || {
+        level: 1,
+        level_progress: 0,
+        stars: 0,
+        stories_read: 0,
+        selected_dialect: 'Español'
+    };
+
+    // Colección de insignias/medallas
+    const badges = user?.badges || [];
 
     return (
         <>
@@ -5682,31 +5941,36 @@ export default function Dashboard() {
                             </Link>
                             <div className="hidden sm:block">
                                 <h1 className="font-headline-md text-headline-md font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Raíces Vivas</h1>
-                                <p className="font-label-sm text-label-sm text-on-surface-variant">¡Hola, {user ? user.name : 'Mateo'}!</p>
+                                <p className="font-label-sm text-label-sm text-on-surface-variant">
+                                    ¡Hola, {user?.name || 'Mateo'}!
+                                </p>
                             </div>
                         </div>
 
                         {/* Estadísticas, Lenguaje y Botón de Salir */}
                         <div className="flex items-center gap-2 md:gap-6">
-                            {/* Estrellas */}
+                            {/* Estrellas dinámicas desde la BD */}
                             <div className="flex items-center bg-surface-container-high rounded-full px-3 py-1 border border-outline-variant">
                                 <span className="material-symbols-outlined text-tertiary-container mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                                <span className="font-label-lg text-label-lg">128</span>
+                                <span className="font-label-lg text-label-lg">{profile.stars}</span>
                             </div>
 
-                            {/* Medallas */}
+                            {/* Medallas dinámicas según conteo de la relación pivot */}
                             <div className="flex items-center bg-surface-container-high rounded-full px-3 py-1 border border-outline-variant">
                                 <span className="material-symbols-outlined text-secondary mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
-                                <span className="font-label-lg text-label-lg">12</span>
+                                <span className="font-label-lg text-label-lg">{badges.length}</span>
                             </div>
 
-                            {/* Selector de Lengua */}
+                            {/* Selector de Lengua dinámico */}
                             <div className="hidden md:flex items-center bg-surface-container-low rounded-xl px-2 py-1 border border-outline-variant">
                                 <span className="material-symbols-outlined text-primary mr-2">language</span>
-                                <select className="bg-transparent border-none focus:ring-0 font-label-lg text-label-lg py-0 pl-0 pr-8">
-                                    <option>Español</option>
-                                    <option>Náhuatl</option>
-                                    <option>Otomí</option>
+                                <select 
+                                    defaultValue={profile.selected_dialect} 
+                                    className="bg-transparent border-none focus:ring-0 font-label-lg text-label-lg py-0 pl-0 pr-8 cursor-pointer"
+                                >
+                                    <option value="Español">Español</option>
+                                    <option value="Náhuatl">Náhuatl</option>
+                                    <option value="Otomí">Otomí</option>
                                 </select>
                             </div>
 
@@ -5773,7 +6037,7 @@ export default function Dashboard() {
                                 <span className="material-symbols-outlined text-[48px] text-primary icon-animate" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
                             </div>
                             <h3 className="font-headline-md text-headline-md text-primary mb-2" style={{ fontFamily: 'Bricolage Grotesque' }}>Lecciones</h3>
-                            <p className="font-body-md text-body-md text-on-surface-variant">Sigue tu camino para ser un experto.</p>
+                            <p className="font-body-md text-body-md text-on-surface-variant">Sigue tu camino para ser un experto (Nivel {profile.level}).</p>
                             <div className="mt-auto pt-6 w-full opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span className="bg-primary text-white px-4 py-2 rounded-full font-label-lg">Continuar</span>
                             </div>
@@ -5782,7 +6046,7 @@ export default function Dashboard() {
                         {/* Evaluaciones */}
                         <div className="bg-surface-container-lowest rounded-3xl p-6 border-b-4 border-outline shadow-sm card-hover transition-all duration-300 cursor-pointer flex flex-col items-center text-center group">
                             <div className="w-24 h-24 mb-6 rounded-2xl bg-surface-container flex items-center justify-center floating" style={{ animationDelay: '1.5s' }}>
-                                <span className="material-symbols-outlined text-[48px] text-outline icon-animate" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
+                                <span className="material-symbols-outlined text-[48px] text-outline icon-animate" style={{ fontVariationSettings: "'FILL' 1" }}>assignment</span>
                             </div>
                             <h3 className="font-headline-md text-headline-md text-outline mb-2" style={{ fontFamily: 'Bricolage Grotesque' }}>Mis Evaluaciones</h3>
                             <p className="font-body-md text-body-md text-on-surface-variant">¿Qué tanto has aprendido esta semana?</p>
@@ -5802,7 +6066,11 @@ export default function Dashboard() {
                                 </div>
                                 <div>
                                     <h4 className="font-headline-md text-headline-md text-white" style={{ fontFamily: 'Bricolage Grotesque' }}>Mis Logros</h4>
-                                    <p className="font-body-md text-white/80">Has ganado 3 medallas nuevas esta semana.</p>
+                                    <p className="font-body-md text-white/80">
+                                        {badges.length > 0 
+                                            ? `Has desbloqueado ${badges.length} medallas hasta ahora.` 
+                                            : '¡Comienza tus lecciones para desbloquear medallas!'}
+                                    </p>
                                 </div>
                             </div>
                             <div className="bg-white text-primary-container rounded-full p-2 group-hover:translate-x-2 transition-transform">
@@ -5834,6 +6102,335 @@ export default function Dashboard() {
 
                 {/* Componente de Footer reutilizable */}
                 <Footer />
+            </div>
+        </>
+    );
+}
+</file>
+
+<file path="resources/js/Pages/Teacher/Dashboard.jsx">
+import { Head, Link, usePage } from '@inertiajs/react';
+import Footer from '@/Components/Footer';
+
+export default function Dashboard({ 
+    teacherProfile = null, 
+    groups = [], 
+    students = [], 
+    assignedActivitiesCount = 0, 
+    groupAverage = 'N/A',
+    announcements = []
+}) {
+    // Obtenemos el usuario autenticado desde Inertia
+    const { auth } = usePage().props;
+    const user = auth?.user;
+
+    // Datos dinámicos del docente
+    const teacherData = teacherProfile || user?.teacher_profile || {};
+
+    return (
+        <>
+            <Head title="Panel Docente - Raíces Vivas" />
+
+            {/* Fuentes de Google Fonts y Material Symbols */}
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" 
+                rel="stylesheet" 
+            />
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" 
+                rel="stylesheet" 
+            />
+
+            {/* Estilos dinámicos personalizados */}
+            <style>{`
+                .otomi-pattern {
+                    opacity: 0.04;
+                    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50l-20-20l-10 10l30 30l30-30l-10-10z' fill='%239a4028'/%3E%3C/svg%3E");
+                }
+                .sunset-shadow {
+                    box-shadow: 0 12px 32px -8px rgba(154, 64, 40, 0.12);
+                }
+                .border-press:active {
+                    transform: translateY(2px);
+                }
+                .mayan-divider {
+                    border-bottom: 2px solid;
+                    border-image: repeating-linear-gradient(45deg, #9a4028, #9a4028 10px, transparent 10px, transparent 20px) 1;
+                }
+            `}</style>
+
+            <div className="font-body-md text-on-surface bg-surface min-h-screen flex">
+                
+                {/* SIDEBAR NAVIGATION (Fija a la izquierda) */}
+                <aside className="h-screen w-64 fixed left-0 top-0 bg-surface shadow-md flex flex-col border-r border-outline-variant/30 z-50">
+                    {/* Brand Header */}
+                    <div className="px-6 py-8 border-b border-outline-variant/20">
+                        <h1 className="font-headline-md text-headline-md font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                            Raíces Vivas
+                        </h1>
+                        <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+                            Educator Console
+                        </p>
+                    </div>
+
+                    {/* Perfil del docente */}
+                    <div className="px-4 py-6 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+                            <span className="material-symbols-outlined">person</span>
+                        </div>
+                        <div>
+                            <p className="font-label-lg text-label-lg text-on-surface font-semibold">
+                                {user?.name || 'Docente'}
+                            </p>
+                            <p className="text-[10px] text-on-surface-variant">
+                                ID: {teacherData.teacher_id || 'Sin ID'}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Navegación Principal */}
+                    <nav className="flex-1 px-3 space-y-1 mt-2">
+                        <Link 
+                            href="#" 
+                            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg group"
+                        >
+                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">library_books</span>
+                            <span className="font-label-lg text-label-lg">Content Management</span>
+                        </Link>
+                        <Link 
+                            href="#" 
+                            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg group"
+                        >
+                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">assignment_turned_in</span>
+                            <span className="font-label-lg text-label-lg">Task Assignment</span>
+                        </Link>
+                        <Link 
+                            href="#" 
+                            className="flex items-center gap-3 px-4 py-3 text-primary font-bold border-r-4 border-primary bg-primary-container/10 rounded-l-lg group"
+                        >
+                            <span className="material-symbols-outlined">analytics</span>
+                            <span className="font-label-lg text-label-lg">Reports</span>
+                        </Link>
+                        <Link 
+                            href="#" 
+                            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg group"
+                        >
+                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">quiz</span>
+                            <span className="font-label-lg text-label-lg">Assessments</span>
+                        </Link>
+                    </nav>
+
+                    {/* Acciones del pie de la Sidebar */}
+                    <div className="p-6 mt-auto space-y-4">
+                        <button className="w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label-lg text-label-lg border-b-4 border-primary-container hover:bg-primary-container transition-all border-press flex items-center justify-center gap-2">
+                            <span className="material-symbols-outlined text-sm">add_circle</span>
+                            Create New Class
+                        </button>
+                        <div className="border-t border-outline-variant/30 pt-4 space-y-1">
+                            <Link href={route('profile.edit')} className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-colors">
+                                <span className="material-symbols-outlined text-md">settings</span>
+                                <span className="font-label-sm text-label-sm">Settings</span>
+                            </Link>
+                            <Link 
+                                method="post" 
+                                href={route('logout')} 
+                                as="button" 
+                                className="w-full flex items-center gap-3 px-4 py-2 text-error hover:bg-error-container/20 rounded-lg transition-colors text-left"
+                            >
+                                <span className="material-symbols-outlined text-md">logout</span>
+                                <span className="font-label-sm text-label-sm">Salir</span>
+                            </Link>
+                        </div>
+                    </div>
+                </aside>
+
+                {/* ÁREA DE CONTENIDO PRINCIPAL */}
+                <div className="ml-64 flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
+                    <div className="absolute inset-0 otomi-pattern pointer-events-none"></div>
+
+                    {/* TOP APP BAR */}
+                    <header className="flex justify-between items-center w-full px-6 py-4 bg-surface shadow-sm sticky top-0 z-40">
+                        <div className="flex items-center gap-3">
+                            <h2 className="font-headline-md text-headline-md font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                Raíces Vivas Control Center
+                            </h2>
+                            <div className="h-6 w-[1px] bg-outline-variant/50 mx-2"></div>
+                            <div className="relative">
+                                <select 
+                                    defaultValue=""
+                                    className="bg-surface-container-low border-2 border-outline-variant rounded-lg font-label-lg text-label-lg px-4 py-2 pr-10 appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer text-on-surface"
+                                >
+                                    <option value="" disabled>Seleccionar grupo...</option>
+                                    {groups.map((group) => (
+                                        <option key={group.id} value={group.id}>
+                                            {group.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+                                    expand_more
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-6">
+                            {/* Buscador corregido en padding e icono */}
+                            <div className="relative flex items-center">
+                                <span className="material-symbols-outlined absolute left-3 text-on-surface-variant pointer-events-none text-xl">
+                                    search
+                                </span>
+                                <input 
+                                    type="text"
+                                    placeholder="Search data..." 
+                                    className="bg-surface-container-lowest border-2 border-outline-variant/30 rounded-full py-2 pl-10 pr-4 focus:border-primary focus:ring-0 text-body-md w-64 transition-all outline-none"
+                                />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button className="relative p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-full">
+                                    <span className="material-symbols-outlined">notifications</span>
+                                </button>
+                                <Link href={route('profile.edit')} className="p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-full">
+                                    <span className="material-symbols-outlined">account_circle</span>
+                                </Link>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* LIENZO DE CONTENIDO */}
+                    <main className="p-8 relative z-10 max-w-7xl w-full mx-auto space-y-8 flex-grow">
+                        
+                        {/* MÉTRICAS BENTO GRID */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            
+                            {/* Estudiantes Activos */}
+                            <div className="bg-white p-6 rounded-xl sunset-shadow border border-outline-variant/20 flex items-center gap-6 relative overflow-hidden group">
+                                <div className="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                    <span className="material-symbols-outlined text-[100px]" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
+                                </div>
+                                <div className="w-16 h-16 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container">
+                                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
+                                </div>
+                                <div>
+                                    <p className="font-label-lg text-label-lg text-on-surface-variant">Estudiantes Activos</p>
+                                    <h3 className="font-headline-lg text-headline-lg text-secondary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {students.length}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            {/* Actividades Asignadas */}
+                            <div className="bg-white p-6 rounded-xl sunset-shadow border border-outline-variant/20 flex items-center gap-6 relative overflow-hidden group">
+                                <div className="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                    <span className="material-symbols-outlined text-[100px]" style={{ fontVariationSettings: "'FILL' 1" }}>assignment</span>
+                                </div>
+                                <div className="w-16 h-16 rounded-2xl bg-primary-container flex items-center justify-center text-on-primary">
+                                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>assignment</span>
+                                </div>
+                                <div>
+                                    <p className="font-label-lg text-label-lg text-on-surface-variant">Actividades Asignadas</p>
+                                    <h3 className="font-headline-lg text-headline-lg text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {assignedActivitiesCount}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            {/* Promedio Grupal */}
+                            <div className="bg-white p-6 rounded-xl sunset-shadow border border-outline-variant/20 flex items-center gap-6 relative overflow-hidden group">
+                                <div className="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                    <span className="material-symbols-outlined text-[100px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                                </div>
+                                <div className="w-16 h-16 rounded-2xl bg-tertiary-container flex items-center justify-center text-on-tertiary">
+                                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                                </div>
+                                <div>
+                                    <p className="font-label-lg text-label-lg text-on-surface-variant">Promedio Grupal</p>
+                                    <h3 className="font-headline-lg text-headline-lg text-tertiary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {groupAverage}
+                                    </h3>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* ÁREA INTERACTIVA PRINCIPAL */}
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                            
+                            {/* Tabla de Actividad Reciente */}
+                            <div className="lg:col-span-3 space-y-4">
+                                <div className="flex items-center justify-between mayan-divider pb-2">
+                                    <h3 className="font-headline-md text-headline-md text-on-surface" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        Recent Class Activity
+                                    </h3>
+                                    <Link className="text-primary font-label-lg text-label-lg hover:underline" href="#">
+                                        View All Students
+                                    </Link>
+                                </div>
+
+                                <div className="bg-white rounded-xl sunset-shadow overflow-hidden border border-outline-variant/10">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead className="bg-surface-container-low">
+                                            <tr>
+                                                <th className="p-4 font-label-lg text-on-surface-variant">Estudiante</th>
+                                                <th className="p-4 font-label-lg text-on-surface-variant">Última Actividad</th>
+                                                <th className="p-4 font-label-lg text-on-surface-variant">Progreso</th>
+                                                <th className="p-4 font-label-lg text-on-surface-variant">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-outline-variant/10 font-body-md">
+                                            {students.length > 0 ? (
+                                                students.map((student) => (
+                                                    <tr key={student.id} className="hover:bg-surface-container/30 transition-colors">
+                                                        <td className="p-4 font-medium">{student.name}</td>
+                                                        <td className="p-4 text-on-surface-variant">{student.last_activity || 'Sin actividad'}</td>
+                                                        <td className="p-4">{student.progress || 0}%</td>
+                                                        <td className="p-4">
+                                                            <span className="px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded-full">
+                                                                {student.status || 'Pendiente'}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="4" className="p-8 text-center text-on-surface-variant">
+                                                        <span className="material-symbols-outlined text-4xl mb-2 text-outline">group_off</span>
+                                                        <p>No hay estudiantes ni actividad registrada en este momento.</p>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Panel Lateral Secundario */}
+                            <div className="space-y-4">
+                                <div className="bg-white p-6 rounded-xl sunset-shadow border border-outline-variant/20">
+                                    <h4 className="font-headline-md text-headline-md text-primary mb-4" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        Avisos Rápidos
+                                    </h4>
+                                    {announcements.length > 0 ? (
+                                        <ul className="space-y-3">
+                                            {announcements.map((item, idx) => (
+                                                <li key={idx} className="text-body-md text-on-surface-variant">
+                                                    {item.text}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-body-md text-on-surface-variant italic">
+                                            No hay avisos recientes.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                        </div>
+                    </main>
+
+                    {/* FOOTER */}
+                    <Footer />
+                </div>
             </div>
         </>
     );
@@ -5958,55 +6555,6 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
-</file>
-
-<file path="routes/web.php">
-<?php
-
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DocenteController;
-use App\Http\Controllers\ProgressController;
-use App\Http\Controllers\StoryController;
-use App\Http\Controllers\VideoController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
-// Ruta de bienvenida (Landing)
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-// Rutas protegidas por autenticación
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard principal del Alumno
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Panel del Docente
-    Route::get('/docente', [DocenteController::class, 'index'])->name('docente.index');
-    
-    // Cuentos y Leyendas
-    Route::get('/cuentos', [StoryController::class, 'index'])->name('stories.index');
-    
-    // Videos Educativos
-    Route::get('/videos', [VideoController::class, 'index'])->name('videos.index');
-    
-    // Progreso de Actividades
-    Route::post('/progress', [ProgressController::class, 'store'])->name('progress.store');
-    
-    // Perfil del Usuario
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
 </file>
 
 <file path="tests/Feature/Auth/AuthenticationTest.php">
@@ -6707,57 +7255,74 @@ class PasswordResetLinkController extends Controller
 }
 </file>
 
-<file path="app/Http/Controllers/Auth/RegisteredUserController.php">
+<file path="app/Http/Controllers/DashboardController.php">
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
 
-class RegisteredUserController extends Controller
+class DashboardController extends Controller
 {
     /**
-     * Display the registration view.
+     * Punto de entrada central que redirige al usuario según su rol.
      */
-    public function create(): Response
+    public function index(Request $request)
     {
-        return Inertia::render('Auth/Register');
+        // Obtenemos el rol; si es nulo por alguna razón, asignamos 'student'
+        $role = $request->user()->role ?? 'student';
+
+        return match ($role) {
+            'admin'   => redirect()->route('admin.dashboard'),
+            'teacher' => redirect()->route('teacher.dashboard'),
+            'student' => redirect()->route('student.dashboard'),
+            default   => redirect()->route('student.dashboard'), // Fallback elegante sin pantalla 403
+        };
+    }
+}
+</file>
+
+<file path="app/Http/Middleware/HandleInertiaRequests.php">
+<?php
+
+namespace App\Http\Middleware;
+
+use Illuminate\Http\Request;
+use Inertia\Middleware;
+
+class HandleInertiaRequests extends Middleware
+{
+    /**
+     * The root template that is loaded on the first page visit.
+     *
+     * @var string
+     */
+    protected $rootView = 'app';
+
+    /**
+     * Determine the current asset version.
+     */
+    public function version(Request $request): ?string
+    {
+        return parent::version($request);
     }
 
     /**
-     * Handle an incoming registration request.
+     * Define the props that are shared by default.
      *
-     * @throws ValidationException
+     * @return array<string, mixed>
      */
-    public function store(Request $request): RedirectResponse
+    public function share(Request $request): array
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        return array_merge(parent::share($request), [
+            'auth' => [
+                'user' => $request->user() 
+                    ? $request->user()->load('studentProfile') 
+                    : null,
+                // Agregamos la verificación de suplantación activa
+                'is_impersonating' => app('impersonate')->isImpersonating(),
+            ],
         ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
     }
 }
 </file>
@@ -6882,6 +7447,376 @@ class ProfileUpdateRequest extends FormRequest
             ],
         ];
     }
+}
+</file>
+
+<file path="app/Models/User.php">
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Lab404\Impersonate\Models\Impersonate; // <-- 1. Importamos la clase
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable, Impersonate; // <-- 2. Añadimos el Trait aquí
+
+    // CONSTANTES DE ROLES (Clean Code)
+    public const ROLE_STUDENT = 'student';
+    public const ROLE_TEACHER = 'teacher';
+    public const ROLE_ADMIN   = 'admin';
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    // Helpers Legibles y Robustos
+    public function isStudent(): bool
+    {
+        return $this->role === self::ROLE_STUDENT;
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === self::ROLE_TEACHER;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    // --- LÓGICA DE IMPERSONACIÓN ---
+
+    /**
+     * Define si este usuario tiene permiso para suplantar a otros.
+     */
+    public function canImpersonate(): bool
+    {
+        // Aprovechamos tu helper de rol existente
+        return $this->isAdmin();
+    }
+
+    /**
+     * Define si este usuario puede ser suplantado por un Administrador.
+     */
+    public function canBeImpersonated(): bool
+    {
+        // Evitamos que un Admin pueda suplantar a otro Admin
+        return !$this->isAdmin();
+    }
+
+    // Relaciones
+    public function studentProfile(): HasOne
+    {
+        return $this->hasOne(StudentProfile::class);
+    }
+
+    public function badges(): BelongsToMany
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')
+                    ->withPivot('progress', 'completed')
+                    ->withTimestamps();
+    }
+}
+</file>
+
+<file path="bootstrap/app.php">
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+        ]);
+
+        // Registrar el alias del middleware de roles
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        //
+    })->create();
+</file>
+
+<file path="database/migrations/0001_01_01_000000_create_users_table.php">
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->string('role')->default('student');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('sessions');
+    }
+};
+</file>
+
+<file path="database/seeders/DatabaseSeeder.php">
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // 1. CREAR ADMINISTRADOR GENERAL
+        User::factory()->create([
+            'name'     => 'José Sánchez',
+            'email'    => 'jesanchezrom@gmail.com',
+            'password' => Hash::make('password'),
+            'role'     => User::ROLE_ADMIN, // 'admin'
+        ]);
+
+        // 2. CREAR AL DOCENTE (MAESTRO)
+        User::factory()->create([
+            'name'     => 'Profesor Admin',
+            'email'    => 'profe@yolitzli.com',
+            'password' => Hash::make('password'),
+            'role'     => User::ROLE_TEACHER, // 'teacher'
+        ]);
+
+        // 3. CREAR ALUMNOS DE PRUEBA
+        $students = [
+            [
+                'name'  => 'Juanito Pérez',
+                'email' => 'juan@alumno.com',
+            ],
+            [
+                'name'  => 'María González',
+                'email' => 'maria@alumno.com',
+            ],
+            [
+                'name'  => 'Pedrito López',
+                'email' => 'pedro@alumno.com',
+            ],
+        ];
+
+        foreach ($students as $data) {
+            $student = User::factory()->create([
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'password' => Hash::make('password'),
+                'role'     => User::ROLE_STUDENT, // 'student'
+            ]);
+
+            // Perfil de estudiante para gamificación
+            $student->studentProfile()->create([
+                'level'            => 1,
+                'level_progress'   => 0,
+                'stars'            => 10,
+                'stories_read'     => 0,
+                'selected_dialect' => 'Español',
+            ]);
+        }
+
+        // 4. OTROS SEEDERS
+        $this->call([
+            VideoSeeder::class,
+            StorySeeder::class,
+        ]);
+    }
+}
+</file>
+
+<file path="resources/css/app.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</file>
+
+<file path="resources/js/Layouts/AuthenticatedLayout.jsx">
+import { Link, usePage } from '@inertiajs/react';
+import ImpersonationBanner from '@/Components/Admin/ImpersonationBanner';
+
+export default function Authenticated({ children }) {
+    // Obtenemos el usuario autenticado desde el estado global de Inertia
+    const user = usePage().props.auth.user;
+
+    // Extraemos la información del perfil del estudiante con fallback si no existe (ej. para Docente/Admin)
+    const profile = user?.student_profile || {
+        stars: 0,
+        stories_read: 0,
+        selected_dialect: 'Español'
+    };
+
+    // Si tu usuario tiene una colección de insignias asociadas, la leemos, si no usamos historias leídas
+    const badgesCount = user?.badges ? user.badges.length : profile.stories_read;
+
+    return (
+        <div className="min-h-screen bg-[#fdf7ff]">
+            {/* Banner Flotante de Retorno */}
+            <ImpersonationBanner />
+
+            {/* Carga de Fuentes y Símbolos de Google */}
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" 
+                rel="stylesheet" 
+            />
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" 
+                rel="stylesheet" 
+            />
+
+            {/* NUEVA BARRA DE NAVEGACIÓN (HEADER) */}
+            <header className="w-full top-0 sticky z-50 bg-surface border-b-2 border-outline-variant shadow-sm px-4 md:px-10 py-3 bg-[#fdf7ff]">
+                <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+                    
+                    {/* Brand & Avatar */}
+                    <div className="flex items-center gap-3">
+                        <Link href={route('profile.edit')} className="relative group cursor-pointer">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-[#9a4028] overflow-hidden bg-[#ffdbd2]">
+                                <img 
+                                    className="w-full h-full object-cover" 
+                                    alt="Avatar de usuario" 
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDV_vbS1UcT8yeB4XaPTPwyI3vi6G2BtN7IF5xVsKGU8QndCNsqhXeQlYo51pIkCc-v8hyTa1f3pT9qTlFTTX95tacWeRvtGzRuBNfkdVa5ICZG0_cmOQ9IuHo8xL665zUWliNrYnMfp8T3encfzGdu8ChGjRoJ9AtBMFiWcf-2v5Sn2TyU4WZPIuAn6svCvi5Q67yRCt1AqtXQjGDgh5_2yB2wqAaLli5rC4o46RyOgBtsD1lftjM" 
+                                />
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 bg-[#36693e] text-white rounded-full p-1 border-2 border-white flex items-center justify-center">
+                                <span className="material-symbols-outlined text-[14px]">edit</span>
+                            </div>
+                        </Link>
+                        <div className="hidden sm:block">
+                            <Link href={route('dashboard')}>
+                                <h1 className="font-bold text-[#9a4028] text-xl" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                    Raíces Vivas
+                                </h1>
+                            </Link>
+                            <p className="text-xs text-[#56423d] font-medium">
+                                ¡Hola, {user ? user.name : 'Usuario'}!
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Stats, Idioma y Botón de Salir */}
+                    <div className="flex items-center gap-2 md:gap-6">
+                        {/* Estrellas Dinámicas */}
+                        <div className="flex items-center bg-[#ede5f9] rounded-full px-3 py-1 border border-[#dcc0ba]">
+                            <span className="material-symbols-outlined text-[#a36700] mr-1 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                            <span className="text-sm font-semibold text-[#1d1928]">
+                                {profile.stars}
+                            </span>
+                        </div>
+
+                        {/* Insignias / Medallas Dinámicas */}
+                        <div className="flex items-center bg-[#ede5f9] rounded-full px-3 py-1 border border-[#dcc0ba]">
+                            <span className="material-symbols-outlined text-[#36693e] mr-1 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
+                            <span className="text-sm font-semibold text-[#1d1928]">
+                                {badgesCount}
+                            </span>
+                        </div>
+
+                        {/* Selector de Lengua */}
+                        <div className="hidden md:flex items-center bg-[#f8f1ff] rounded-xl px-2 py-1 border border-[#dcc0ba]">
+                            <span className="material-symbols-outlined text-[#9a4028] mr-2 text-[20px]">language</span>
+                            <select 
+                                defaultValue={profile.selected_dialect}
+                                className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-[#1d1928] py-0 pl-0 pr-8 cursor-pointer"
+                            >
+                                <option value="Español">Español</option>
+                                <option value="Náhuatl">Náhuatl</option>
+                                <option value="Otomí">Otomí</option>
+                            </select>
+                        </div>
+
+                        {/* Botón Salir (Logout) */}
+                        <Link
+                            method="post"
+                            href={route('logout')}
+                            as="button"
+                            className="flex items-center justify-center w-10 h-10 md:w-auto md:px-4 rounded-xl text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors font-semibold text-sm"
+                        >
+                            <span className="material-symbols-outlined md:mr-2 text-[20px]">logout</span>
+                            <span className="hidden md:inline">Salir</span>
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
+            {/* Contenido dinámico de las páginas */}
+            <main>{children}</main>
+        </div>
+    );
 }
 </file>
 
@@ -7570,6 +8505,271 @@ export default function Register() {
 }
 </file>
 
+<file path="resources/js/Pages/Auth/ResetPassword.jsx">
+import { useState } from 'react';
+import InputError from '@/Components/InputError';
+import { Head, Link, useForm } from '@inertiajs/react';
+
+export default function ResetPassword({ token, email }) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        token: token,
+        email: email,
+        password: '',
+        password_confirmation: '',
+    });
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    // Estados para verificar las condiciones individuales
+    const [hasMinLength, setHasMinLength] = useState(false);
+    const [hasUpperAndSymbol, setHasUpperAndSymbol] = useState(false);
+
+    const [strength, setStrength] = useState({
+        score: 0,
+        width: '0%',
+        color: 'bg-outline',
+        label: 'Muy Débil',
+        textColor: '#89726c'
+    });
+
+    const handlePasswordChange = (e) => {
+        const val = e.target.value;
+        setData('password', val);
+
+        // Validaciones individuales
+        const minLengthOk = val.length >= 8;
+        const upperAndSymbolOk = /[A-Z]/.test(val) && /[^A-Za-z0-9]/.test(val);
+
+        setHasMinLength(minLengthOk);
+        setHasUpperAndSymbol(upperAndSymbolOk);
+
+        // Cálculo de barra de fuerza
+        let score = 0;
+        if (minLengthOk) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        const widths = ['0%', '25%', '50%', '75%', '100%'];
+        const colors = ['bg-outline', 'bg-[#ba1a1a]', 'bg-[#825100]', 'bg-[#36693e]', 'bg-[#36693e]'];
+        const labels = ['Muy Débil', 'Débil', 'Media', 'Fuerte', 'Muy Segura'];
+        const textColors = ['#89726c', '#ba1a1a', '#825100', '#36693e', '#36693e'];
+
+        setStrength({
+            score,
+            width: widths[score],
+            color: colors[score],
+            label: labels[score],
+            textColor: textColors[score]
+        });
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route('password.store'), {
+            onFinish: () => reset('password', 'password_confirmation'),
+        });
+    };
+
+    return (
+        <div className="bg-[#fdf7ff] font-sans text-[#1d1928] min-h-screen flex flex-col justify-between">
+            <Head title="Restablecer Contraseña - Raíces Vivas" />
+
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Montserrat:wght@400;500;600&display=swap" 
+                rel="stylesheet" 
+            />
+            <link 
+                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" 
+                rel="stylesheet" 
+            />
+
+            <header className="w-full max-w-7xl mx-auto px-5 md:px-10 py-6 flex justify-center md:justify-start">
+                <Link href={route('login')}>
+                    <h1 className="text-2xl font-extrabold text-[#9a4028] tracking-tight" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                        Raíces Vivas
+                    </h1>
+                </Link>
+            </header>
+
+            <main className="flex-grow flex items-center justify-center px-5 py-8">
+                <section className="w-full max-w-md bg-white rounded-xl p-6 md:p-8 shadow-xl border border-[#dcc0ba] relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[#9a4028] opacity-20"></div>
+                    <div className="absolute top-0 left-0 w-full h-1 overflow-hidden">
+                        <div className="flex space-x-1 justify-center opacity-40">
+                            <span className="w-4 h-1 bg-[#9a4028]"></span>
+                            <span className="w-8 h-1 bg-[#9a4028]"></span>
+                            <span className="w-4 h-1 bg-[#9a4028]"></span>
+                        </div>
+                    </div>
+
+                    <div className="text-center mb-6">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-[#ffdbd2] rounded-full mb-4">
+                            <span className="material-symbols-outlined text-[#9a4028] text-3xl" style={{ fontVariationSettings: "'FILL' 0" }}>
+                                lock_reset
+                            </span>
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold text-[#1d1928] mb-1" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                            Nueva Contraseña
+                        </h2>
+                        <p className="text-sm text-[#56423d] max-w-xs mx-auto">
+                            Crea una contraseña segura para proteger tu conexión con nuestra cultura.
+                        </p>
+                    </div>
+
+                    <form onSubmit={submit} className="space-y-5">
+                        <input type="hidden" name="email" value={data.email} />
+
+                        {/* Campo: Nueva Contraseña */}
+                        <div className="space-y-1">
+                            <label className="block text-sm font-semibold text-[#56423d]" htmlFor="password">
+                                Nueva Contraseña
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    name="password"
+                                    value={data.password}
+                                    onChange={handlePasswordChange}
+                                    placeholder="••••••••"
+                                    className="w-full bg-[#fdf7ff] border-2 border-[#dcc0ba] rounded-lg px-4 py-2 pr-10 focus:border-[#9a4028] focus:ring-0 transition-colors text-sm"
+                                    autoComplete="new-password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#89726c] hover:text-[#9a4028]"
+                                >
+                                    <span className="material-symbols-outlined text-md">
+                                        {showPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
+                            <InputError message={errors.password} className="mt-1" />
+                        </div>
+
+                        {/* Medidor de Fuerza + Requisitos en Verde */}
+                        <div className="space-y-1">
+                            <div className="flex justify-between items-center px-1">
+                                <span className="text-xs text-[#56423d]">Seguridad</span>
+                                <span className="text-xs font-bold" style={{ color: strength.textColor }}>
+                                    {strength.label}
+                                </span>
+                            </div>
+                            <div className="h-2 w-full bg-[#e7dff3] rounded-full overflow-hidden">
+                                <div 
+                                    className={`h-full transition-all duration-500 ${strength.color}`} 
+                                    style={{ width: strength.width }}
+                                ></div>
+                            </div>
+
+                            {/* LISTA DE CONDICIONES DINÁMICAS */}
+                            <ul className="text-[12px] mt-3 space-y-1.5 list-none pl-1 transition-all duration-300">
+                                {/* Condición 1: Mínimo 8 caracteres */}
+                                <li className={`flex items-center gap-1.5 font-medium transition-colors duration-300 ${
+                                    hasMinLength ? 'text-[#36693e]' : 'text-[#56423d]'
+                                }`}>
+                                    <span 
+                                        className="material-symbols-outlined text-[16px]"
+                                        style={{ fontVariationSettings: `'FILL' ${hasMinLength ? 1 : 0}` }}
+                                    >
+                                        check_circle
+                                    </span>
+                                    Mínimo 8 caracteres
+                                </li>
+
+                                {/* Condición 2: Mayúsculas y símbolos */}
+                                <li className={`flex items-center gap-1.5 font-medium transition-colors duration-300 ${
+                                    hasUpperAndSymbol ? 'text-[#36693e]' : 'text-[#56423d]'
+                                }`}>
+                                    <span 
+                                        className="material-symbols-outlined text-[16px]"
+                                        style={{ fontVariationSettings: `'FILL' ${hasUpperAndSymbol ? 1 : 0}` }}
+                                    >
+                                        check_circle
+                                    </span>
+                                    Mayúsculas y símbolos
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Campo: Confirmar Contraseña */}
+                        <div className="space-y-1">
+                            <label className="block text-sm font-semibold text-[#56423d]" htmlFor="password_confirmation">
+                                Confirmar Nueva Contraseña
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="password_confirmation"
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    name="password_confirmation"
+                                    value={data.password_confirmation}
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    placeholder="••••••••"
+                                    className="w-full bg-[#fdf7ff] border-2 border-[#dcc0ba] rounded-lg px-4 py-2 pr-10 focus:border-[#9a4028] focus:ring-0 transition-colors text-sm"
+                                    autoComplete="new-password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#89726c] hover:text-[#9a4028]"
+                                >
+                                    <span className="material-symbols-outlined text-md">
+                                        {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
+                            <InputError message={errors.password_confirmation} className="mt-1" />
+                        </div>
+
+                        {/* Botón de Enviar */}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full bg-[#9a4028] text-white font-semibold text-sm py-3 rounded-lg shadow-md transition-all hover:bg-[#b9573e] border-b-4 border-[#b9573e] flex items-center justify-center gap-2 active:translate-y-0.5 disabled:opacity-50"
+                        >
+                            {processing ? (
+                                <span className="material-symbols-outlined animate-spin text-md">progress_activity</span>
+                            ) : (
+                                'Actualizar Contraseña'
+                            )}
+                        </button>
+
+                        <div className="text-center mt-3">
+                            <Link
+                                href={route('login')}
+                                className="text-sm font-semibold text-[#36693e] hover:text-[#1d5129] transition-colors inline-flex items-center gap-1 group"
+                            >
+                                <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">
+                                    arrow_back
+                                </span>
+                                Cancelar
+                            </Link>
+                        </div>
+                    </form>
+                </section>
+            </main>
+
+            <footer className="bg-white border-t border-[#dcc0ba]">
+                <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 py-6 max-w-7xl mx-auto text-sm text-[#56423d]">
+                    <span className="mb-4 md:mb-0">
+                        © 2026 Raíces Vivas. Preservando lenguas, cultivando futuro.
+                    </span>
+                    <div className="flex gap-6">
+                        <a href="#" className="hover:underline hover:text-[#36693e] transition-colors">Privacidad</a>
+                        <a href="#" className="hover:underline hover:text-[#36693e] transition-colors">Términos</a>
+                        <a href="#" className="hover:underline hover:text-[#36693e] transition-colors">Soporte</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    );
+}
+</file>
+
 <file path="resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx">
 import InputError from '@/Components/InputError';
 import { useForm } from '@inertiajs/react';
@@ -7768,234 +8968,6 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, onSu
                 </div>
             </form>
         </section>
-    );
-}
-</file>
-
-<file path="resources/js/Pages/Profile/Edit.jsx">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-import DeleteUserForm from './Partials/DeleteUserForm';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import { Link } from '@inertiajs/react';
-
-export default function Edit({ mustVerifyEmail, status }) {
-    const user = usePage().props.auth.user;
-    
-    // Estados para controlar qué modal o formulario flotante está abierto
-    const [activeModal, setActiveModal] = useState(null); // 'profile', 'password', 'delete' or null
-
-    return (
-        <AuthenticatedLayout>
-            <Head title="Mi Perfil" />
-
-            {/* Inyección de fuentes requeridas por el diseño */}
-            <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
-            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet" />
-
-            <div className="max-w-7xl mx-auto px-6 md:px-10 py-8 relative z-10 font-body-md bg-background text-on-background min-h-screen">
-                
-                {/* Breadcrumbs */}
-                <div className="flex items-center gap-1 mb-6 text-on-surface-variant text-sm">
-                    <Link 
-                        href={route('dashboard')} 
-                        className="hover:text-primary transition-colors cursor-pointer"
-                    >
-                        Inicio
-                    </Link>
-                    <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                    <span className="text-primary font-bold">Mi Perfil</span>
-                </div>
-
-                {/* Profile Layout Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    
-                    {/* COLUMNA IZQUIERDA: Tarjeta de información personal fija */}
-                    <div className="lg:col-span-5 flex flex-col gap-6">
-                        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant relative overflow-hidden shadow-sm">
-                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
-                            
-                            {/* Avatar Section */}
-                            <div className="flex flex-col items-center mb-6">
-                                <div className="relative group">
-                                    <div className="w-32 h-32 rounded-full border-4 border-primary-fixed-dim p-1 bg-surface-container shadow-lg overflow-hidden transition-transform duration-300 group-hover:scale-105">
-                                        <img 
-                                            className="w-full h-full object-cover rounded-full" 
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwzZYciMRfpkNFYYAMRSoIBA4eKJZw2KWkObR9VK6xYAD4Yza8361UsQEy3i54ajuiQebCfnI1iNVT5iCA3wkKqA_nQeyQJnUxU3REtJ_Gk5sI0xGNwP1a1Bt71PJ4LLBgkdYMxZNDELES3WAIb99H9wGOBAecQ66QSuUvwpMWncOqTM2v19u-Bdf_GbycP0EaJqdjiTXmonFC-avnSXma02bbtz9iZUO99XrOEXRR9-tIgFfFOhCy" 
-                                            alt="Avatar"
-                                        />
-                                    </div>
-                                </div>
-                                <h1 className="text-2xl font-bold text-primary mt-4" style={{ fontFamily: 'Bricolage Grotesque' }}>
-                                    {user.name}
-                                </h1>
-                                <p className="text-sm font-semibold text-secondary uppercase tracking-widest mt-1">Estudiante</p>
-                            </div>
-
-                            {/* Info Grid */}
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-xs font-semibold text-on-surface-variant block mb-1">Correo Electrónico</label>
-                                    <div className="flex items-center gap-3 bg-surface-container p-3 rounded-lg border border-outline-variant/30">
-                                        <span className="material-symbols-outlined text-secondary">mail</span>
-                                        <span className="text-on-surface text-sm break-all">{user.email}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-xs font-semibold text-on-surface-variant block mb-1">Dialecto Preferido</label>
-                                    <div className="flex items-center gap-3 bg-surface-container p-3 rounded-lg border border-outline-variant/30">
-                                        <span className="material-symbols-outlined text-secondary">auto_stories</span>
-                                        <span className="text-on-surface text-sm">Náhuatl</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Actions Trigger Buttons */}
-                            <div className="mt-6 flex flex-col gap-3">
-                                <button 
-                                    onClick={() => setActiveModal('profile')}
-                                    className="w-full bg-primary text-white py-3 rounded-lg font-bold shadow-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2"
-                                    style={{ fontFamily: 'Bricolage Grotesque' }}
-                                >
-                                    <span className="material-symbols-outlined text-[20px]">edit</span>
-                                    Editar Información
-                                </button>
-                                <button 
-                                    onClick={() => setActiveModal('password')}
-                                    className="w-full border-2 border-secondary text-secondary py-3 rounded-lg font-bold hover:bg-secondary-fixed transition-all flex items-center justify-center gap-2"
-                                    style={{ fontFamily: 'Bricolage Grotesque' }}
-                                >
-                                    <span className="material-symbols-outlined text-[20px]">lock</span>
-                                    Cambiar Contraseña
-                                </button>
-                                <button 
-                                    onClick={() => setActiveModal('delete')}
-                                    className="w-full text-error font-bold py-2 flex items-center justify-center gap-2 hover:underline text-sm"
-                                >
-                                    <span className="material-symbols-outlined text-[20px]">delete_forever</span>
-                                    Eliminar Cuenta
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* COLUMNA DERECHA: Modales dinámicos / Paneles de Estadísticas */}
-                    <div className="lg:col-span-7 flex flex-col gap-6">
-                        
-                        {/* Renderizado condicional de Formularios Activos */}
-                        {activeModal === 'profile' && (
-                            <div className="bg-surface-container-lowest p-6 rounded-xl border-2 border-primary shadow-md transition-all">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Modificar Datos</h3>
-                                    <button onClick={() => setActiveModal(null)} className="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
-                                </div>
-                                <UpdateProfileInformationForm mustVerifyEmail={mustVerifyEmail} status={status} onSuccess={() => setActiveModal(null)} />
-                            </div>
-                        )}
-
-                        {activeModal === 'password' && (
-                            <div className="bg-surface-container-lowest p-6 rounded-xl border-2 border-secondary shadow-md transition-all">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-bold text-secondary" style={{ fontFamily: 'Bricolage Grotesque' }}>Seguridad de la cuenta</h3>
-                                    <button onClick={() => setActiveModal(null)} className="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
-                                </div>
-                                <UpdatePasswordForm onSuccess={() => setActiveModal(null)} />
-                            </div>
-                        )}
-
-                        {activeModal === 'delete' && (
-                            <div className="bg-surface-container-lowest p-6 rounded-xl border-2 border-error shadow-md transition-all">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-bold text-error" style={{ fontFamily: 'Bricolage Grotesque' }}>Zona de Peligro</h3>
-                                    <button onClick={() => setActiveModal(null)} className="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
-                                </div>
-                                <DeleteUserForm />
-                            </div>
-                        )}
-
-                        {/* Bento Grid de Progreso Fijo del Alumno */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Nivel Card */}
-                            <div className="bg-surface-container-high p-6 rounded-xl border border-outline-variant flex flex-col justify-between relative overflow-hidden group">
-                                <div className="absolute -right-4 -bottom-4 text-secondary/10 transform rotate-12 transition-transform group-hover:rotate-0 pointer-events-none">
-                                    <span className="material-symbols-outlined text-[120px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                                </div>
-                                <div>
-                                    <h3 className="text-xs font-bold bg-secondary text-white px-3 py-1 rounded-full inline-block mb-4">Nivel Actual</h3>
-                                    <div className="text-4xl font-extrabold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Nivel 5</div>
-                                </div>
-                                <div className="mt-6 z-10">
-                                    <div className="flex justify-between text-xs mb-1">
-                                        <span>Progreso al Nivel 6</span>
-                                        <span className="font-bold">75%</span>
-                                    </div>
-                                    <div className="w-full h-3 bg-surface-container-lowest rounded-full overflow-hidden border border-outline-variant/50">
-                                        <div className="bg-secondary h-full rounded-full" style={{ width: '75%' }}></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Estrellas Card */}
-                            <div className="bg-tertiary-fixed p-6 rounded-xl border border-outline-variant flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-xl bg-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-tertiary-fixed text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs font-semibold text-on-tertiary-fixed-variant">Estrellas Ganadas</p>
-                                    <h4 className="text-3xl font-bold text-on-tertiary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>450</h4>
-                                </div>
-                            </div>
-
-                            {/* Actividad Card */}
-                            <div className="bg-secondary-fixed p-6 rounded-xl border border-outline-variant flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-xl bg-on-secondary-fixed flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-secondary-fixed text-[40px]">menu_book</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs font-semibold text-on-secondary-fixed-variant">Actividad</p>
-                                    <h4 className="text-2xl font-bold text-on-secondary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>12 Cuentos Leídos</h4>
-                                </div>
-                            </div>
-
-                            {/* Motivación Card */}
-                            <div className="bg-surface-container p-6 rounded-xl border border-outline-variant border-dashed flex flex-col items-center justify-center text-on-surface-variant gap-2 text-center">
-                                <span className="material-symbols-outlined text-[32px] text-primary">emoji_events</span>
-                                <p className="text-sm font-semibold">¡Sigue así! Tu camino apenas comienza.</p>
-                            </div>
-                        </div>
-
-                        {/* Insignias Logradas */}
-                        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
-                            <h2 className="text-xl font-bold text-on-surface mb-6" style={{ fontFamily: 'Bricolage Grotesque' }}>Insignias Logradas</h2>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="flex flex-col items-center gap-2 group text-center">
-                                    <div className="w-20 h-20 rounded-full bg-secondary-container border-4 border-secondary flex items-center justify-center relative transition-all duration-500 group-hover:rotate-12">
-                                        <span className="material-symbols-outlined text-secondary text-[36px]">grass</span>
-                                        <div className="absolute -top-1 -right-1 bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">1/3</div>
-                                    </div>
-                                    <span className="text-xs font-bold text-secondary">Semilla</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-2 group text-center">
-                                    <div className="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center border-4 border-primary transition-all duration-500 group-hover:-rotate-12">
-                                        <span className="material-symbols-outlined text-primary text-[36px]">eco</span>
-                                    </div>
-                                    <span className="text-xs font-bold text-primary">Brote</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-2 group text-center">
-                                    <div className="w-20 h-20 rounded-full bg-tertiary-fixed flex items-center justify-center border-4 border-tertiary transition-all duration-500 group-hover:scale-110">
-                                        <span className="material-symbols-outlined text-tertiary text-[36px]">psychology</span>
-                                    </div>
-                                    <span className="text-xs font-bold text-tertiary">Raíz</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </AuthenticatedLayout>
     );
 }
 </file>
@@ -8257,6 +9229,104 @@ export default function Welcome({ auth }) {
 </html>
 </file>
 
+<file path="routes/web.php">
+<?php
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\StoryController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\VideoController;
+use App\Models\User; // <-- Añadido para hacer referencia a la clase User
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
+// --------------------------------------------------------------------------
+// Ruta de Bienvenida (Landing Page)
+// --------------------------------------------------------------------------
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
+
+// --------------------------------------------------------------------------
+// Rutas Protegidas por Autenticación
+// --------------------------------------------------------------------------
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    // Redirección central inteligente según el rol del usuario
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // ----------------------------------------------------------------------
+    // Impersonación: Salir de la suplantación (Disponible para cualquier usuario autenticado)
+    // ----------------------------------------------------------------------
+    Route::get('/impersonate/leave', function () {
+        auth()->user()->leaveImpersonation();
+        return redirect()->route('admin.dashboard');
+    })->name('impersonate.leave');
+
+    // ----------------------------------------------------------------------
+    // Área Exclusiva de Estudiantes (rol: student)
+    // ----------------------------------------------------------------------
+    Route::middleware(['role:student'])->group(function () {
+        Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+        
+        // Recursos accesibles para alumnos
+        Route::get('/cuentos', [StoryController::class, 'index'])->name('stories.index');
+        Route::get('/videos', [VideoController::class, 'index'])->name('videos.index');
+        Route::post('/progress', [ProgressController::class, 'store'])->name('progress.store');
+    });
+
+    // ----------------------------------------------------------------------
+    // Área Exclusiva de Docentes (rol: teacher)
+    // ----------------------------------------------------------------------
+    Route::middleware(['role:teacher'])->group(function () {
+        Route::get('/teacher/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+    });
+
+    // ----------------------------------------------------------------------
+    // Área Exclusiva de Administradores (rol: admin)
+    // ----------------------------------------------------------------------
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+        // Impersonación: Iniciar suplantación (Solo ejecutable por Admins)
+        Route::get('/impersonate/take/{id}', function ($id) {
+            $userToImpersonate = User::findOrFail($id);
+
+            if (auth()->user()->canImpersonate() && $userToImpersonate->canBeImpersonated()) {
+                auth()->user()->impersonate($userToImpersonate);
+
+                return match ($userToImpersonate->role) {
+                    User::ROLE_TEACHER => redirect()->route('teacher.dashboard'),
+                    User::ROLE_STUDENT => redirect()->route('student.dashboard'),
+                    default            => redirect()->route('dashboard'),
+                };
+            }
+
+            return back()->with('error', 'No tienes permisos para suplantar a este usuario.');
+        })->name('impersonate');
+    });
+
+    // ----------------------------------------------------------------------
+    // Perfil del Usuario (Accesible por todos los usuarios autenticados)
+    // ----------------------------------------------------------------------
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+</file>
+
 <file path=".gitignore">
 /node_modules
 /vendor
@@ -8300,6 +9370,336 @@ export default function Welcome({ auth }) {
 /Documentation/Static_test/
 </file>
 
+<file path="app/Http/Controllers/Auth/RegisteredUserController.php">
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class RegisteredUserController extends Controller
+{
+    /**
+     * Display the registration view.
+     */
+    public function create(): Response
+    {
+        return Inertia::render('Auth/Register');
+    }
+
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => User::ROLE_STUDENT, // Uso declarativo mediante la constante
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
+    }
+}
+</file>
+
+<file path="resources/js/Pages/Profile/Edit.jsx">
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, usePage, Link } from '@inertiajs/react';
+import { useState } from 'react';
+import DeleteUserForm from './Partials/DeleteUserForm';
+import UpdatePasswordForm from './Partials/UpdatePasswordForm';
+import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+
+export default function Edit({ mustVerifyEmail, status }) {
+    // Obtenemos el usuario autenticado desde los props globales
+    const user = usePage().props.auth.user;
+
+    // Extraemos los datos del perfil de estudiante con fallback si no existe (ej. docentes)
+    const profile = user?.student_profile || {
+        level: 1,
+        level_progress: 0,
+        stars: 0,
+        stories_read: 0,
+        selected_dialect: 'Español'
+    };
+
+    // Colección de insignias
+    const badges = user?.badges || [];
+
+    // Estado para controlar qué modal o formulario flotante está abierto
+    const [activeModal, setActiveModal] = useState(null);
+
+    // Formatear el nombre del rol para mostrarlo de forma vistosa
+    const formattedRole = user.role 
+        ? user.role.charAt(0).toUpperCase() + user.role.slice(1) 
+        : 'Estudiante';
+
+    return (
+        <AuthenticatedLayout>
+            <Head title="Mi Perfil" />
+
+            {/* Inyección de fuentes requeridas por el diseño */}
+            <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet" />
+
+            <div className="max-w-7xl mx-auto px-6 md:px-10 py-8 relative z-10 font-body-md bg-background text-on-background min-h-screen">
+                
+                {/* Breadcrumbs */}
+                <div className="flex items-center gap-1 mb-6 text-on-surface-variant text-sm">
+                    <Link 
+                        href={route('dashboard')} 
+                        className="hover:text-primary transition-colors cursor-pointer"
+                    >
+                        Inicio
+                    </Link>
+                    <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <span className="text-primary font-bold">Mi Perfil</span>
+                </div>
+
+                {/* Profile Layout Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    {/* COLUMNA IZQUIERDA: Tarjeta de información personal fija */}
+                    <div className="lg:col-span-5 flex flex-col gap-6">
+                        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant relative overflow-hidden shadow-sm">
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
+                            
+                            {/* Avatar Section */}
+                            <div className="flex flex-col items-center mb-6">
+                                <div className="relative group">
+                                    <div className="w-32 h-32 rounded-full border-4 border-primary-fixed-dim p-1 bg-surface-container shadow-lg overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                                        <img 
+                                            className="w-full h-full object-cover rounded-full" 
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwzZYciMRfpkNFYYAMRSoIBA4eKJZw2KWkObR9VK6xYAD4Yza8361UsQEy3i54ajuiQebCfnI1iNVT5iCA3wkKqA_nQeyQJnUxU3REtJ_Gk5sI0xGNwP1a1Bt71PJ4LLBgkdYMxZNDELES3WAIb99H9wGOBAecQ66QSuUvwpMWncOqTM2v19u-Bdf_GbycP0EaJqdjiTXmonFC-avnSXma02bbtz9iZUO99XrOEXRR9-tIgFfFOhCy" 
+                                            alt="Avatar"
+                                        />
+                                    </div>
+                                </div>
+                                <h1 className="text-2xl font-bold text-primary mt-4" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                    {user.name}
+                                </h1>
+                                <p className="text-sm font-semibold text-secondary uppercase tracking-widest mt-1">
+                                    {formattedRole}
+                                </p>
+                            </div>
+
+                            {/* Info Grid */}
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-xs font-semibold text-on-surface-variant block mb-1">Correo Electrónico</label>
+                                    <div className="flex items-center gap-3 bg-surface-container p-3 rounded-lg border border-outline-variant/30">
+                                        <span className="material-symbols-outlined text-secondary">mail</span>
+                                        <span className="text-on-surface text-sm break-all">{user.email}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-semibold text-on-surface-variant block mb-1">Dialecto Preferido</label>
+                                    <div className="flex items-center gap-3 bg-surface-container p-3 rounded-lg border border-outline-variant/30">
+                                        <span className="material-symbols-outlined text-secondary">auto_stories</span>
+                                        <span className="text-on-surface text-sm">{profile.selected_dialect}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Actions Trigger Buttons */}
+                            <div className="mt-6 flex flex-col gap-3">
+                                <button 
+                                    onClick={() => setActiveModal('profile')}
+                                    className="w-full bg-primary text-white py-3 rounded-lg font-bold shadow-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2"
+                                    style={{ fontFamily: 'Bricolage Grotesque' }}
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                    Editar Información
+                                </button>
+                                <button 
+                                    onClick={() => setActiveModal('password')}
+                                    className="w-full border-2 border-secondary text-secondary py-3 rounded-lg font-bold hover:bg-secondary-fixed transition-all flex items-center justify-center gap-2"
+                                    style={{ fontFamily: 'Bricolage Grotesque' }}
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">lock</span>
+                                    Cambiar Contraseña
+                                </button>
+                                <button 
+                                    onClick={() => setActiveModal('delete')}
+                                    className="w-full text-error font-bold py-2 flex items-center justify-center gap-2 hover:underline text-sm"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">delete_forever</span>
+                                    Eliminar Cuenta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* COLUMNA DERECHA: Modales dinámicos / Paneles de Estadísticas */}
+                    <div className="lg:col-span-7 flex flex-col gap-6">
+                        
+                        {/* Renderizado condicional de Formularios Activos */}
+                        {activeModal === 'profile' && (
+                            <div className="bg-surface-container-lowest p-6 rounded-xl border-2 border-primary shadow-md transition-all">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Modificar Datos</h3>
+                                    <button onClick={() => setActiveModal(null)} className="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
+                                </div>
+                                <UpdateProfileInformationForm mustVerifyEmail={mustVerifyEmail} status={status} onSuccess={() => setActiveModal(null)} />
+                            </div>
+                        )}
+
+                        {activeModal === 'password' && (
+                            <div className="bg-surface-container-lowest p-6 rounded-xl border-2 border-secondary shadow-md transition-all">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-bold text-secondary" style={{ fontFamily: 'Bricolage Grotesque' }}>Seguridad de la cuenta</h3>
+                                    <button onClick={() => setActiveModal(null)} className="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
+                                </div>
+                                <UpdatePasswordForm onSuccess={() => setActiveModal(null)} />
+                            </div>
+                        )}
+
+                        {activeModal === 'delete' && (
+                            <div className="bg-surface-container-lowest p-6 rounded-xl border-2 border-error shadow-md transition-all">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-bold text-error" style={{ fontFamily: 'Bricolage Grotesque' }}>Zona de Peligro</h3>
+                                    <button onClick={() => setActiveModal(null)} className="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
+                                </div>
+                                <DeleteUserForm />
+                            </div>
+                        )}
+
+                        {/* Bento Grid de Progreso del Alumno */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            
+                            {/* Nivel Card Dinámico */}
+                            <div className="bg-surface-container-high p-6 rounded-xl border border-outline-variant flex flex-col justify-between relative overflow-hidden group">
+                                <div className="absolute -right-4 -bottom-4 text-secondary/10 transform rotate-12 transition-transform group-hover:rotate-0 pointer-events-none">
+                                    <span className="material-symbols-outlined text-[120px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-xs font-bold bg-secondary text-white px-3 py-1 rounded-full inline-block mb-4">Nivel Actual</h3>
+                                    <div className="text-4xl font-extrabold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        Nivel {profile.level}
+                                    </div>
+                                </div>
+                                <div className="mt-6 z-10">
+                                    <div className="flex justify-between text-xs mb-1">
+                                        <span>Progreso al Nivel {profile.level + 1}</span>
+                                        <span className="font-bold">{profile.level_progress}%</span>
+                                    </div>
+                                    <div className="w-full h-3 bg-surface-container-lowest rounded-full overflow-hidden border border-outline-variant/50">
+                                        <div 
+                                            className="bg-secondary h-full rounded-full transition-all duration-500" 
+                                            style={{ width: `${profile.level_progress}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Estrellas Card Dinámico */}
+                            <div className="bg-tertiary-fixed p-6 rounded-xl border border-outline-variant flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-xl bg-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-tertiary-fixed text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-on-tertiary-fixed-variant">Estrellas Ganadas</p>
+                                    <h4 className="text-3xl font-bold text-on-tertiary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {profile.stars}
+                                    </h4>
+                                </div>
+                            </div>
+
+                            {/* Actividad Card Dinámico */}
+                            <div className="bg-secondary-fixed p-6 rounded-xl border border-outline-variant flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-xl bg-on-secondary-fixed flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-secondary-fixed text-[40px]">menu_book</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-on-secondary-fixed-variant">Actividad</p>
+                                    <h4 className="text-2xl font-bold text-on-secondary-fixed" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                        {profile.stories_read} {profile.stories_read === 1 ? 'Cuento Leído' : 'Cuentos Leídos'}
+                                    </h4>
+                                </div>
+                            </div>
+
+                            {/* Motivación Card */}
+                            <div className="bg-surface-container p-6 rounded-xl border border-outline-variant border-dashed flex flex-col items-center justify-center text-on-surface-variant gap-2 text-center">
+                                <span className="material-symbols-outlined text-[32px] text-primary">emoji_events</span>
+                                <p className="text-sm font-semibold">¡Sigue así! Tu camino apenas comienza.</p>
+                            </div>
+                        </div>
+
+                        {/* Insignias Logradas Dinámicas */}
+                        <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+                            <h2 className="text-xl font-bold text-on-surface mb-6" style={{ fontFamily: 'Bricolage Grotesque' }}>
+                                Insignias Logradas ({badges.length})
+                            </h2>
+                            
+                            {badges.length > 0 ? (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    {badges.map((badge, idx) => (
+                                        <div key={badge.id || idx} className="flex flex-col items-center gap-2 group text-center">
+                                            <div className="w-20 h-20 rounded-full bg-secondary-container border-4 border-secondary flex items-center justify-center relative transition-all duration-500 group-hover:rotate-12">
+                                                <span className="material-symbols-outlined text-secondary text-[36px]">
+                                                    {badge.icon_name || 'workspace_premium'}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs font-bold text-secondary">{badge.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-3 gap-4 opacity-60">
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border-4 border-outline-variant flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-outline text-[36px]">grass</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-outline">Semilla</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border-4 border-outline-variant flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-outline text-[36px]">eco</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-outline">Brote</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border-4 border-outline-variant flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-outline text-[36px]">psychology</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-outline">Raíz</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
+}
+</file>
+
 <file path="composer.json">
 {
     "$schema": "https://getcomposer.org/schema.json",
@@ -8311,6 +9711,7 @@ export default function Welcome({ auth }) {
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
+        "lab404/laravel-impersonate": "^1.7",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",

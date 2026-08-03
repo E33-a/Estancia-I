@@ -34,6 +34,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user() 
                     ? $request->user()->load('studentProfile') 
                     : null,
+                // Agregamos la verificación de suplantación activa
+                'is_impersonating' => app('impersonate')->isImpersonating(),
             ],
         ]);
     }

@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import ImpersonationBanner from '@/Components/Admin/ImpersonationBanner';
 
 export default function Authenticated({ children }) {
     // Obtenemos el usuario autenticado desde el estado global de Inertia
@@ -16,6 +17,9 @@ export default function Authenticated({ children }) {
 
     return (
         <div className="min-h-screen bg-[#fdf7ff]">
+            {/* Banner Flotante de Retorno */}
+            <ImpersonationBanner />
+
             {/* Carga de Fuentes y Símbolos de Google */}
             <link 
                 href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" 

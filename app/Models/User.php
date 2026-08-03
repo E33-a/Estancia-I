@@ -7,10 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Lab404\Impersonate\Models\Impersonate; // <-- 1. Importamos la clase
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Impersonate; // <-- 2. Añadimos el Trait aquí
 
     // CONSTANTES DE ROLES (Clean Code)
     public const ROLE_STUDENT = 'student';
@@ -51,6 +52,26 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
+    }
+
+    // --- LÓGICA DE IMPERSONACIÓN ---
+
+    /**
+     * Define si este usuario tiene permiso para suplantar a otros.
+     */
+    public function canImpersonate(): bool
+    {
+        // Aprovechamos tu helper de rol existente
+        return $this->isAdmin();
+    }
+
+    /**
+     * Define si este usuario puede ser suplantado por un Administrador.
+     */
+    public function canBeImpersonated(): bool
+    {
+        // Evitamos que un Admin pueda suplantar a otro Admin
+        return !$this->isAdmin();
     }
 
     // Relaciones
