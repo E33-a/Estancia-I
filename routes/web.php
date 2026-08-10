@@ -8,6 +8,7 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\GameController;
 use App\Models\User; // <-- Añadido para hacer referencia a la clase User
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------------------
     Route::middleware(['role:student'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+        Route::get('/juegos', [GameController::class, 'index'])
+    ->name('games.index');
         
         // Recursos accesibles para alumnos
         Route::get('/cuentos', [StoryController::class, 'index'])->name('stories.index');
