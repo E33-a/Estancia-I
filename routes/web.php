@@ -116,6 +116,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             '/cuentos',
             [StoryController::class, 'index']
         )->name('stories.index');
+        Route::get(
+        '/cuentos/{story}',
+        [StoryController::class, 'show']
+        )->name('stories.show');
+
+        Route::post(
+        '/cuentos/{story}/progreso',
+        [StoryController::class, 'saveProgress']
+        )->name('stories.progress');
 
         Route::get(
             '/videos',
