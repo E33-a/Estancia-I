@@ -10,6 +10,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\AssessmentController;
+use App\Http\Controllers\AchievementController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +61,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
 
     Route::middleware(['role:student'])->group(function () {
+        Route::get(
+    '/mis-logros',
+    [AchievementController::class, 'index']
+)->name('achievements.index');
         /*
 |--------------------------------------------------------------------------
 | Evaluaciones del estudiante

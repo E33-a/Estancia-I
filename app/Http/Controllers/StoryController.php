@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AchievementService;
 use App\Models\Story;
 use App\Models\StoryProgress;
 use Illuminate\Http\JsonResponse;
@@ -136,6 +137,10 @@ class StoryController extends Controller
         }
 
         $progress->save();
+        if ($data['completed'] ?? false) {
+    app(AchievementService::class)
+        ->sync(auth()->user());
+}
 
         return response()->json([
             'saved' => true,

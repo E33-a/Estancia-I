@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AchievementService;
 use App\Models\Assessment;
 use App\Models\AssessmentAnswer;
 use App\Models\AssessmentAttempt;
@@ -317,7 +318,8 @@ class AssessmentController extends Controller
             &$score,
             &$maximumScore,
             &$correctCount
-        ) {
+        ) 
+        {
             AssessmentAnswer::query()
                 ->where(
                     'attempt_id',
@@ -412,6 +414,8 @@ class AssessmentController extends Controller
                 'submitted_at' => now(),
             ]);
         });
+        app(AchievementService::class)
+            ->sync(auth()->user());
 
         return redirect()->route(
             'assessments.result',

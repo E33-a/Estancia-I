@@ -191,12 +191,21 @@ export default function Result({ result }) {
             </div>
           </section>
 
-          <div className="grid sm:grid-cols-2 gap-3 mt-8">
+          <div className="grid sm:grid-cols-3 gap-3 mt-8">
             <Link
               href={route("assessments.index")}
               className="border-2 border-primary text-primary rounded-xl py-4 text-center font-bold"
             >
               Mis evaluaciones
+            </Link>
+            <Link
+              href={route("achievements.index")}
+              className="bg-secondary text-white rounded-xl py-4 text-center font-bold flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined">
+                workspace_premium
+              </span>
+              Ver Mis Logros
             </Link>
 
             <Link

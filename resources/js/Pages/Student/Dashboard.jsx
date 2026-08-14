@@ -323,31 +323,39 @@ export default function Dashboard() {
 
           {/* Sección Logros */}
           <div className="max-w-2xl mx-auto">
-            <button className="w-full bg-primary-container text-on-primary-container p-6 rounded-3xl flex items-center justify-between shadow-lg hover:shadow-xl transition-all press-effect group">
+            <Link
+              href={route("achievements.index")}
+              className="w-full bg-primary-container text-on-primary-container p-6 rounded-3xl flex items-center justify-between shadow-lg hover:shadow-xl transition-all press-effect group"
+            >
               <div className="flex items-center text-left">
                 <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mr-4">
                   <span className="material-symbols-outlined text-white text-[32px]">
                     emoji_events
                   </span>
                 </div>
+
                 <div>
                   <h4
                     className="font-headline-md text-headline-md text-white"
-                    style={{ fontFamily: "Bricolage Grotesque" }}
+                    style={{
+                      fontFamily: "Bricolage Grotesque",
+                    }}
                   >
                     Mis Logros
                   </h4>
+
                   <p className="font-body-md text-white/80">
                     {badges.length > 0
                       ? `Has desbloqueado ${badges.length} medallas hasta ahora.`
-                      : "¡Comienza tus lecciones para desbloquear medallas!"}
+                      : "¡Completa actividades para desbloquear medallas!"}
                   </p>
                 </div>
               </div>
+
               <div className="bg-white text-primary-container rounded-full p-2 group-hover:translate-x-2 transition-transform">
                 <span className="material-symbols-outlined">chevron_right</span>
               </div>
-            </button>
+            </Link>
           </div>
         </main>
 
