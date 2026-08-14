@@ -280,33 +280,45 @@ export default function Dashboard() {
             </div>
 
             {/* Evaluaciones */}
-            <div className="bg-surface-container-lowest rounded-3xl p-6 border-b-4 border-outline shadow-sm card-hover transition-all duration-300 cursor-pointer flex flex-col items-center text-center group">
+            <Link
+              href={route("assessments.index")}
+              className="bg-surface-container-lowest rounded-3xl p-6 border-b-4 border-outline shadow-sm card-hover transition-all duration-300 cursor-pointer flex flex-col items-center text-center group"
+            >
               <div
                 className="w-24 h-24 mb-6 rounded-2xl bg-surface-container flex items-center justify-center floating"
-                style={{ animationDelay: "1.5s" }}
+                style={{
+                  animationDelay: "1.5s",
+                }}
               >
                 <span
                   className="material-symbols-outlined text-[48px] text-outline icon-animate"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
+                  style={{
+                    fontVariationSettings: "'FILL' 1",
+                  }}
                 >
                   assignment
                 </span>
               </div>
+
               <h3
                 className="font-headline-md text-headline-md text-outline mb-2"
-                style={{ fontFamily: "Bricolage Grotesque" }}
+                style={{
+                  fontFamily: "Bricolage Grotesque",
+                }}
               >
                 Mis Evaluaciones
               </h3>
+
               <p className="font-body-md text-body-md text-on-surface-variant">
                 ¿Qué tanto has aprendido esta semana?
               </p>
+
               <div className="mt-auto pt-6 w-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="bg-outline text-white px-4 py-2 rounded-full font-label-lg">
                   Ver retos
                 </span>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Sección Logros */}

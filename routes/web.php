@@ -9,6 +9,7 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\AssessmentController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
 
     Route::middleware(['role:student'])->group(function () {
+        /*
+|--------------------------------------------------------------------------
+| Evaluaciones del estudiante
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/evaluaciones',
+    [AssessmentController::class, 'index']
+)->name('assessments.index');
+
+Route::post(
+    '/evaluaciones/{assessment}/iniciar',
+    [AssessmentController::class, 'start']
+)->name('assessments.start');
+
+Route::get(
+    '/evaluaciones/intentos/{attempt}',
+    [AssessmentController::class, 'take']
+)->name('assessments.take');
+
+Route::post(
+    '/evaluaciones/intentos/{attempt}/enviar',
+    [AssessmentController::class, 'submit']
+)->name('assessments.submit');
+
+Route::get(
+    '/evaluaciones/intentos/{attempt}/resultado',
+    [AssessmentController::class, 'result']
+)->name('assessments.result');
 
         Route::get(
             '/student/dashboard',
