@@ -105,32 +105,31 @@ export default function Index({ games = [] }) {
 
       <div className="min-h-screen flex flex-col bg-surface text-on-surface games-background">
         <main className="flex-grow max-w-7xl mx-auto w-full px-5 md:px-10 py-8">
-          <div className="mb-6">
+          <div className="mb-6"></div>
+
+          <div className="flex items-center gap-4 mb-8">
             <Link
               href={route("student.dashboard")}
-              className="inline-flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors"
+              className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-surface-container-high text-primary hover:bg-primary-fixed transition-colors"
             >
               <span className="material-symbols-outlined">arrow_back</span>
-              Regresar al Menú Principal
             </Link>
+
+            <div>
+              <h1
+                className="text-4xl font-bold text-primary"
+                style={{
+                  fontFamily: "Bricolage Grotesque",
+                }}
+              >
+                Juegos Educativos
+              </h1>
+
+              <p className="text-on-surface-variant">
+                Practica lo aprendido de una forma divertida.
+              </p>
+            </div>
           </div>
-
-          <section className="mb-8">
-            <h1
-              className="text-3xl md:text-4xl font-bold text-primary mb-2"
-              style={{
-                fontFamily: "Bricolage Grotesque",
-              }}
-            >
-              Juegos Educativos
-            </h1>
-
-            <p className="text-on-surface-variant max-w-2xl">
-              ¡Aprende jugando! Pon a prueba tus conocimientos sobre lenguas y
-              cultura mexicana con retos divertidos diseñados especialmente para
-              ti.
-            </p>
-          </section>
 
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {games.map((game) => {

@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class VocabularyItem extends Model
 {
+    public function lessons()
+{
+    return $this
+        ->belongsToMany(
+            Lesson::class,
+            'lesson_vocabulary_item'
+        )
+        ->withPivot('position')
+        ->withTimestamps();
+}
     use HasFactory;
 
     protected $fillable = [

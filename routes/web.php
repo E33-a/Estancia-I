@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\GameResultController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
@@ -72,6 +72,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     '/mis-logros',
     [AchievementController::class, 'index']
 )->name('achievements.index');
+    Route::get(
+    '/lecciones',
+    [LessonController::class, 'index']
+)->name('lessons.index');
+
+Route::get(
+    '/lecciones/{lesson}',
+    [LessonController::class, 'show']
+)->name('lessons.show');
+
+Route::post(
+    '/lecciones/{lesson}/progreso',
+    [LessonController::class, 'progress']
+)->name('lessons.progress');
+
+Route::post(
+    '/lecciones/{lesson}/completar',
+    [LessonController::class, 'complete']
+)->name('lessons.complete');
 
         /*
 |--------------------------------------------------------------------------

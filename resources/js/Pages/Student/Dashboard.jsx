@@ -272,11 +272,14 @@ export default function Dashboard() {
               <p className="font-body-md text-body-md text-on-surface-variant">
                 Sigue tu camino para ser un experto (Nivel {profile.level}).
               </p>
-              <div className="mt-auto pt-6 w-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="bg-primary text-white px-4 py-2 rounded-full font-label-lg">
+              <Link
+                href={route("lessons.index")}
+                className="mt-auto pt-6 w-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <span className="bg-primary text-white px-4 py-2 rounded-full font-label-lg inline-block">
                   Continuar
                 </span>
-              </div>
+              </Link>
             </div>
 
             {/* Evaluaciones */}
