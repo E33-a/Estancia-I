@@ -3,7 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-// Cambia solamente este número si quieres más o menos vidas.
+import GameStatusBar from "@/Components/Games/GameStatusBar";
+import GameResultModal from "@/Components/Games/GameResultModal";
+import PronounceButton from "@/Components/Games/PronounceButton";
+
+import { saveGameResult } from "@/Utils/gameResults";
+
 const MAX_LIVES = 8;
 
 function shuffleCards(pairs) {
@@ -15,7 +20,10 @@ function shuffleCards(pairs) {
       spanish: pair.spanish,
       nahuatl: pair.nahuatl,
       emoji: pair.emoji,
+
+      audioUrl: pair.audioUrl ?? null,
     },
+
     {
       id: `${pair.id}-word`,
       pairId: pair.id,
@@ -23,6 +31,8 @@ function shuffleCards(pairs) {
       spanish: pair.spanish,
       nahuatl: pair.nahuatl,
       emoji: pair.emoji,
+
+      audioUrl: pair.audioUrl ?? null,
     },
   ]);
 
@@ -35,31 +45,60 @@ function shuffleCards(pairs) {
   return cards;
 }
 
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-
-  return `${String(minutes).padStart(2, "0")}:${String(
-    remainingSeconds,
-  ).padStart(2, "0")}`;
-}
-
 export default function Memory({ pairs = [] }) {
   const initialCards = useMemo(() => shuffleCards(pairs), [pairs]);
 
   const [cards, setCards] = useState(initialCards);
+
   const [flipped, setFlipped] = useState([]);
+
   const [matched, setMatched] = useState([]);
+
   const [mistakes, setMistakes] = useState(0);
+
   const [score, setScore] = useState(0);
+
   const [seconds, setSeconds] = useState(0);
+
   const [locked, setLocked] = useState(false);
+
   const [message, setMessage] = useState("");
+
   const [status, setStatus] = useState("playing");
+
+  /*
+   * Información que responde Laravel
+   * después de guardar la partida.
+   */
+  const [resultData, setResultData] = useState({
+    stars: 0,
+    newBadges: [],
+  });
 
   const timeoutRef = useRef(null);
 
+  /*
+   * UUID único de esta partida.
+   *
+   * Si por cualquier motivo se repite
+   * la petición HTTP, Laravel no
+   * registrará dos veces la partida.
+   */
+  const resultUuidRef = useRef(crypto.randomUUID());
+
+  /*
+   * Evita enviar dos veces el
+   * resultado durante el mismo juego.
+   */
+  const resultSentRef = useRef(false);
+
   const lives = Math.max(0, MAX_LIVES - mistakes);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Reiniciar
+  |--------------------------------------------------------------------------
+  */
 
   const resetGame = useCallback(() => {
     if (timeoutRef.current) {
@@ -67,27 +106,56 @@ export default function Memory({ pairs = [] }) {
     }
 
     setCards(shuffleCards(pairs));
+
     setFlipped([]);
     setMatched([]);
     setMistakes(0);
+
     setScore(0);
     setSeconds(0);
+
     setLocked(false);
     setMessage("");
+
     setStatus("playing");
+
+    setResultData({
+      stars: 0,
+      newBadges: [],
+    });
+
+    /*
+     * Nueva partida =
+     * nuevo identificador.
+     */
+    resultUuidRef.current = crypto.randomUUID();
+
+    resultSentRef.current = false;
   }, [pairs]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Cronómetro
+  |--------------------------------------------------------------------------
+  */
 
   useEffect(() => {
     if (status !== "playing") {
       return;
     }
 
-    const timer = setInterval(() => {
+    const timer = window.setInterval(() => {
       setSeconds((current) => current + 1);
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, [status]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Limpiar timeout al abandonar
+  |--------------------------------------------------------------------------
+  */
 
   useEffect(() => {
     return () => {
@@ -97,32 +165,98 @@ export default function Memory({ pairs = [] }) {
     };
   }, []);
 
+  /*
+  |--------------------------------------------------------------------------
+  | Detectar victoria
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
     if (
       pairs.length > 0 &&
       matched.length === pairs.length &&
       status === "playing"
     ) {
-      setStatus("won");
-
+      /*
+       * Bono final dependiendo de
+       * las vidas conservadas.
+       */
       setScore((current) => current + lives * 25);
+
+      setStatus("won");
     }
   }, [matched, pairs.length, lives, status]);
 
-  const speakWord = (word) => {
-    if (!("speechSynthesis" in window)) {
+  /*
+  |--------------------------------------------------------------------------
+  | Guardar resultado
+  |--------------------------------------------------------------------------
+  |
+  | Se ejecuta tanto al ganar como
+  | al quedarse sin vidas.
+  |
+  */
+
+  useEffect(() => {
+    if (status === "playing" || resultSentRef.current) {
       return;
     }
 
-    window.speechSynthesis.cancel();
+    resultSentRef.current = true;
 
-    const utterance = new SpeechSynthesisUtterance(word);
+    let cancelled = false;
 
-    utterance.lang = "es-MX";
-    utterance.rate = 0.75;
+    const persistResult = async () => {
+      try {
+        const response = await saveGameResult({
+          resultUuid: resultUuidRef.current,
 
-    window.speechSynthesis.speak(utterance);
-  };
+          gameKey: "memory",
+
+          score,
+
+          livesRemaining: lives,
+
+          elapsedSeconds: seconds,
+
+          won: status === "won",
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        setResultData({
+          stars: response.result?.stars ?? 0,
+
+          newBadges: response.newBadges ?? [],
+        });
+      } catch (error) {
+        console.error("No se pudo guardar el resultado del Memorama:", error);
+
+        /*
+         * Permitimos intentar
+         * enviar nuevamente si
+         * ocurre un error real.
+         */
+        if (!cancelled) {
+          resultSentRef.current = false;
+        }
+      }
+    };
+
+    persistResult();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status, score, lives, seconds]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Seleccionar cartas
+  |--------------------------------------------------------------------------
+  */
 
   const handleCardClick = (card) => {
     if (
@@ -148,6 +282,9 @@ export default function Memory({ pairs = [] }) {
 
     const secondCard = cards.find((item) => item.id === newFlipped[1]);
 
+    /*
+     * Pareja correcta
+     */
     if (firstCard && secondCard && firstCard.pairId === secondCard.pairId) {
       setMatched((current) => [...current, firstCard.pairId]);
 
@@ -158,25 +295,28 @@ export default function Memory({ pairs = [] }) {
       setFlipped([]);
       setLocked(false);
 
-      timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = window.setTimeout(() => {
         setMessage("");
       }, 2200);
 
       return;
     }
 
-    timeoutRef.current = setTimeout(() => {
+    /*
+     * Pareja incorrecta
+     */
+    timeoutRef.current = window.setTimeout(() => {
       setFlipped([]);
       setLocked(false);
 
       setMistakes((current) => {
-        const nextMistakes = current + 1;
+        const next = current + 1;
 
-        if (nextMistakes >= MAX_LIVES) {
+        if (next >= MAX_LIVES) {
           setStatus("lost");
         }
 
-        return nextMistakes;
+        return next;
       });
     }, 900);
   };
@@ -203,24 +343,34 @@ export default function Memory({ pairs = [] }) {
           position: relative;
           width: 100%;
           height: 100%;
-          transition: transform 0.45s;
-          transform-style: preserve-3d;
+          transition:
+            transform 0.45s;
+
+          transform-style:
+            preserve-3d;
         }
 
-        .memory-card-visible .memory-card-inner {
-          transform: rotateY(180deg);
+        .memory-card-visible
+        .memory-card-inner {
+          transform:
+            rotateY(180deg);
         }
 
         .memory-card-back,
         .memory-card-front {
           position: absolute;
           inset: 0;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
+
+          backface-visibility:
+            hidden;
+
+          -webkit-backface-visibility:
+            hidden;
         }
 
         .memory-card-front {
-          transform: rotateY(180deg);
+          transform:
+            rotateY(180deg);
         }
 
         @keyframes matchPulse {
@@ -229,7 +379,8 @@ export default function Memory({ pairs = [] }) {
           }
 
           50% {
-            transform: scale(1.04);
+            transform:
+              scale(1.04);
           }
 
           100% {
@@ -238,70 +389,38 @@ export default function Memory({ pairs = [] }) {
         }
 
         .matched-card {
-          animation: matchPulse 0.8s ease;
+          animation:
+            matchPulse
+            0.8s
+            ease;
+
           box-shadow:
             0 0 0 3px #36693e,
-            0 8px 20px rgba(54, 105, 62, 0.2);
+            0 8px 20px
+              rgba(
+                54,
+                105,
+                62,
+                0.2
+              );
         }
       `}</style>
 
       <div className="min-h-screen bg-surface-bright flex flex-col">
-        {/* Barra superior del juego */}
+        {/* Barra de estado común */}
         <header className="bg-surface-bright shadow-sm border-b border-outline-variant sticky top-[80px] z-40">
-          <div className="max-w-5xl mx-auto px-5 md:px-10 py-3 flex justify-between items-center">
-            {/* Vidas */}
-            <div className="flex items-center gap-1 flex-wrap">
-              {Array.from({ length: MAX_LIVES }, (_, index) => index + 1).map(
-                (heart) => (
-                  <span
-                    key={heart}
-                    className={`material-symbols-outlined ${
-                      heart <= lives ? "text-primary" : "text-outline-variant"
-                    }`}
-                    style={{
-                      fontVariationSettings:
-                        heart <= lives ? "'FILL' 1" : "'FILL' 0",
-                    }}
-                  >
-                    favorite
-                  </span>
-                ),
-              )}
-
-              <span className="ml-1 font-label-lg text-on-surface-variant">
-                {lives}/{MAX_LIVES}
-              </span>
-            </div>
-
-            {/* Tiempo */}
-            <div className="flex items-center bg-surface-container-high px-4 py-2 rounded-full shadow-inner">
-              <span className="material-symbols-outlined text-primary mr-2">
-                timer
-              </span>
-
-              <span className="font-bold text-xl text-primary tabular-nums">
-                {formatTime(seconds)}
-              </span>
-            </div>
-
-            {/* Puntuación */}
-            <div className="flex items-center gap-1">
-              <span
-                className="material-symbols-outlined text-tertiary"
-                style={{
-                  fontVariationSettings: "'FILL' 1",
-                }}
-              >
-                star
-              </span>
-
-              <span className="font-bold text-on-surface">{score}</span>
-            </div>
+          <div className="max-w-5xl mx-auto px-5 md:px-10 py-3">
+            <GameStatusBar
+              lives={lives}
+              maxLives={MAX_LIVES}
+              score={score}
+              elapsedSeconds={seconds}
+            />
           </div>
         </header>
 
         <main className="flex-grow flex flex-col items-center px-5 py-8 relative">
-          {/* Mensaje cuando encuentra una pareja */}
+          {/* Mensaje de pareja correcta */}
           <div
             className={`
               fixed
@@ -352,12 +471,11 @@ export default function Memory({ pairs = [] }) {
             </h1>
 
             <p className="text-on-surface-variant mt-1">
-              Vocabulario en Náhuatl
+              Animales del México Antiguo
             </p>
 
             <p className="text-sm text-on-surface-variant mt-2">
-              Relaciona cada concepto en español con su palabra correspondiente
-              en Náhuatl.
+              Encuentra la imagen que corresponde con su palabra en Náhuatl.
             </p>
           </div>
 
@@ -368,33 +486,58 @@ export default function Memory({ pairs = [] }) {
 
               const isMatched = matched.includes(card.pairId);
 
+              const disabled = locked || isMatched || status !== "playing";
+
               return (
-                <button
+                <div
                   key={card.id}
-                  type="button"
+                  role="button"
+                  tabIndex={disabled ? -1 : 0}
+                  aria-disabled={disabled}
                   onClick={() => handleCardClick(card)}
-                  disabled={locked || isMatched || status !== "playing"}
+                  onKeyDown={(event) => {
+                    /*
+                     * Si el evento viene
+                     * del botón de audio,
+                     * no voltea la carta.
+                     */
+                    if (event.target !== event.currentTarget) {
+                      return;
+                    }
+
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+
+                      handleCardClick(card);
+                    }
+                  }}
                   className={`
-                    memory-card
-                    relative
-                    aspect-square
-                    rounded-xl
-                    outline-none
-                    transition-transform
+                      memory-card
+                      relative
+                      aspect-square
+                      rounded-xl
+                      outline-none
+                      transition-transform
 
-                    ${!visible && status === "playing" ? "hover:scale-105" : ""}
+                      ${!disabled ? "cursor-pointer" : "cursor-default"}
 
-                    ${visible ? "memory-card-visible" : ""}
-                  `}
+                      ${
+                        !visible && status === "playing"
+                          ? "hover:scale-105"
+                          : ""
+                      }
+
+                      ${visible ? "memory-card-visible" : ""}
+                    `}
                 >
                   <div
                     className={`
-                      memory-card-inner
-                      rounded-xl
-                      shadow-md
+                        memory-card-inner
+                        rounded-xl
+                        shadow-md
 
-                      ${isMatched ? "matched-card" : ""}
-                    `}
+                        ${isMatched ? "matched-card" : ""}
+                      `}
                   >
                     {/* Reverso */}
                     <div className="memory-card-back memory-pattern rounded-xl border-2 border-primary-container flex items-center justify-center">
@@ -430,25 +573,18 @@ export default function Memory({ pairs = [] }) {
                             Náhuatl
                           </p>
 
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            onClick={(event) => {
-                              event.stopPropagation();
-
-                              speakWord(card.nahuatl);
-                            }}
-                            className="mt-1 bg-surface-container-high rounded-full p-1 text-primary hover:bg-primary hover:text-white transition-colors"
-                          >
-                            <span className="material-symbols-outlined text-base">
-                              volume_up
-                            </span>
-                          </span>
+                          <div className="mt-2">
+                            <PronounceButton
+                              text={card.nahuatl}
+                              audioUrl={card.audioUrl}
+                              compact
+                            />
+                          </div>
                         </>
                       )}
                     </div>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -474,103 +610,16 @@ export default function Memory({ pairs = [] }) {
           </div>
         </main>
 
-        {/* Modal de resultado */}
-        {status !== "playing" && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[120] flex items-center justify-center p-5">
-            <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border border-outline-variant">
-              <div
-                className={`
-                  w-20
-                  h-20
-                  rounded-full
-                  mx-auto
-                  mb-5
-                  flex
-                  items-center
-                  justify-center
-
-                  ${
-                    status === "won"
-                      ? "bg-secondary-container text-secondary"
-                      : "bg-error-container text-error"
-                  }
-                `}
-              >
-                <span className="material-symbols-outlined text-5xl">
-                  {status === "won" ? "emoji_events" : "sentiment_dissatisfied"}
-                </span>
-              </div>
-
-              <h2
-                className="text-3xl font-bold text-on-surface mb-2"
-                style={{
-                  fontFamily: "Bricolage Grotesque",
-                }}
-              >
-                {status === "won"
-                  ? "¡Excelente trabajo!"
-                  : "¡Inténtalo de nuevo!"}
-              </h2>
-
-              <p className="text-on-surface-variant mb-6">
-                {status === "won"
-                  ? "Encontraste todas las parejas del memorama."
-                  : "Se terminaron tus intentos, pero puedes volver a intentarlo."}
-              </p>
-
-              <div className="grid grid-cols-3 gap-3 mb-7">
-                <div className="bg-surface-container rounded-xl p-3">
-                  <span className="material-symbols-outlined text-tertiary">
-                    star
-                  </span>
-
-                  <p className="font-bold">{score}</p>
-
-                  <p className="text-xs text-on-surface-variant">Puntos</p>
-                </div>
-
-                <div className="bg-surface-container rounded-xl p-3">
-                  <span className="material-symbols-outlined text-primary">
-                    timer
-                  </span>
-
-                  <p className="font-bold">{formatTime(seconds)}</p>
-
-                  <p className="text-xs text-on-surface-variant">Tiempo</p>
-                </div>
-
-                <div className="bg-surface-container rounded-xl p-3">
-                  <span className="material-symbols-outlined text-secondary">
-                    check_circle
-                  </span>
-
-                  <p className="font-bold">
-                    {matched.length}/{pairs.length}
-                  </p>
-
-                  <p className="text-xs text-on-surface-variant">Pares</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  type="button"
-                  onClick={resetGame}
-                  className="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary-container transition-colors"
-                >
-                  Jugar de nuevo
-                </button>
-
-                <Link
-                  href={route("games.index")}
-                  className="flex-1 border-2 border-primary text-primary py-3 rounded-xl font-bold hover:bg-primary-fixed transition-colors"
-                >
-                  Catálogo
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Modal común */}
+        <GameResultModal
+          open={status !== "playing"}
+          won={status === "won"}
+          score={score}
+          elapsedSeconds={seconds}
+          stars={resultData.stars}
+          newBadges={resultData.newBadges}
+          onRetry={resetGame}
+        />
       </div>
     </AuthenticatedLayout>
   );

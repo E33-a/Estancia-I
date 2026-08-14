@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GameResult;
 use App\Models\AssessmentAttempt;
 use App\Models\StoryProgress;
 use App\Services\AchievementService;
@@ -15,6 +16,78 @@ class AchievementController extends Controller
         AchievementService $achievementService
     ): Response {
         $user = auth()->user();
+        /*
+|--------------------------------------------------------------------------
+| Historial de juegos
+|--------------------------------------------------------------------------
+*/
+
+$gameNames = [
+    'memory' =>
+        'Memorama',
+
+    'matching' =>
+        'Relacionar',
+
+    'wordsearch' =>
+        'Sopa de Letras',
+
+    'puzzle' =>
+        'Rompecabezas',
+
+    'dictation' =>
+        'Dictado',
+
+    'trivia' =>
+        'Trivia Cultural',
+];
+
+$gameHistory =
+    GameResult::query()
+        ->where(
+            'user_id',
+            $user->id
+        )
+        ->get()
+        ->map(
+            function (
+                GameResult $result
+            ) use (
+                $gameNames
+            ) {
+                return [
+                    'id' =>
+                        'game-' .
+                        $result->id,
+
+                    'type' =>
+                        'game',
+
+                    'title' =>
+                        $gameNames[
+                            $result
+                                ->game_key
+                        ]
+                        ?? 'Juego',
+
+                    'score' =>
+                        $result->score,
+
+                    'date' =>
+                        optional(
+                            $result
+                                ->played_at
+                        )
+                            ->toISOString(),
+
+                    'icon' =>
+                        'sports_esports',
+
+                    'color' =>
+                        'tertiary',
+                ];
+            }
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -244,12 +317,15 @@ class AchievementController extends Controller
         */
 
         $activityHistory =
-            $assessmentHistory
-                ->concat(
-                    $storyHistory
-                )
-                ->sortByDesc('date')
-                ->values();
+    $assessmentHistory
+        ->concat(
+            $storyHistory
+        )
+        ->concat(
+            $gameHistory
+        )
+        ->sortByDesc('date')
+        ->values();
 
         /*
         |--------------------------------------------------------------------------

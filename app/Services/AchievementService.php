@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AssessmentAttempt;
+use App\Models\GameResult;
 use App\Models\StoryProgress;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,7 @@ class AchievementService
 
         /*
         |--------------------------------------------------------------------------
-        | Evaluaciones
+        | Evaluaciones terminadas
         |--------------------------------------------------------------------------
         */
 
@@ -52,9 +53,7 @@ class AchievementService
                 ->filter(function (
                     AssessmentAttempt $attempt
                 ) {
-                    if (
-                        !$attempt->assessment
-                    ) {
+                    if (!$attempt->assessment) {
                         return false;
                     }
 
@@ -77,46 +76,142 @@ class AchievementService
 
         /*
         |--------------------------------------------------------------------------
+        | Juegos
+        |--------------------------------------------------------------------------
+        */
+
+        $gameResults =
+            GameResult::query()
+                ->where(
+                    'user_id',
+                    $user->id
+                )
+                ->get();
+
+        $wonGames =
+            $gameResults
+                ->where(
+                    'won',
+                    true
+                );
+
+        // Total de partidas ganadas.
+        $gamesWon =
+            $wonGames->count();
+
+        // Número de juegos distintos que ya completó.
+        // memory, matching, wordsearch, puzzle, dictation y trivia.
+        $uniqueGamesCompleted =
+            $wonGames
+                ->pluck('game_key')
+                ->unique()
+                ->count();
+
+        // Partidas completadas conservando todas las vidas.
+        $perfectGames =
+            $wonGames
+                ->filter(
+                    function ($result) {
+                        return
+                            $result->lives_remaining >=
+                            $result->max_lives;
+                    }
+                )
+                ->count();
+
+        // Número de victorias específicas en Memorama.
+        $memoryWins =
+            $wonGames
+                ->where(
+                    'game_key',
+                    'memory'
+                )
+                ->count();
+
+        // Estrellas ganadas jugando.
+        $totalGameStars =
+            (int)
+            $gameResults
+                ->sum(
+                    'earned_stars'
+                );
+
+        /*
+        |--------------------------------------------------------------------------
         | Insignias disponibles
         |--------------------------------------------------------------------------
         */
 
-        $badges = DB::table('badges')
-            ->where(
-                'active',
-                true
-            )
-            ->whereNotNull('slug')
-            ->get();
+        $badges =
+            DB::table('badges')
+                ->where(
+                    'active',
+                    true
+                )
+                ->whereNotNull(
+                    'slug'
+                )
+                ->get();
 
         $newBadges = [];
 
         foreach ($badges as $badge) {
-            $currentValue = match (
-                $badge->unlock_type
-            ) {
-                'stories_completed' =>
-                    $storiesCompleted,
+            /*
+            |--------------------------------------------------------------------------
+            | Calcular avance de cada tipo de insignia
+            |--------------------------------------------------------------------------
+            */
 
-                'assessments_passed' =>
-                    $assessmentsPassed,
+            $currentValue =
+                match (
+                    $badge->unlock_type
+                ) {
+                    'stories_completed' =>
+                        $storiesCompleted,
 
-                'best_assessment_score' =>
-                    $bestAssessmentScore,
+                    'assessments_passed' =>
+                        $assessmentsPassed,
 
-                default => 0,
-            };
+                    'best_assessment_score' =>
+                        $bestAssessmentScore,
+
+                    'games_won' =>
+                        $gamesWon,
+
+                    'unique_games_completed' =>
+                        $uniqueGamesCompleted,
+
+                    'perfect_games' =>
+                        $perfectGames,
+
+                    'memory_wins' =>
+                        $memoryWins,
+
+                    'total_game_stars' =>
+                        $totalGameStars,
+
+                    default => 0,
+                };
 
             $shouldUnlock =
                 $currentValue >=
-                (int) $badge->unlock_value;
+                (int)
+                $badge->unlock_value;
 
             if (!$shouldUnlock) {
                 continue;
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Comprobar si ya la tenía
+            |--------------------------------------------------------------------------
+            */
+
             $alreadyUnlocked =
-                DB::table('user_badges')
+                DB::table(
+                    'user_badges'
+                )
                     ->where(
                         'user_id',
                         $user->id
@@ -137,7 +232,9 @@ class AchievementService
             |--------------------------------------------------------------------------
             */
 
-            DB::table('user_badges')
+            DB::table(
+                'user_badges'
+            )
                 ->insert([
                     'user_id' =>
                         $user->id,
@@ -157,13 +254,13 @@ class AchievementService
 
             /*
             |--------------------------------------------------------------------------
-            | Recompensa de estrellas
+            | Estrellas extra por desbloquear la insignia
             |--------------------------------------------------------------------------
             */
 
             if (
-                (int) $badge->stars_reward >
-                0
+                (int)
+                $badge->stars_reward > 0
             ) {
                 DB::table(
                     'student_profiles'
@@ -179,20 +276,37 @@ class AchievementService
                     );
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Se devuelve al frontend para mostrarla en el modal
+            |--------------------------------------------------------------------------
+            */
+
             $newBadges[] = [
-                'id' => $badge->id,
-                'name' => $badge->name,
-                'icon' => $badge->icon,
+                'id' =>
+                    $badge->id,
+
+                'name' =>
+                    $badge->name,
+
+                'icon' =>
+                    $badge->icon,
+
+                'starsReward' =>
+                    (int)
+                    $badge->stars_reward,
             ];
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Sincronizar número de cuentos
+        | Sincronizar cuentos leídos
         |--------------------------------------------------------------------------
         */
 
-        DB::table('student_profiles')
+        DB::table(
+            'student_profiles'
+        )
             ->where(
                 'user_id',
                 $user->id
@@ -205,12 +319,19 @@ class AchievementService
                     now(),
             ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Estadísticas generales
+        |--------------------------------------------------------------------------
+        */
+
         return [
             'storiesCompleted' =>
                 $storiesCompleted,
 
             'assessmentsCompleted' =>
-                $assessmentAttempts->count(),
+                $assessmentAttempts
+                    ->count(),
 
             'assessmentsPassed' =>
                 $assessmentsPassed,
@@ -220,6 +341,24 @@ class AchievementService
                     $bestAssessmentScore,
                     2
                 ),
+
+            'gamesPlayed' =>
+                $gameResults->count(),
+
+            'gamesWon' =>
+                $gamesWon,
+
+            'uniqueGamesCompleted' =>
+                $uniqueGamesCompleted,
+
+            'perfectGames' =>
+                $perfectGames,
+
+            'memoryWins' =>
+                $memoryWins,
+
+            'totalGameStars' =>
+                $totalGameStars,
 
             'newBadges' =>
                 $newBadges,

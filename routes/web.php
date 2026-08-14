@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\GameResultController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GameController;
@@ -61,10 +63,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
 
     Route::middleware(['role:student'])->group(function () {
+        
+        Route::post(
+    '/juegos/resultados',
+    [GameResultController::class, 'store']
+)->name('games.results.store');
         Route::get(
     '/mis-logros',
     [AchievementController::class, 'index']
 )->name('achievements.index');
+
         /*
 |--------------------------------------------------------------------------
 | Evaluaciones del estudiante

@@ -1,7 +1,14 @@
 import { Head, Link } from "@inertiajs/react";
-import { useEffect, useMemo, useState } from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+
+import GameStatusBar from "@/Components/Games/GameStatusBar";
+import GameResultModal from "@/Components/Games/GameResultModal";
+import PronounceButton from "@/Components/Games/PronounceButton";
+
+import useGameTimer from "@/Hooks/useGameTimer";
+
+import { saveGameResult } from "@/Utils/gameResults";
 
 const MAX_LIVES = 8;
 
