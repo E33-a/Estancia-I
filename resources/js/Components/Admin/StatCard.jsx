@@ -1,4 +1,7 @@
 export default function StatCard({ title, value, icon, variant = 'default', badge }) {
+    // Tratamiento seguro de valores
+    const displayValue = (value !== null && value !== undefined) ? value : 'N/A';
+
     if (variant === 'highlight') {
         return (
             <div className="bg-primary p-lg rounded-xl sunset-shadow-lg text-on-primary flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
@@ -9,9 +12,16 @@ export default function StatCard({ title, value, icon, variant = 'default', badg
                 </div>
                 <div className="mt-lg">
                     <p className="font-label-lg text-label-lg opacity-80 uppercase tracking-wider">{title}</p>
-                    <p className="font-display-lg text-display-lg mt-xs">
-                        {value} {badge && <span className="text-lg font-normal">{badge}</span>}
-                    </p>
+                    <div className="flex items-baseline gap-xs mt-xs">
+                        <p className="font-display-lg text-display-lg leading-none">
+                            {displayValue}
+                        </p>
+                        {badge && (
+                            <span className="text-sm font-semibold opacity-90">
+                                {badge}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
         );
@@ -32,7 +42,7 @@ export default function StatCard({ title, value, icon, variant = 'default', badg
             </div>
             <div className="mt-lg">
                 <p className="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">{title}</p>
-                <p className="font-display-lg text-display-lg mt-xs">{value}</p>
+                <p className="font-display-lg text-display-lg mt-xs">{displayValue}</p>
             </div>
         </div>
     );

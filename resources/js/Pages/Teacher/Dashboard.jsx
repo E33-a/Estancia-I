@@ -1,5 +1,8 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
+import TeacherSidebar from '@/Components/Teacher/Sidebar';
+import TeacherTopbar from '@/Components/Teacher/Topbar';
 
 export default function Dashboard({ 
     teacherProfile = null, 
@@ -9,12 +12,12 @@ export default function Dashboard({
     groupAverage = 'N/A',
     announcements = []
 }) {
-    // Obtenemos el usuario autenticado desde Inertia
-    const { auth } = usePage().props;
-    const user = auth?.user;
+    // Estado para controlar si el sidebar está abierto o colapsado
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    // Datos dinámicos del docente
-    const teacherData = teacherProfile || user?.teacher_profile || {};
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
     return (
         <>
@@ -50,140 +53,19 @@ export default function Dashboard({
 
             <div className="font-body-md text-on-surface bg-surface min-h-screen flex">
                 
-                {/* SIDEBAR NAVIGATION (Fija a la izquierda) */}
-                <aside className="h-screen w-64 fixed left-0 top-0 bg-surface shadow-md flex flex-col border-r border-outline-variant/30 z-50">
-                    {/* Brand Header */}
-                    <div className="px-6 py-8 border-b border-outline-variant/20">
-                        <h1 className="font-headline-md text-headline-md font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
-                            Raíces Vivas
-                        </h1>
-                        <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
-                            Educator Console
-                        </p>
-                    </div>
+                {/* SIDEBAR NAVIGATION (Pasamos el estado e isSidebarOpen) */}
+                <TeacherSidebar 
+                    teacherProfile={teacherProfile} 
+                    isOpen={isSidebarOpen} 
+                    toggleSidebar={toggleSidebar} 
+                />
 
-                    {/* Perfil del docente */}
-                    <div className="px-4 py-6 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
-                            <span className="material-symbols-outlined">person</span>
-                        </div>
-                        <div>
-                            <p className="font-label-lg text-label-lg text-on-surface font-semibold">
-                                {user?.name || 'Docente'}
-                            </p>
-                            <p className="text-[10px] text-on-surface-variant">
-                                ID: {teacherData.teacher_id || 'Sin ID'}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Navegación Principal */}
-                    <nav className="flex-1 px-3 space-y-1 mt-2">
-                        <Link 
-                            href="#" 
-                            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg group"
-                        >
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">library_books</span>
-                            <span className="font-label-lg text-label-lg">Content Management</span>
-                        </Link>
-                        <Link 
-                            href="#" 
-                            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg group"
-                        >
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">assignment_turned_in</span>
-                            <span className="font-label-lg text-label-lg">Task Assignment</span>
-                        </Link>
-                        <Link 
-                            href="#" 
-                            className="flex items-center gap-3 px-4 py-3 text-primary font-bold border-r-4 border-primary bg-primary-container/10 rounded-l-lg group"
-                        >
-                            <span className="material-symbols-outlined">analytics</span>
-                            <span className="font-label-lg text-label-lg">Reports</span>
-                        </Link>
-                        <Link 
-                            href="#" 
-                            className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg group"
-                        >
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">quiz</span>
-                            <span className="font-label-lg text-label-lg">Assessments</span>
-                        </Link>
-                    </nav>
-
-                    {/* Acciones del pie de la Sidebar */}
-                    <div className="p-6 mt-auto space-y-4">
-                        <button className="w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label-lg text-label-lg border-b-4 border-primary-container hover:bg-primary-container transition-all border-press flex items-center justify-center gap-2">
-                            <span className="material-symbols-outlined text-sm">add_circle</span>
-                            Create New Class
-                        </button>
-                        <div className="border-t border-outline-variant/30 pt-4 space-y-1">
-                            <Link href={route('profile.edit')} className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-colors">
-                                <span className="material-symbols-outlined text-md">settings</span>
-                                <span className="font-label-sm text-label-sm">Settings</span>
-                            </Link>
-                            <Link 
-                                method="post" 
-                                href={route('logout')} 
-                                as="button" 
-                                className="w-full flex items-center gap-3 px-4 py-2 text-error hover:bg-error-container/20 rounded-lg transition-colors text-left"
-                            >
-                                <span className="material-symbols-outlined text-md">logout</span>
-                                <span className="font-label-sm text-label-sm">Salir</span>
-                            </Link>
-                        </div>
-                    </div>
-                </aside>
-
-                {/* ÁREA DE CONTENIDO PRINCIPAL */}
-                <div className="ml-64 flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
+                {/* ÁREA DE CONTENIDO PRINCIPAL (Transición dinámica de margen) */}
+                <div className={`flex-1 flex flex-col min-h-screen relative overflow-x-hidden transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
                     <div className="absolute inset-0 otomi-pattern pointer-events-none"></div>
 
-                    {/* TOP APP BAR */}
-                    <header className="flex justify-between items-center w-full px-6 py-4 bg-surface shadow-sm sticky top-0 z-40">
-                        <div className="flex items-center gap-3">
-                            <h2 className="font-headline-md text-headline-md font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>
-                                Raíces Vivas Control Center
-                            </h2>
-                            <div className="h-6 w-[1px] bg-outline-variant/50 mx-2"></div>
-                            <div className="relative">
-                                <select 
-                                    defaultValue=""
-                                    className="bg-surface-container-low border-2 border-outline-variant rounded-lg font-label-lg text-label-lg px-4 py-2 pr-10 appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer text-on-surface"
-                                >
-                                    <option value="" disabled>Seleccionar grupo...</option>
-                                    {groups.map((group) => (
-                                        <option key={group.id} value={group.id}>
-                                            {group.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
-                                    expand_more
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-6">
-                            {/* Buscador corregido en padding e icono */}
-                            <div className="relative flex items-center">
-                                <span className="material-symbols-outlined absolute left-3 text-on-surface-variant pointer-events-none text-xl">
-                                    search
-                                </span>
-                                <input 
-                                    type="text"
-                                    placeholder="Search data..." 
-                                    className="bg-surface-container-lowest border-2 border-outline-variant/30 rounded-full py-2 pl-10 pr-4 focus:border-primary focus:ring-0 text-body-md w-64 transition-all outline-none"
-                                />
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <button className="relative p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-full">
-                                    <span className="material-symbols-outlined">notifications</span>
-                                </button>
-                                <Link href={route('profile.edit')} className="p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-full">
-                                    <span className="material-symbols-outlined">account_circle</span>
-                                </Link>
-                            </div>
-                        </div>
-                    </header>
+                    {/* TOP APP BAR (Pasamos toggleSidebar por si quieres el botón arriba también) */}
+                    <TeacherTopbar groups={groups} toggleSidebar={toggleSidebar} />
 
                     {/* LIENZO DE CONTENIDO */}
                     <main className="p-8 relative z-10 max-w-7xl w-full mx-auto space-y-8 flex-grow">

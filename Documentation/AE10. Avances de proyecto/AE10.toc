@@ -1,0 +1,9 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{Introducción}{5}{section*.1}%
+\contentsline {subsection}{Antecedentes del Estudio}{5}{subsection*.2}%
+\contentsline {subsubsection}{Alcance de este Reporte}{5}{subsubsection*.3}%
+\contentsline {section}{Metodología}{6}{section*.4}%
+\contentsline {section}{Resultados}{7}{section*.6}%
+\contentsline {subsection}{Contraste entre Planeación y Avance Real}{7}{subsection*.7}%
+\contentsline {subsection}{Gráfica de Quemado (Burndown Chart)}{8}{subsection*.9}%
+\contentsline {section}{Discusión}{9}{section*.11}%

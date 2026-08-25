@@ -86,4 +86,14 @@ class User extends Authenticatable
                     ->withPivot('progress', 'completed')
                     ->withTimestamps();
     }
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
 }
