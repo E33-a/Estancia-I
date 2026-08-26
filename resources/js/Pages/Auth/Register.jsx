@@ -8,13 +8,14 @@ export default function Register() {
         name: '',
         email: '',
         password: '',
+        password_confirmation: '',
         role: 'student', // rol por defecto
         avatar: 'axolotl', // avatar por defecto
     });
 
     useEffect(() => {
         return () => {
-            reset('password');
+            reset('password', 'password_confirmation');
         };
     }, []);
 
@@ -25,7 +26,7 @@ export default function Register() {
 
     return (
         <div className="bg-background text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
-            <Head title="Raíces Vivas - Registro" />
+            <Head title="Yoliztli - Registro" />
 
             {/* Carga de Fuentes e Iconos de Google (Opcional si ya los tienes en tu app.blade.php) */}
             <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -47,7 +48,7 @@ export default function Register() {
             {/* TopAppBar */}
             <header className="w-full top-0 sticky z-50 bg-surface border-b-2 border-outline-variant shadow-sm">
                 <div className="flex justify-between items-center w-full px-4 md:px-10 py-3 max-w-7xl mx-auto">
-                    <div className="text-2xl font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Raíces Vivas</div>
+                    <div className="text-2xl font-bold text-primary" style={{ fontFamily: 'Bricolage Grotesque' }}>Yoliztli</div>
                     <nav className="hidden md:flex items-center gap-8">
                         <a className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" style={{ fontFamily: 'Montserrat' }} href="#">Lecciones</a>
                         <a className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" style={{ fontFamily: 'Montserrat' }} href="#">Vocabulario</a>
@@ -75,7 +76,7 @@ export default function Register() {
                         <div className="hidden lg:flex flex-col justify-center items-center p-8 bg-surface-container text-center relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-2 border-t-4 border-dashed border-primary-container opacity-20"></div>
                             <div className="w-full max-w-sm mb-6 aspect-square rounded-full overflow-hidden border-8 border-surface-container-high shadow-xl transform rotate-1">
-                                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhFj3m7tY-rvsHVKz_pdBiXPc8dblp2a9jpvIXYBHKZGMItSk630DC2aZNy-aHgQLYFf6PkOtSej6lYwEqGrBh3H3qTkAF6KjyZF3qj1Xf0PhPBJt3FUoL0AGRBe94WdukclDZlTmC6wJAa8HD__4HZ3SmXYnb0cc7BBidpn3a_MUb_iflkWQGYtMSrlzrxImKESqQRcNqGjD6DJplOX3CoDjgtVTlgUXP7b9hLhy6wsC0I5MnXP7E" alt="Ilustración Raíces Vivas" />
+                                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhFj3m7tY-rvsHVKz_pdBiXPc8dblp2a9jpvIXYBHKZGMItSk630DC2aZNy-aHgQLYFf6PkOtSej6lYwEqGrBh3H3qTkAF6KjyZF3qj1Xf0PhPBJt3FUoL0AGRBe94WdukclDZlTmC6wJAa8HD__4HZ3SmXYnb0cc7BBidpn3a_MUb_iflkWQGYtMSrlzrxImKESqQRcNqGjD6DJplOX3CoDjgtVTlgUXP7b9hLhy6wsC0I5MnXP7E" alt="Ilustración Yoliztli" />
                             </div>
                             <h2 className="text-3xl font-bold text-primary mb-4" style={{ fontFamily: 'Bricolage Grotesque' }}>Comienza tu viaje</h2>
                             <p className="text-lg text-on-surface-variant px-6" style={{ fontFamily: 'Montserrat' }}>Únete a una comunidad dedicada a revitalizar nuestras lenguas ancestrales y celebrar la herencia mexicana.</p>
@@ -237,8 +238,8 @@ export default function Register() {
             <footer className="w-full mt-auto bg-surface-container-low border-t border-outline-variant">
                 <div className="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-10 py-6 max-w-7xl mx-auto">
                     <div className="mb-4 md:mb-0">
-                        <div className="text-xl font-bold text-on-surface mb-1" style={{ fontFamily: 'Bricolage Grotesque' }}>Raíces Vivas</div>
-                        <p className="text-xs text-on-surface-variant">© 2026 Raíces Vivas. Preservando lenguas, celebrando herencia.</p>
+                        <div className="text-xl font-bold text-on-surface mb-1" style={{ fontFamily: 'Bricolage Grotesque' }}>Yoliztli</div>
+                        <p className="text-xs text-on-surface-variant">© 2026 Yoliztli. Preservando lenguas, celebrando herencia.</p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
                         <a className="text-xs text-on-surface-variant hover:text-primary transition-all" href="#">Privacidad</a>
