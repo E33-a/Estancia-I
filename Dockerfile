@@ -15,9 +15,12 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY . /var/www/html
-WORKDIR /var/www/html
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-RUN composer install --no-dev --optimize-autoloader
+# Borrar cachés locales previas para evitar conflictos con paquetes dev (Laravel Pail)
+RUN rm -f bootstrap/cache/*.php
+
+RUN composer install --optimize-autoloader --no-interaction
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
@@ -30,3 +33,4 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/conf-ava
 EXPOSE 80
 
 CMD ["apache2-foreground"]
+
