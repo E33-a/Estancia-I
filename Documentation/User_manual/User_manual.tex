@@ -1,0 +1,394 @@
+% User_manual.tex
+% ================================================================
+% Manual de Usuario Operacional - Proyecto Yoliztli (v1.0.0)
+% Compilar con: lualatex User_manual.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+
+% --- Cargar configuración y paquetes globales ---
+\input{../config/preamble}
+
+% --- Colores Locales ---
+\definecolor{accentred}{RGB}{204, 0, 0}
+\definecolor{accentgreen}{RGB}{0, 153, 76}
+\definecolor{accentblue}{RGB}{0, 102, 204}
+\definecolor{darkcard}{RGB}{245, 247, 250}
+
+% --- Metadatos del PDF ---
+\hypersetup{
+    pdftitle={Manual de Usuario Operacional v1.0.0 --- Yoliztli},
+    pdfauthor={Chavarría, Islas, Morán, Sánchez},
+    pdfsubject={Guía de Interfaces y Manual de Operación por Roles},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+    citecolor=purpleUPP
+}
+
+% ================================================================
+\begin{document}
+
+% --- Portada ---
+\input{cover/cover}
+
+% --- Tabla de contenidos ---
+\newpage
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+}
+\newpage
+
+% ================================================================
+\section{Introducción y Arquitectura del Sistema}
+
+El presente \textbf{Manual de Usuario Operacional} es la guía oficial de uso e interacción para la versión \textbf{v1.0.0} del sistema \textbf{Yoliztli} (Plataforma Educativa para la Enseñanza de Lenguas Originarias en Educación Primaria).
+
+El sistema fue diseñado pensando en la inclusión digital, la sencillez de uso y la preservación cultural. Ofrece una navegación completamente intuitiva dividida en tres roles principales:
+\begin{enumerate}
+    \item \textbf{Rol Estudiante (Alumno)}: Diseñado con colores vibrantes e íconos interactivos. Permite a los niños leer cuentos en su lengua materna (Náhuatl, Maya, Zapoteco, Otomí), escuchar la pronunciación en audio, jugar minijuegos didácticos y consultar sus medallas de logro.
+    \item \textbf{Rol Docente (Profesor)}: Diseñado para facilitar la labor del maestro. Permite dar seguimiento al avance de los niños en tiempo real, visualizar el progreso global del grupo y crear cuestionarios o evaluaciones personalizadas.
+    \item \textbf{Rol Administrador}: Diseñado para la gestión técnica de la plataforma. Permite dar de alta y controlar usuarios, gestionar el catálogo de contenidos y configurar los parámetros del servidor.
+\end{enumerate}
+
+% ================================================================
+\newpage
+\section{Módulo I: Acceso, Autenticación e Identidad}
+
+\subsection{Pantalla de Bienvenida y Selección de Idioma}
+Al entrar al sistema por primera vez, se presenta la pantalla principal de bienvenida (Figura~\ref{fig:gui_welcome}). Desde esta interfaz, el usuario puede seleccionar la variante lingüística deseada antes de iniciar sesión.
+
+\textbf{Pasos de uso recomendados:}
+\begin{itemize}
+    \item \textbf{Selección de Idioma}: Haga clic en uno de los botones disponibles (\textit{Español}, \textit{Náhuatl}, \textit{Maya}, \textit{Zapoteco} u \textit{Otomí}) para adaptar la interfaz.
+    \item \textbf{Botones de Acceso}: Use el botón \textbf{"Iniciar Sesión"} si ya cuenta con un usuario, o \textbf{"Registrarse"} para crear una cuenta nueva.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Welcome__and__Language_Selection.png}
+    \caption{Pantalla de Bienvenida y Selección de Idioma Originario.}
+    \label{fig:gui_welcome}
+\end{figure}
+
+\newpage
+\subsection{Inicio de Sesión (Login)}
+La pantalla de autenticación (Figura~\ref{fig:gui_login}) permite a estudiantes, profesores y administradores ingresar de forma segura a sus portales correspondientes.
+
+\textbf{Instrucciones para iniciar sesión:}
+\begin{enumerate}
+    \item Ingrese su dirección de \textbf{Correo Electrónico} registrada.
+    \item Escriba su \textbf{Contraseña}.
+    \item (Opcional) Marque la casilla \textbf{"Recordarme"} para mantener su sesión activa en el navegador.
+    \item Haga clic en el botón \textbf{"Iniciar Sesión"}.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Log_In.png}
+    \caption{Interfaz de Inicio de Sesión de Usuarios.}
+    \label{fig:gui_login}
+\end{figure}
+
+\newpage
+\subsection{Registro de Usuarios y Recuperación de Credenciales}
+Si es un usuario nuevo o ha olvidado su contraseña, utilice los formularios dedicados de la plataforma (Figura~\ref{fig:gui_register_recovery}).
+
+\textbf{Móduos incluidos:}
+\begin{itemize}
+    \item \textbf{Formulario de Registro} (Figura~\ref{fig:gui_register_recovery}a): Permite capturar nombre, correo, clave y tipo de perfil (Alumno o Docente).
+    \item \textbf{Recuperación de Contraseña} (Figura~\ref{fig:gui_register_recovery}b): Envía un enlace de restablecimiento al correo proporcionado en caso de olvido de credenciales.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Registration.png}
+        \caption{Formulario de Registro.}
+        \label{fig:gui_register}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Password_Recovery.png}
+        \caption{Recuperación de Contraseña.}
+        \label{fig:gui_recovery}
+    \end{subfigure}
+    \caption{Interfaces de Registro de Cuenta y Recuperación de Contraseña.}
+    \label{fig:gui_register_recovery}
+\end{figure}
+
+% ================================================================
+\newpage
+\section{Módulo II: Manual de Operación para el Rol Estudiante (Alumno)}
+
+\subsection{Menú Principal del Estudiante}
+Al iniciar sesión con una cuenta de alumno, se despliega el menú lúdico interactivo (Figura~\ref{fig:gui_student_menu}).
+
+\textbf{Elementos principales del menú:}
+\begin{itemize}
+    \item \textbf{Tarjetas de Acceso Directo}: Botones grandes e ilustrados para entrar a \textit{Cuentos}, \textit{Minijuegos}, \textit{Videos} y \textit{Mis Logros}.
+    \item \textbf{Barra de Progreso Rápido}: Muestra el porcentaje acumulado de lecturas y actividades completadas por el niño.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Student_Main_Menu.png}
+    \caption{Menú Principal e Interfaz Lúdica del Estudiante.}
+    \label{fig:gui_student_menu}
+\end{figure}
+
+\newpage
+\subsection{Perfil de Usuario y Medallero de Logros}
+En esta sección (Figura~\ref{fig:gui_profile_achievements}), el estudiante puede consultar sus datos personales y visualizar las recompensas ganadas durante sus lecturas.
+
+\textbf{Características de la interfaz:}
+\begin{itemize}
+    \item \textbf{Perfil del Estudiante} (Figura~\ref{fig:gui_profile_achievements}a): Permite cambiar la foto de avatar y editar datos básicos.
+    \item \textbf{Medallas de Logro} (Figura~\ref{fig:gui_profile_achievements}b): Muestra las insignias desbloqueadas por completar lecturas y obtener puntuaciones perfectas en los minijuegos.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/User_Profile.png}
+        \caption{Perfil del Estudiante.}
+        \label{fig:gui_profile}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/My_Achievements.png}
+        \caption{Pantalla de Mis Logros.}
+        \label{fig:gui_achievements}
+    \end{subfigure}
+    \caption{Gestión de Perfil de Usuario y Consulta de Medallas.}
+    \label{fig:gui_profile_achievements}
+\end{figure}
+
+\newpage
+\subsection{Catálogo de Cuentos y Lector Interactivo}
+El catálogo de cuentos (Figura~\ref{fig:gui_stories_reader}) es el corazón pedagógico de Yoliztli, ofreciendo relatos tradicionales en lenguas indígenas.
+
+\textbf{Modo de lectura:}
+\begin{enumerate}
+    \item \textbf{Catálogo} (Figura~\ref{fig:gui_stories_reader}a): Filtre por lengua originaria o rango de edad y seleccione una historia.
+    \item \textbf{Lector Interactivo} (Figura~\ref{fig:gui_stories_reader}b): Avance página por página, active la narración en audio y lea la traducción simultánea en Español.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Stories_Catalog.png}
+        \caption{Catálogo de Cuentos.}
+        \label{fig:gui_stories}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Story_Reader.png}
+        \caption{Lector Interactivo de Cuentos.}
+        \label{fig:gui_reader}
+    \end{subfigure}
+    \caption{Exploración y Lectura de Cuentos Indígenas.}
+    \label{fig:gui_stories_reader}
+\end{figure}
+
+\newpage
+\subsection{Catálogo de Minijuegos y Juego de Memoria}
+Para reforzar el aprendizaje del vocabulario, el alumno puede acceder a la sección de minijuegos educativos (Figura~\ref{fig:gui_games_memory}).
+
+\textbf{Funcionamiento del juego:}
+\begin{itemize}
+    \item \textbf{Catálogo de Juegos} (Figura~\ref{fig:gui_games_memory}a): Seleccione la actividad deseada.
+    \item \textbf{Juego de Memoria} (Figura~\ref{fig:gui_games_memory}b): Voltee las cartas para encontrar los pares entre las ilustraciones y las palabras escritas en lengua originaria.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Educational_Games_Catalog.png}
+        \caption{Catálogo de Minijuegos.}
+        \label{fig:gui_games_cat}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Memory_Game.png}
+        \caption{Minijuego de Memoria.}
+        \label{fig:gui_memory}
+    \end{subfigure}
+    \caption{Catálogo de Actividades y Ejecución del Juego de Memoria.}
+    \label{fig:gui_games_memory}
+\end{figure}
+
+\newpage
+\subsection{Emparejamiento de Palabras y Evaluaciones}
+Las actividades prácticas concluyen con ejercicios de asociación directa y cuestionarios didácticos (Figura~\ref{fig:gui_matching_assessment}).
+
+\textbf{Detalle de las dinámicas:}
+\begin{itemize}
+    \item \textbf{Emparejamiento de Palabras} (Figura~\ref{fig:gui_matching_assessment}a): Arrastre y conecte el texto con su imagen correspondiente.
+    \item \textbf{Evaluación del Estudiante} (Figura~\ref{fig:gui_matching_assessment}b): Responda las preguntas de opción múltiple preparadas por el profesor.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Word_Matching_Game.png}
+        \caption{Emparejamiento de Palabras.}
+        \label{fig:gui_matching}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Student_Assessment.png}
+        \caption{Cuestionario del Estudiante.}
+        \label{fig:gui_assessment_student}
+    \end{subfigure}
+    \caption{Minijuego de Asociación de Vocabulario y Cuestionarios.}
+    \label{fig:gui_matching_assessment}
+\end{figure}
+
+% ================================================================
+\newpage
+\section{Módulo III: Manual de Operación para el Rol Docente (Profesor)}
+
+\subsection{Dashboard Principal del Docente}
+Al ingresar con la cuenta de profesor, se muestra el panel de control educativo (Figura~\ref{fig:gui_teacher_dash}), el cual concentra las métricas clave de aprendizaje.
+
+\textbf{Información visible en el panel:}
+\begin{itemize}
+    \item \textbf{Resumen Estadístico}: Total de alumnos inscritos, alumnos activos y porcentaje de avance global del grupo.
+    \item \textbf{Tabla de Alumnos}: Lista detallada con el correo, estatus, última actividad realizada y barra de progreso individual.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Teacher_Main_Dashboard.png}
+    \caption{Dashboard Principal del Rol Docente.}
+    \label{fig:gui_teacher_dash}
+\end{figure}
+
+\newpage
+\subsection{Seguimiento de Progreso y Creador de Evaluaciones}
+El docente cuenta con herramientas para dar seguimiento puntual a las lecturas y evaluar los conocimientos adquiridos (Figura~\ref{fig:gui_reports_creator}).
+
+\textbf{Funcionalidades docentes:}
+\begin{itemize}
+    \item \textbf{Reportes de Progreso} (Figura~\ref{fig:gui_reports_creator}a): Gráficas detalladas del tiempo dedicado y lecturas completadas por grupo.
+    \item \textbf{Creador de Cuestionarios} (Figura~\ref{fig:gui_reports_creator}b): Formulario interactivo para agregar preguntas, opciones de respuesta y asignar cuestionarios a los grupos.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Reports_Progress_Tracking.png}
+        \caption{Seguimiento de Progreso.}
+        \label{fig:gui_reports}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Assessment_Creator__and__Manager.png}
+        \caption{Creador de Cuestionarios.}
+        \label{fig:gui_assessment_creator}
+    \end{subfigure}
+    \caption{Módulos Docentes de Monitoreo y Creación de Evaluaciones.}
+    \label{fig:gui_reports_creator}
+\end{figure}
+
+% ================================================================
+\newpage
+\section{Módulo IV: Manual de Operación para el Rol Administrador}
+
+\subsection{Consola de Administración y Gestión de Usuarios}
+El panel del administrador (Figura~\ref{fig:gui_admin_user_mgr}) permite supervisar el rendimiento técnico del servidor y la lista global de cuentas registradas.
+
+\textbf{Opciones de control:}
+\begin{itemize}
+    \item \textbf{Consola General} (Figura~\ref{fig:gui_admin_user_mgr}a): Estado del servicio, almacenamiento consumido y logs de actividad.
+    \item \textbf{Gestión de Usuarios} (Figura~\ref{fig:gui_admin_user_mgr}b): Alta, modificación de roles (Docente/Alumno), suspensión de acceso y cambio de claves.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/General_Administration_Panel.png}
+        \caption{Panel General de Administración.}
+        \label{fig:gui_admin_panel}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/User_Manager.png}
+        \caption{Gestor de Usuarios del Sistema.}
+        \label{fig:gui_user_mgr}
+    \end{subfigure}
+    \caption{Paneles de Administración del Sistema y Usuarios.}
+    \label{fig:gui_admin_user_mgr}
+\end{figure}
+
+\newpage
+\subsection{Gestión de Contenidos y Configuración Global}
+La administración de materiales y variables del servidor se realiza desde las consolas especializadas (Figura~\ref{fig:gui_content_system}).
+
+\textbf{Controles disponibles:}
+\begin{itemize}
+    \item \textbf{Gestor de Contenidos} (Figura~\ref{fig:gui_content_system}a): Subida de nuevos cuentos, audios en lenguas indígenas e ilustraciones.
+    \item \textbf{Configuración Global} (Figura~\ref{fig:gui_content_system}b): Parámetros de conexión a la base de datos, envío de correos y respaldo del sistema.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Content__and__Resource_Manage.png}
+        \caption{Gestión de Contenidos.}
+        \label{fig:gui_content_mgr}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/System_Configuration.png}
+        \caption{Configuración Global.}
+        \label{fig:gui_system_cfg}
+    \end{subfigure}
+    \caption{Administración de Recurso Educativo y Configuración del Sistema.}
+    \label{fig:gui_content_system}
+\end{figure}
+
+% ================================================================
+\newpage
+\section{Guía de Despliegue e Inicialización del Sistema (v1.0.0)}
+
+Para desplegar e inicializar localmente la versión \textbf{v1.0.0} de Yoliztli en un servidor o máquina de desarrollo, ejecute los siguientes comandos en la terminal:
+
+\begin{verbatim}
+# 1. Acceder al directorio principal del proyecto
+cd /ruta/al/proyecto/Estancia-I
+
+# 2. Instalar dependencias backend (PHP) y frontend (Node.js)
+composer install
+npm install
+
+# 3. Ejecutar migraciones de base de datos y sembrar datos iniciales
+php artisan migrate --force
+php artisan db:seed --force
+
+# 4. Compilar los activos de producción de React con Vite
+npm run build
+
+# 5. Iniciar el servidor local de desarrollo
+php artisan serve --port=8000
+\end{verbatim}
+
+\end{document}
