@@ -1,0 +1,418 @@
+% Final_test_report.tex
+% ================================================================
+% Reporte de Hallazgos de Pruebas v1.0.0 y Manual de Usuario
+% Proyecto Yoliztli - Sistema Educativo Infantil
+% Compilar con: lualatex Final_test_report.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+
+% --- Cargar configuración y paquetes globales ---
+\input{../config/preamble}
+
+% --- Colores Locales ---
+\definecolor{accentred}{RGB}{204, 0, 0}
+\definecolor{accentgreen}{RGB}{0, 153, 76}
+\definecolor{accentblue}{RGB}{0, 102, 204}
+\definecolor{darkcard}{RGB}{245, 247, 250}
+
+% --- Metadatos del PDF ---
+\hypersetup{
+    pdftitle={Reporte de Hallazgos v1.0.0 y Manual de Usuario --- Yoliztli},
+    pdfauthor={Islas Lozada Emmanuel},
+    pdfsubject={Reporte Final de Calidad de Software y Guía Operacional},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+    citecolor=purpleUPP
+}
+
+% ================================================================
+\begin{document}
+
+% --- Portada ---
+\input{cover/cover}
+
+% --- Tabla de contenidos ---
+\newpage
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+}
+\newpage
+
+% ================================================================
+\part{Reporte de Hallazgos de Pruebas (Versión Final v1.0.0)}
+
+\section{Introducción y Alcance del Reporte}
+
+El presente documento constituye el \textbf{Reporte Final de Hallazgos de Pruebas y Manual de Usuario Operacional} correspondiente a la liberación de la versión \textbf{v1.0.0} del sistema \textbf{Yoliztli}. Tras la ejecución del Plan de Mantenimiento de Software y la aplicación de la Reingeniería de Procesos bajo el estándar \textbf{ISO/IEC/IEEE 14764:2014}, se procedió a realizar una auditoría integral de calidad compuesta por pruebas estáticas automatizadas con \textbf{SonarQube Community Edition v25.2.0} y pruebas dinámicas funcionales de caja negra.
+
+El propósito fundamental de esta evaluación es verificar que el software reconstituido cumple rigurosamente con los criterios de calidad interna (ausencia de vulnerabilidades, cero bugs de confiabilidad y deuda técnica bajo control) y calidad externa (operatividad al 100\% en todas las interfaces de los roles Alumno, Docente y Administrador).
+
+\subsection{Resumen del Entorno de Pruebas}
+La auditoría final se llevó a cabo bajo las siguientes especificaciones técnicas de infraestructura:
+\begin{itemize}
+    \item \textbf{Servidor de Pruebas Local}: Fedora Linux 44 Workstation.
+    \item \textbf{Motor de Base de Datos}: PostgreSQL 15.4 / Laravel Eloquent ORM.
+    \item \textbf{Stack de Aplicación}: Laravel 10.x (PHP 8.2), Inertia.js 1.0, React.js 18.2, Vite 5.0.
+    \item \textbf{Herramienta de Auditoría Estática}: SonarQube v25.2.0.
+    \item \textbf{Herramientas de Linteo Pre-commit}: PHP-CS-Fixer (PSR-12) y ESLint 8.x.
+\end{itemize}
+
+% ================================================================
+\section{Auditoría Estática de Código (SonarQube v25.2.0)}
+
+\subsection{Comparativa de Resultados: Diagnóstico Inicial vs. Versión v1.0.0}
+El análisis estático final ejecutado sobre la versión \textbf{v1.0.0} arrojó una transformación drástica en la calidad interna del repositorio. En la Tabla~\ref{tab:sonarqube_comparison} se presenta la comparativa detallada entre la inspección inicial (previa a la intervención de mantenimiento) y la auditoría final.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparativa Cuantitativa de Auditoría Estática SonarQube (Inicial vs. v1.0.0).}
+    \label{tab:sonarqube_comparison}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{XXXc}
+        \toprule
+        \textbf{Métrica de Calidad} & \textbf{Diagnóstico Inicial} & \textbf{Versión Final v1.0.0} & \textbf{Estatus Final} \\
+        \midrule
+        \textbf{Quality Gate Status} & \textbf{FAILED (Rechazado)} & \textbf{PASSED (Aprobado)} & \textbf{Aprobado A} \\
+        \rowcolor{darkcard}
+        \textbf{Bugs de Confiabilidad} & 67 Bugs (Rating C) & 0 Bugs (Rating A) & \textbf{0 Defectos} \\
+        \textbf{Vulnerabilidades de Seguridad} & 0 Vulnerabilidades & 0 Vulnerabilidades & \textbf{Rating A} \\
+        \rowcolor{darkcard}
+        \textbf{Hotspots de Seguridad} & 2 Revisables & 0 Pendientes & \textbf{Rating A} \\
+        \textbf{Code Smells (Deuda)} & 115 Smells (6h 54m) & 5 Smells ($<$ 15m) & \textbf{95.65\% Remediado} \\
+        \rowcolor{darkcard}
+        \textbf{Linteo Automático} & Inexistente (Manual) & 100\% (PHP-CS / ESLint) & \textbf{Estandarizado} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Visualización del Dashboard de Calidad (Quality Gate PASSED)}
+La Figura~\ref{fig:sonarqube_dashboard} representa el estado del Dashboard de SonarQube para la versión v1.0.0, certificando el cumplimiento del nivel óptimo de calidad (**Rating A**) en todos los ejes evaluados.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=0.95]
+        % Contenedor Dashboard
+        \fill[darkcard, draw=black!30, thick, rounded corners=6pt] (-6,-2.8) rectangle (6,2.8);
+        
+        % Encabezado
+        \node[font=\large\bfseries\color{purpleUPP}] at (-2.5,2.2) {SonarQube Dashboard --- Yoliztli v1.0.0};
+        \node[draw=accentgreen, fill=accentgreen!15, text=accentgreen, font=\small\bfseries, rounded corners=3pt, inner sep=4pt] at (4.2,2.2) {QUALITY GATE: PASSED};
+        
+        % Tarjeta 1: Confiabilidad (Bugs)
+        \fill[white, draw=black!20, rounded corners=4pt] (-5.5, 0.2) rectangle (-1.8, 1.6);
+        \node[font=\tiny\color{black!60}] at (-3.65, 1.3) {RELIABILITY (CONFIABILIDAD)};
+        \node[font=\huge\bfseries\color{accentgreen}] at (-4.5, 0.75) {0};
+        \node[font=\small\bfseries\color{white}, fill=accentgreen, circle, inner sep=2pt] at (-2.5, 0.75) {A};
+        \node[font=\tiny\color{black!70}] at (-4.5, 0.35) {Bugs};
+
+        % Tarjeta 2: Seguridad
+        \fill[white, draw=black!20, rounded corners=4pt] (-1.5, 0.2) rectangle (1.8, 1.6);
+        \node[font=\tiny\color{black!60}] at (0.15, 1.3) {SECURITY (SEGURIDAD)};
+        \node[font=\huge\bfseries\color{accentgreen}] at (-0.5, 0.75) {0};
+        \node[font=\small\bfseries\color{white}, fill=accentgreen, circle, inner sep=2pt] at (1.1, 0.75) {A};
+        \node[font=\tiny\color{black!70}] at (-0.5, 0.35) {Vulnerabilidades};
+
+        % Tarjeta 3: Mantenibilidad (Code Smells)
+        \fill[white, draw=black!20, rounded corners=4pt] (2.1, 0.2) rectangle (5.5, 1.6);
+        \node[font=\tiny\color{black!60}] at (3.8, 1.3) {MAINTAINABILITY (DEUDA)};
+        \node[font=\huge\bfseries\color{accentgreen}] at (3.0, 0.75) {5};
+        \node[font=\small\bfseries\color{white}, fill=accentgreen, circle, inner sep=2pt] at (4.8, 0.75) {A};
+        \node[font=\tiny\color{black!70}] at (3.0, 0.35) {Code Smells};
+
+        % Tarjeta 4: Duplicaciones y Cobertura
+        \fill[white, draw=black!20, rounded corners=4pt] (-5.5, -2.3) rectangle (5.5, -0.2);
+        \node[anchor=west, font=\small\bfseries\color{black!80}] at (-5.0, -0.6) {Resultados Integrados de Análisis Estático:};
+        \node[anchor=west, font=\footnotesize\color{black!70}] at (-5.0, -1.1) {$\bullet$ \textbf{Remediación de Deuda Técnica}: 95.65\% de limpieza sobre diagnóstico inicial (MR-003).};
+        \node[anchor=west, font=\footnotesize\color{black!70}] at (-5.0, -1.6) {$\bullet$ \textbf{Estándar de Codificación}: Cumplimiento del 100\% PSR-12 en Backend y ESLint en React.};
+        \node[anchor=west, font=\footnotesize\color{black!70}] at (-5.0, -2.0) {$\bullet$ \textbf{Incidente Crítico PR-001}: Totalmente resuelto mediante compilación automática Vite.};
+    \end{tikzpicture}
+    \caption{Representación del Dashboard Final de SonarQube v25.2.0 para la Versión v1.0.0.}
+    \label{fig:sonarqube_dashboard}
+\end{figure}
+
+% ================================================================
+\section{Pruebas Funcionales Dinámicas (Matriz de Caja Negra)}
+
+\subsection{Resultados de la Matriz de Pruebas Funcionales (CP001 a CP008)}
+Se re-ejecutaron los 8 casos de prueba funcionales de caja negra diseñados para la plataforma Yoliztli, verificando la corrección de las fallas detectadas en el diagnóstico inicial. En la Tabla~\ref{tab:functional_tests} se presenta la matriz de resultados finales.
+
+\begin{table}[H]
+    \centering
+    \caption{Matriz Final de Pruebas Funcionales Dinámicas de Caja Negra (v1.0.0).}
+    \label{tab:functional_tests}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{lXcc}
+        \toprule
+        \textbf{Código CP} & \textbf{Descripción del Caso de Prueba} & \textbf{Resultado Previo} & \textbf{Resultado v1.0.0} \\
+        \midrule
+        \textbf{CP001} & Selección de idioma inicial y bienvenida & Aprobado & \textbf{PASSED (100\%)} \\
+        \rowcolor{darkcard}
+        \textbf{CP002} & Inicio de sesión y autenticación de usuarios & Aprobado & \textbf{PASSED (100\%)} \\
+        \textbf{CP003} & Registro de nuevos usuarios y validaciones & Aprobado & \textbf{PASSED (100\%)} \\
+        \rowcolor{darkcard}
+        \textbf{CP004} & Recuperación de contraseña vía correo & Aprobado & \textbf{PASSED (100\%)} \\
+        \textbf{CP005} & Visualización y actualización de perfil & Aprobado & \textbf{PASSED (100\%)} \\
+        \rowcolor{darkcard}
+        \textbf{CP006} & Catálogo y lectura interactiva de cuentos & Aprobado & \textbf{PASSED (100\%)} \\
+        \textbf{CP007} & \textbf{Filtro de cuentos por categoría y edad} & \textbf{Fallo (Fallido)} & \textbf{PASSED (Remediado MR-004)} \\
+        \rowcolor{darkcard}
+        \textbf{CP008} & \textbf{Persistencia de avance del alumno en PostgreSQL} & \textbf{Fallo (Fallido)} & \textbf{PASSED (Remediado MR-005)} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Verificación de Remediaciones Clave}
+\begin{itemize}
+    \item \textbf{Remediación CP007 (MR-004)}: Se reestructuró el controlador de búsqueda de cuentos en Laravel Eloquent. Las consultas de filtrado dinámico por edad y categoría operan con respuesta inmediata (< 120 ms).
+    \item \textbf{Remediación CP008 (MR-005)}: Se implementaron los esquemas de base de datos y endpoints API para registrar las lecturas completadas y puntuaciones de minijuegos del estudiante, logrando la persistencia exitosa en PostgreSQL.
+\end{itemize}
+
+\newpage
+
+% ================================================================
+\part{Manual de Usuario Operacional y Guía de Interfaces (v1.0.0)}
+
+\section{Estructura de Roles y Navegación General}
+
+La plataforma web **Yoliztli v1.0.0** está diseñada con una arquitectura basada en roles de usuario bien definidos:
+\begin{enumerate}
+    \item \textbf{Rol Estudiante (Alumno)}: Orientado a niños de educación básica para la lectura interactiva de cuentos y la resolución de minijuegos educativos.
+    \item \textbf{Rol Docente (Profesor)}: Diseñado para monitorear el avance de grupos de alumnos, consultar reportes de lectura y gestionar evaluaciones.
+    \item \textbf{Rol Administrador}: Encargado de la configuración global del sistema, la gestión de usuarios y la administración del catálogo de contenidos.
+\end{enumerate}
+
+% ================================================================
+\section{Módulo de Acceso e Identidad}
+
+\subsection{Selección de Idioma y Bienvenida}
+Al ingresar a la plataforma, el usuario es recibido por la pantalla principal de bienvenida (Figura~\ref{fig:gui_welcome}), donde puede seleccionar el idioma originario o español para adaptar la interfaz.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Welcome__and__Language_Selection.png}
+    \caption{Pantalla de Bienvenida y Selección de Idioma Originario.}
+    \label{fig:gui_welcome}
+\end{figure}
+
+\subsection{Inicio de Sesión y Autenticación}
+El módulo de inicio de sesión (Figura~\ref{fig:gui_login}) permite a los usuarios registrados acceder ingresando su correo electrónico y contraseña. Cuenta con validaciones en tiempo real desarrolladas en React.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Log_In.png}
+    \caption{Interfaz de Inicio de Sesión de Usuarios.}
+    \label{fig:gui_login}
+\end{figure}
+
+\subsection{Registro de Usuarios y Recuperación de Contraseña}
+Para nuevos usuarios, el formulario de registro (Figura~\ref{fig:gui_register}) permite crear cuentas especificando el rol asignado. En caso de olvido de credenciales, el módulo de recuperación (Figura~\ref{fig:gui_recovery}) envía un enlace seguro de restablecimiento.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Registration.png}
+        \caption{Formulario de Registro.}
+        \label{fig:gui_register}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Password_Recovery.png}
+        \caption{Recuperación de Contraseña.}
+        \label{fig:gui_recovery}
+    \end{subfigure}
+    \caption{Interfaces de Registro e Identidad.}
+\end{figure}
+
+% ================================================================
+\section{Manual del Rol Estudiante (Alumno)}
+
+\subsection{Menú Principal del Estudiante}
+Al iniciar sesión como estudiante, la pantalla principal (Figura~\ref{fig:gui_student_menu}) presenta un panel lúdico y colorido con acceso directo a las secciones de cuentos, juegos, logros y perfil.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Student_Main_Menu.png}
+    \caption{Menú Principal del Estudiante.}
+    \label{fig:gui_student_menu}
+\end{figure}
+
+\subsection{Perfil y Medallas de Logro}
+El estudiante puede consultar sus datos de perfil (Figura~\ref{fig:gui_profile}) y revisar sus logros acumulados (Figura~\ref{fig:gui_achievements}), donde se despliegan las medallas obtenidas por completar lecturas y minijuegos.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/User_Profile.png}
+        \caption{Perfil del Estudiante.}
+        \label{fig:gui_profile}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/My_Achievements.png}
+        \caption{Pantalla de Mis Logros.}
+        \label{fig:gui_achievements}
+    \end{subfigure}
+    \caption{Interfaces de Perfil y Logros del Alumno.}
+\end{figure}
+
+\subsection{Catálogo de Cuentos y Visor Interactivo}
+El catálogo de cuentos (Figura~\ref{fig:gui_stories}) permite filtrar lecturas por categoría y nivel. Al seleccionar un cuento, se abre el lector interactivo (Figura~\ref{fig:gui_reader}) con ilustraciones y audio bilingüe.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Stories_Catalog.png}
+        \caption{Catálogo de Cuentos.}
+        \label{fig:gui_stories}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Story_Reader.png}
+        \caption{Lector Interactivo de Cuentos.}
+        \label{fig:gui_reader}
+    \end{subfigure}
+    \caption{Módulo de Cuentos Didácticos.}
+\end{figure}
+
+\subsection{Catálogo de Minijuegos Lúdicos y Evaluaciones}
+La sección de juegos educativos (Figura~\ref{fig:gui_games_cat}) incluye actividades lúdicas como el Minijuego de Memoria (Figura~\ref{fig:gui_memory}) y el Minijuego de Emparejamiento (Figura~\ref{fig:gui_matching}). Además, el estudiante puede resolver evaluaciones lúdicas asignadas por su docente (Figura~\ref{fig:gui_assessment_student}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Educational_Games_Catalog.png}
+        \caption{Catálogo de Minijuegos.}
+        \label{fig:gui_games_cat}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Memory_Game.png}
+        \caption{Minijuego de Memoria.}
+        \label{fig:gui_memory}
+    \end{subfigure}
+    \caption{Minijuegos Educativos e Interacción.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Word_Matching_Game.png}
+        \caption{Emparejamiento de Palabras.}
+        \label{fig:gui_matching}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Student_Assessment.png}
+        \caption{Cuestionario del Estudiante.}
+        \label{fig:gui_assessment_student}
+    \end{subfigure}
+    \caption{Minijuego de Palabras y Evaluación Infantil.}
+\end{figure}
+
+% ================================================================
+\section{Manual del Rol Docente (Profesor)}
+
+\subsection{Dashboard Principal del Docente}
+El docente cuenta con un panel de control centralizado (Figura~\ref{fig:gui_teacher_dash}) desde donde visualiza un resumen ejecutivo de la actividad de sus alumnos y grupos asignados.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../img/Interfaces/Teacher_Main_Dashboard.png}
+    \caption{Dashboard Principal del Docente.}
+    \label{fig:gui_teacher_dash}
+\end{figure}
+
+\subsection{Seguimiento de Progreso y Creador de Evaluaciones}
+En el módulo de reportes (Figura~\ref{fig:gui_reports}), el docente analiza métricas cuantitativas del avance del grupo. Mediante la herramienta de gestión de evaluaciones (Figura~\ref{fig:gui_assessment_creator}), puede diseñar y asignar nuevos cuestionarios interactivos.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Reports_Progress_Tracking.png}
+        \caption{Seguimiento de Progreso de Alumnos.}
+        \label{fig:gui_reports}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Assessment_Creator__and__Manager.png}
+        \caption{Creador y Gestor de Evaluaciones.}
+        \label{fig:gui_assessment_creator}
+    \end{subfigure}
+    \caption{Herramientas de Monitoreo y Gestión Docente.}
+\end{figure}
+
+% ================================================================
+\section{Manual del Rol Administrador (Gestión del Sistema)}
+
+\subsection{Panel de Administración General y Usuarios}
+El administrador dispone de una consola general (Figura~\ref{fig:gui_admin_panel}) para inspeccionar el estado global de la infraestructura. El módulo de gestión de usuarios (Figura~\ref{fig:gui_user_mgr}) permite la creación, modificación y asignación de roles.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/General_Administration_Panel.png}
+        \caption{Panel General de Administración.}
+        \label{fig:gui_admin_panel}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/User_Manager.png}
+        \caption{Gestor de Usuarios del Sistema.}
+        \label{fig:gui_user_mgr}
+    \end{subfigure}
+    \caption{Consolas de Administración e Identidades.}
+\end{figure}
+
+\subsection{Gestión de Contenidos y Configuración Global}
+El administrador puede dar de alta y editar cuentos y recursos multimedia (Figura~\ref{fig:gui_content_mgr}), además de ajustar parámetros globales del servidor y la base de datos (Figura~\ref{fig:gui_system_cfg}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/Content__and__Resource_Manage.png}
+        \caption{Gestor de Contenidos y Recursos.}
+        \label{fig:gui_content_mgr}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../img/Interfaces/System_Configuration.png}
+        \caption{Configuración Global del Sistema.}
+        \label{fig:gui_system_cfg}
+    \end{subfigure}
+    \caption{Administración de Recursos y Configuración.}
+\end{figure}
+
+% ================================================================
+\section{Conclusiones de Pruebas y Dictamen de Operatividad}
+
+La evaluación integral realizada sobre la versión **v1.0.0** del sistema **Yoliztli** confirma el éxito rotundo del Plan de Mantenimiento y de la Reingeniería de Procesos implementada. Se certifica que:
+\begin{enumerate}
+    \item La calidad interna alcanzó la clasificación **Rating A** en SonarQube v25.2.0, erradicando los 67 bugs iniciales y remediando el 95.65\% de la deuda técnica.
+    \item Las pruebas funcionales de caja negra alcanzaron una tasa de aprobación del **100\% (8/8 casos exitosos)**, comprobando la remediación de los filtros lógicos y de la persistencia de avance de estudiantes.
+    \item Las 20 interfaces operacionales han sido verificadas y documentadas en este manual, garantizando la usabilidad completa para los roles Alumno, Docente y Administrador.
+\end{enumerate}
+
+Por lo anterior, se emite el **Dictamen de Liberación Aprobada para la Versión v1.0.0**.
+
+\end{document}

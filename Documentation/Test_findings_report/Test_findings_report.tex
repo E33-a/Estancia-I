@@ -1,0 +1,220 @@
+% Test_findings_report.tex
+% ================================================================
+% Reporte de Hallazgos de Pruebas de la Versión Final v1.0.0
+% Proyecto Yoliztli - Sistema Educativo Infantil
+% Compilar con: lualatex Test_findings_report.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+
+% --- Cargar configuración y paquetes globales ---
+\input{../config/preamble}
+
+% --- Colores Locales ---
+\definecolor{accentred}{RGB}{204, 0, 0}
+\definecolor{accentgreen}{RGB}{0, 153, 76}
+\definecolor{accentblue}{RGB}{0, 102, 204}
+\definecolor{darkcard}{RGB}{245, 247, 250}
+
+% --- Metadatos del PDF ---
+\hypersetup{
+    pdftitle={Reporte de Hallazgos de Pruebas v1.0.0 --- Yoliztli},
+    pdfauthor={Chavarría, Islas, Morán, Sánchez},
+    pdfsubject={Auditoría Estática, Pruebas Dinámicas y Dictamen de Calidad},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+    citecolor=purpleUPP
+}
+
+% ================================================================
+\begin{document}
+
+% --- Portada ---
+\input{cover/cover}
+
+% --- Tabla de contenidos ---
+\newpage
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+}
+\newpage
+
+% ================================================================
+\section{Introducción y Alcance del Reporte}
+
+El presente documento constituye el \textbf{Reporte de Hallazgos de Pruebas de la Versión Final (v1.0.0)} del sistema \textbf{Yoliztli}, elaborado como producto de auditoría técnica tras la ejecución de las seis actividades normadas por el estándar internacional \textbf{ISO/IEC/IEEE 14764:2014} y la guía \textbf{SWEBOK v4.0}.
+
+El objetivo principal de esta evaluación es validar cuantitativa y cualitativamente la calidad del software liberado en la versión \textbf{v1.0.0}, demostrando la erradicación total de los defectos de confiabilidad detectados en la fase diagnóstica inicial, el cumplimiento estricto de las reglas de codificación y la aprobación del 100\% de las pruebas funcionales de caja negra.
+
+\subsection{Infraestructura y Entorno de Ejecución de Pruebas}
+Las pruebas de homologación y auditoría final fueron ejecutadas en la siguiente plataforma tecnológica:
+\begin{itemize}
+    \item \textbf{Sistema Operativo del Servidor}: Fedora Linux 44 Workstation.
+    \item \textbf{Entorno de Ejecución Backend}: PHP 8.2.18 / Laravel Framework 10.48.x.
+    \item \textbf{Motor de Base de Datos}: PostgreSQL 15.4 / SQLite (Modo Testing).
+    \item \textbf{Compilador de Assets Frontend}: Vite 5.0.x / Inertia.js 1.0.x con React 18.2.0.
+    \item \textbf{Inspección Estática Continua}: SonarQube Community Edition v25.2.0.
+    \item \textbf{Herramientas de Estandarización de Código}: `PHP-CS-Fixer` (Reglas PSR-12) y `ESLint 8.x`.
+\end{itemize}
+
+% ================================================================
+\newpage
+\section{Auditoría Estática de Código (SonarQube v25.2.0)}
+
+\subsection{Comparativa de Calidad Interna: Estado Inicial vs. Versión v1.0.0}
+Para certificar la mejora en la calidad interna del código fuente, se comparó el análisis estático ejecutado sobre la versión inicial frente a los resultados obtenidos en la auditoría final de la versión \textbf{v1.0.0}. En la Tabla~\ref{tab:sonarqube_comparison} se detallan los indicadores clave.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparativa Cuantitativa de Auditoría Estática SonarQube (Inicial vs. v1.0.0).}
+    \label{tab:sonarqube_comparison}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{XXc>{\raggedright\arraybackslash}X}
+        \toprule
+        \textbf{Métrica de Calidad} & \textbf{Diagnóstico Inicial} & \textbf{Versión Final v1.0.0} & \textbf{Estatus Final} \\
+        \midrule
+        \textbf{Quality Gate Status} & \textbf{FAILED (Rechazado)} & \textbf{PASSED (Aprobado)} & \textbf{Quality Gate A} \\
+        \rowcolor{darkcard}
+        \textbf{Bugs de Confiabilidad} & 67 Bugs (Rating C) & 0 Bugs (Rating A) & \textbf{100\% Erradicados} \\
+        \textbf{Vulnerabilidades} & 0 Vulnerabilidades & 0 Vulnerabilidades & \textbf{Rating A} \\
+        \rowcolor{darkcard}
+        \textbf{Hotspots de Seguridad} & 2 Revisables & 0 Pendientes & \textbf{Rating A} \\
+        \textbf{Code Smells (Deuda)} & 115 Smells (6h 54m) & 5 Smells ($<$ 15m) & \textbf{95.65\% Remediado} \\
+        \rowcolor{darkcard}
+        \textbf{Linteo Pre-commit} & Inexistente (Manual) & Cobertura 100\% (PSR-12) & \textbf{Estandarizado} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\vspace{1.5em}
+\subsection{Visualización del Dashboard de Calidad (Quality Gate PASSED)}
+La Figura~\ref{fig:sonarqube_dashboard} ilustra la representación gráfica del Dashboard de SonarQube v25.2.0 correspondiente a la versión v1.0.0, certificando el nivel óptimo de calidad (\textbf{Rating A}) en todos los ejes de inspección sin solapamiento de elementos.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=0.92]
+        % Contenedor Dashboard Principal
+        \fill[darkcard, draw=purpleUPP!60, thick, rounded corners=8pt] (-6.6,-3.4) rectangle (6.6,3.2);
+        
+        % Encabezado del Dashboard
+        \node[anchor=west, font=\large\bfseries\color{purpleUPP}] at (-6.0,2.5) {SonarQube Dashboard --- Yoliztli v1.0.0};
+        \node[draw=accentgreen, fill=accentgreen!15, text=accentgreen, font=\small\bfseries, rounded corners=4pt, inner sep=5pt] at (4.2,2.5) {QUALITY GATE: PASSED};
+        
+        % Línea divisoria superior
+        \draw[purpleUPP!30, thick] (-6.0, 2.0) -- (6.0, 2.0);
+
+        % Tarjeta 1: Confiabilidad (Bugs)
+        \fill[white, draw=black!20, thick, rounded corners=6pt] (-6.2, 0.1) rectangle (-2.2, 1.7);
+        \node[font=\tiny\bfseries\color{black!60}] at (-4.2, 1.4) {RELIABILITY (CONFIABILIDAD)};
+        \node[font=\huge\bfseries\color{accentgreen}] at (-5.2, 0.75) {0};
+        \node[font=\small\bfseries\color{white}, fill=accentgreen, circle, inner sep=3pt] at (-3.0, 0.75) {A};
+        \node[font=\tiny\color{black!70}] at (-4.2, 0.35) {Bugs de Confiabilidad};
+
+        % Tarjeta 2: Seguridad
+        \fill[white, draw=black!20, thick, rounded corners=6pt] (-2.0, 0.1) rectangle (2.0, 1.7);
+        \node[font=\tiny\bfseries\color{black!60}] at (0.0, 1.4) {SECURITY (SEGURIDAD)};
+        \node[font=\huge\bfseries\color{accentgreen}] at (-1.0, 0.75) {0};
+        \node[font=\small\bfseries\color{white}, fill=accentgreen, circle, inner sep=3pt] at (1.2, 0.75) {A};
+        \node[font=\tiny\color{black!70}] at (0.0, 0.35) {Vulnerabilidades};
+
+        % Tarjeta 3: Mantenibilidad (Code Smells)
+        \fill[white, draw=black!20, thick, rounded corners=6pt] (2.2, 0.1) rectangle (6.2, 1.7);
+        \node[font=\tiny\bfseries\color{black!60}] at (4.2, 1.4) {MAINTAINABILITY (DEUDA)};
+        \node[font=\huge\bfseries\color{accentgreen}] at (3.2, 0.75) {5};
+        \node[font=\small\bfseries\color{white}, fill=accentgreen, circle, inner sep=3pt] at (5.4, 0.75) {A};
+        \node[font=\tiny\color{black!70}] at (4.2, 0.35) {Code Smells ($<$ 15 min)};
+
+        % Tarjeta 4: Resumen Integrado de Inspección
+        \fill[white, draw=black!20, thick, rounded corners=6pt] (-6.2, -3.0) rectangle (6.2, -0.3);
+        \node[anchor=west, font=\small\bfseries\color{purpleUPP}] at (-5.8, -0.7) {Dictamen Integrado de Inspección Estática:};
+        \node[anchor=west, font=\footnotesize\color{black!80}] at (-5.8, -1.3) {$\bullet$ \textbf{Remediación de Deuda Técnica (PRDT)}: 95.65\% de solución respecto al diagnóstico inicial.};
+        \node[anchor=west, font=\footnotesize\color{black!80}] at (-5.8, -1.9) {$\bullet$ \textbf{Estandarización PSR-12 / ESLint}: Cobertura del 100\% en validaciones pre-commit.};
+        \node[anchor=west, font=\footnotesize\color{black!80}] at (-5.8, -2.5) {$\bullet$ \textbf{Incidente PR-001 (Error 500)}: Solucionado mediante compilación de Vite y manifest.json.};
+    \end{tikzpicture}
+    \caption{Certificación del Dashboard de SonarQube v25.2.0 en Estado PASSED para v1.0.0.}
+    \label{fig:sonarqube_dashboard}
+\end{figure}
+
+% ================================================================
+\newpage
+\section{Pruebas Funcionales Dinámicas (Matriz de Caja Negra)}
+
+\subsection{Matriz de Casos de Prueba Funcionales (CP001 a CP008)}
+Se re-ejecutaron los 8 casos de prueba funcionales de caja negra diseñados en el Plan de Mantenimiento sobre el entorno web activo. En la Tabla~\ref{tab:functional_tests} se resumen los resultados obtenidos en la versión v1.0.0.
+
+\begin{table}[H]
+    \centering
+    \caption{Matriz de Resultados de Pruebas Funcionales de Caja Negra (v1.0.0).}
+    \label{tab:functional_tests}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{lXcc}
+        \toprule
+        \textbf{Código CP} & \textbf{Descripción del Caso de Prueba} & \textbf{Diagnóstico Previo} & \textbf{Resultado v1.0.0} \\
+        \midrule
+        \textbf{CP001} & Selección de idioma inicial y bienvenida & Aprobado & \textbf{PASSED (100\%)} \\
+        \rowcolor{darkcard}
+        \textbf{CP002} & Autenticación e inicio de sesión de usuarios & Aprobado & \textbf{PASSED (100\%)} \\
+        \textbf{CP003} & Registro de nuevos usuarios y comprobaciones & Aprobado & \textbf{PASSED (100\%)} \\
+        \rowcolor{darkcard}
+        \textbf{CP004} & Recuperación de contraseña vía email & Aprobado & \textbf{PASSED (100\%)} \\
+        \textbf{CP005} & Visualización y actualización de perfil & Aprobado & \textbf{PASSED (100\%)} \\
+        \rowcolor{darkcard}
+        \textbf{CP006} & Catálogo y lectura interactiva de cuentos & Aprobado & \textbf{PASSED (100\%)} \\
+        \textbf{CP007} & \textbf{Filtro de cuentos por categoría y edad} & \textbf{Fallo (Fallido)} & \textbf{PASSED (MR-004)} \\
+        \rowcolor{darkcard}
+        \textbf{CP008} & \textbf{Persistencia de avance de alumnos en BD} & \textbf{Fallo (Fallido)} & \textbf{PASSED (MR-005)} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\vspace{1.5em}
+\subsection{Verificación de Solución de Fallas Críticas}
+\begin{enumerate}
+    \item \textbf{Falla CP007 (Filtros de Búsqueda)}: Resuelta mediante el \textbf{MR-004}. La consulta en Laravel Eloquent refactorizó la cláusula \texttt{where} condicional, permitiendo filtrar cuentos por categoría (Náhuatl, Maya, Zapoteco, Otomí) y rangos de edad sin bloqueos.
+    \item \textbf{Falla CP008 (Persistencia en BD)}: Resuelta mediante el \textbf{MR-005}. Se crearon las migraciones y controladores necesarios para persistir las lecturas completadas y estrellas obtenidas en la base de datos, asegurando la actualización en tiempo real en la pantalla de Perfil.
+\end{enumerate}
+
+% ================================================================
+\newpage
+\section{Evaluación Integrada de Métricas de Mantenimiento}
+
+En la Tabla~\ref{tab:maintenance_metrics} se concentran los indicadores cuantitativos acumulados durante la ejecución de las actividades de mantenimiento e ingeniería del proceso.
+
+\begin{table}[H]
+    \centering
+    \caption{Indicadores Cuantitativos Globales del Proceso de Mantenimiento.}
+    \label{tab:maintenance_metrics}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{XXc}
+        \toprule
+        \textbf{Métrica de Mantenimiento} & \textbf{Fórmula / Definición} & \textbf{Valor Medido (v1.0.0)} \\
+        \midrule
+        \textbf{Eficacia Pruebas Regresión (EPR)} & $EPR = \left(1 - \frac{B_{\text{fuga}}}{T_{\text{resueltos}}}\right) \times 100$ & \textbf{100.0\%} ($B_{\text{fuga}} = 0$) \\
+        \rowcolor{darkcard}
+        \textbf{Remediación Deuda Técnica (PRDT)} & $PRDT = \frac{S_{\text{inicial}} - S_{\text{final}}}{S_{\text{inicial}}} \times 100$ & \textbf{95.65\%} (110 de 115 smells) \\
+        \textbf{Tiempo Medio Resolución (MTTR-MR)} & $MTTR = \frac{\sum T_{\text{resolución}}}{N_{\text{MR}}}$ & \textbf{17.78 horas / MR} \\
+        \rowcolor{darkcard}
+        \textbf{Índice Mantenibilidad (MI)} & $MI = 171 - 5.2 \ln(V) - 0.23 G - 16.2 \ln(LOC)$ & \textbf{44.82 pts (Aceptable)} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% ================================================================
+\newpage
+\section{Conclusiones y Dictamen de Liberación}
+
+Tras auditar la versión \textbf{v1.0.0} del sistema \textbf{Yoliztli}, se concluye que:
+\begin{enumerate}
+    \item La aplicación aprobó exitosamente la inspección estática con \textbf{Quality Gate PASSED} y \textbf{Rating A} en SonarQube v25.2.0.
+    \item La suite de pruebas de caja negra alcanzó un porcentaje de éxito del \textbf{100\% (8/8 pruebas aprobadas)}.
+    \item Se solucionaron satisfactoriamente las incidencias críticas de compilación de frontend (\textbf{PR-001}), filtrado de contenidos (\textbf{CP007}) y persistencia de avance (\textbf{CP008}).
+\end{enumerate}
+
+En virtud de lo anterior, se otorga el \textbf{Dictamen de Aprobación Formal y Liberación de la Versión v1.0.0}.
+
+\end{document}
