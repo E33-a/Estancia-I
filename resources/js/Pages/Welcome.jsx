@@ -11,7 +11,7 @@ export default function Welcome({ auth }) {
 
     return (
         <>
-            <Head title="Raíces Vivas - Bienvenida" />
+            <Head title="Yoliztli - Bienvenida" />
 
             {/* Barra de Navegación Superior */}
             <nav className="sticky top-0 z-50 w-full bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant px-margin-mobile md:px-margin-tablet py-base">
@@ -20,7 +20,7 @@ export default function Welcome({ auth }) {
                         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-primary-fixed overflow-hidden p-1">
                             <img alt="Logo" className="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByVo-nwucOy85kw5QECKjsEOFW3Q5gb9tiClHde55td8hiE-BG24hVW6JvdAweA7fGDBVl5agbIAI7WZj2HFMsRbVb9X_PahUXbygb9Z8hWHLif1uBb6U1LpO6l48Lqg447MUJ0yd-NBUqZvHF1U9zuZXoYpqlKy-Bm5LKLtkY4c1-d9auVoObE253z4XS-YaHUmgJaOQOVaiqWp7NKlbT3cFQuSWbiyglJW6Vy5_wy9wnUdj9OPse" />
                         </div>
-                        <span className="font-headline-md text-primary tracking-tight">Raíces Vivas</span>
+                        <span className="font-headline-md text-primary tracking-tight">Yoliztli</span>
                     </div>
                     <div className="flex items-center gap-lg">
                         <button className="font-label-lg text-secondary hover:text-primary transition-colors">Explorar</button>
@@ -39,9 +39,9 @@ export default function Welcome({ auth }) {
                 <div className="absolute inset-0 otomí-pattern"></div>
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-primary-fixed overflow-hidden p-2">
-                        <img className="w-full h-full object-contain" alt="Emblema Raíces Vivas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByVo-nwucOy85kw5QECKjsEOFW3Q5gb9tiClHde55td8hiE-BG24hVW6JvdAweA7fGDBVl5agbIAI7WZj2HFMsRbVb9X_PahUXbygb9Z8hWHLif1uBb6U1LpO6l48Lqg447MUJ0yd-NBUqZvHF1U9zuZXoYpqlKy-Bm5LKLtkY4c1-d9auVoObE253z4XS-YaHUmgJaOQOVaiqWp7NKlbT3cFQuSWbiyglJW6Vy5_wy9wnUdj9OPse" />
+                        <img className="w-full h-full object-contain" alt="Emblema Yoliztli" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByVo-nwucOy85kw5QECKjsEOFW3Q5gb9tiClHde55td8hiE-BG24hVW6JvdAweA7fGDBVl5agbIAI7WZj2HFMsRbVb9X_PahUXbygb9Z8hWHLif1uBb6U1LpO6l48Lqg447MUJ0yd-NBUqZvHF1U9zuZXoYpqlKy-Bm5LKLtkY4c1-d9auVoObE253z4XS-YaHUmgJaOQOVaiqWp7NKlbT3cFQuSWbiyglJW6Vy5_wy9wnUdj9OPse" />
                     </div>
-                    <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mt-4 tracking-tight">Raíces Vivas</h1>
+                    <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mt-4 tracking-tight">Yoliztli</h1>
                 </div>
                 <div className="absolute top-4 left-4 opacity-20 transform -rotate-12">
                     <span className="material-symbols-outlined text-6xl text-primary">local_florist</span>
@@ -134,7 +134,7 @@ export default function Welcome({ auth }) {
             <footer className="relative w-full py-lg mt-auto overflow-hidden">
                 <div className="absolute inset-0 otomí-pattern opacity-5"></div>
                 <div className="max-w-7xl mx-auto px-margin-mobile flex flex-col items-center justify-center text-center relative z-10">
-                    <p className="font-label-sm text-label-sm text-outline mb-xs">© 2026 Raíces Vivas</p>
+                    <p className="font-label-sm text-label-sm text-outline mb-xs">© 2026 Yoliztli</p>
                     <div className="flex gap-md">
                         <div className="w-1.5 h-1.5 rounded-full bg-primary/30"></div>
                         <div className="w-1.5 h-1.5 rounded-full bg-secondary/30"></div>
