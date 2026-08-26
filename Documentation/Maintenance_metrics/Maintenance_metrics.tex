@@ -1,0 +1,354 @@
+% Maintenance_metrics.tex
+% ================================================================
+% AE8. Métricas de Mantenimiento - Proyecto Yoliztli
+% Compilar con: lualatex Maintenance_metrics.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+
+% --- Cargar configuración y paquetes ---
+\input{../config/preamble}
+
+% --- Colores Locales ---
+\definecolor{accentred}{RGB}{204, 0, 0}
+
+% --- Metadatos del PDF ---
+\hypersetup{
+    pdftitle={AE8. Métricas de Mantenimiento de Software --- Yoliztli},
+    pdfauthor={Equipo de Mantenimiento},
+    pdfsubject={Métricas de Calidad en Mantenimiento de Software},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+    citecolor=purpleUPP
+}
+
+% ================================================================
+\begin{document}
+
+% --- Portada ---
+\input{cover/cover}
+
+% --- Tabla de contenidos ---
+\newpage
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+}
+\newpage
+
+% ================================================================
+\section{Introducción}
+
+El mantenimiento de software es una de las fases más complejas y costosas del ciclo de vida del desarrollo de sistemas. Conforme a las directrices de la guía del cuerpo de conocimiento de ingeniería de software \textbf{SWEBOK v4.0} y el estándar internacional \textbf{ISO/IEC/IEEE 14764}, la medición sistemática del proceso y del producto es indispensable para asegurar que las modificaciones no degraden la calidad interna del sistema y que los recursos se utilicen de manera eficiente.
+
+El proyecto \textbf{Yoliztli}, una plataforma educativa interactiva orientada al aprendizaje infantil de lenguas originarias desarrollada bajo una arquitectura monolítica híbrida (\textbf{Laravel 10}, \textbf{React.js} e \textbf{Inertia.js}), requiere una intervención continua para solventar los fallos funcionales y la deuda técnica detectada en la fase de diagnóstico. 
+
+Para controlar y evaluar el progreso del plan de mantenimiento, en este documento se definen \textbf{cinco métricas de calidad de mantenimiento} clasificadas en tres dimensiones fundamentales:
+\begin{itemize}
+    \item \textbf{Métricas de Proceso}: Evalúan la eficiencia en la ejecución de las actividades de mantenimiento por parte del equipo.
+    \item \textbf{Métricas de Producto}: Miden la calidad intrínseca y estructural del código fuente.
+    \item \textbf{Métricas de Calidad de Pruebas (QA)}: Determinan la eficacia del proceso de validación para prevenir regresiones.
+\end{itemize}
+
+Además de la descripción técnica y matemática de cada métrica, se proveen los formatos de bitácora y un ejemplo de aplicación práctica con los datos reales recopilados del proyecto.
+
+\newpage
+
+% ================================================================
+\section{Definición de las Métricas de Calidad}
+
+En esta sección se detallan las cinco métricas propuestas para el proceso de mantenimiento de Yoliztli.
+
+% --- MET-01 ---
+\subsection{MET-01: Tiempo Medio de Resolución de Solicitudes de Modificación (MTTR-MR)}
+\label{subsec:met01}
+
+\begin{itemize}
+    \item \textbf{Categoría:} Proceso.
+    \item \textbf{Descripción:} Mide el tiempo promedio transcurrido desde que una Solicitud de Modificación (MR) es aprobada para su implementación hasta que es completamente resuelta, verificada e integrada en la rama principal.
+    \item \textbf{Objetivo:} Evaluar la agilidad y capacidad de respuesta del equipo ante incidencias y mejoras planificadas.
+    \item \textbf{Fórmula:}
+    \begin{equation}
+        \text{MTTR-MR} = \frac{\sum_{i=1}^{N} (T_{r, i} - T_{a, i})}{N}
+    \end{equation}
+    Donde:
+    \begin{itemize}
+        \item $T_{r, i}$: Fecha y hora en que la MR $i$ se cierra con estado exitoso (desplegado y validado).
+        \item $T_{a, i}$: Fecha y hora en que la MR $i$ es aprobada por el comité de control de cambios para iniciar desarrollo.
+        \item $N$: Número total de solicitudes de modificación resueltas en el periodo de medición.
+    \end{itemize}
+    \item \textbf{Unidad de Medida:} Horas.
+    \item \textbf{Periodicidad:} Al cierre de cada sprint o iteración quincenal.
+    \item \textbf{Umbral de Aceptación:} 
+    \begin{itemize}
+        \item \textcolor{process}{\textbf{Excelente:}} $< 8$ horas.
+        \item \textcolor{value}{\textbf{Aceptable:}} $8 - 24$ horas.
+        \item \textcolor{accentred}{\textbf{Crítico:}} $> 24$ horas.
+    \end{itemize}
+\end{itemize}
+
+\vspace{1em}
+
+% --- MET-02 ---
+\subsection{MET-02: Densidad de Defectos Residuales (DDR)}
+\label{subsec:met02}
+
+\begin{itemize}
+    \item \textbf{Categoría:} Producto.
+    \item \textbf{Descripción:} Cuantifica la cantidad de fallos de fiabilidad activos (bugs) detectados en el código fuente por cada mil líneas de código (KLOC) tras el análisis estático.
+    \item \textbf{Objetivo:} Medir la madurez del código y evaluar si las tareas de mantenimiento correctivo están disminuyendo la tasa de errores en ejecución.
+    \item \textbf{Fórmula:}
+    \begin{equation}
+        \text{DDR} = \frac{\text{Bugs Totales Activos}}{\text{KLOC}}
+    \end{equation}
+    Donde:
+    \begin{itemize}
+        \item $\text{Bugs Totales Activos}$: Cantidad total de bugs de fiabilidad reportados por SonarQube.
+        \item $\text{KLOC}$: Miles de líneas de código fuente analizadas (excluyendo bibliotecas externas y dependencias de terceros), calculada como $\text{LOC}/1000$.
+    \end{itemize}
+    \item \textbf{Unidad de Medida:} Bugs/KLOC (Bugs por cada mil líneas de código).
+    \item \textbf{Periodicidad:} En cada compilación o integración continua (CI/CD) tras el análisis estático.
+    \item \textbf{Umbral de Aceptación:} 
+    \begin{itemize}
+        \item \textcolor{process}{\textbf{Excelente:}} $< 2$ bugs/KLOC.
+        \item \textcolor{value}{\textbf{Aceptable:}} $2 - 5$ bugs/KLOC.
+        \item \textcolor{accentred}{\textbf{Crítico:}} $> 5$ bugs/KLOC.
+    \end{itemize}
+\end{itemize}
+
+\newpage
+
+% --- MET-03 ---
+\subsection{MET-03: Eficacia de las Pruebas de Regresión (EPR)}
+\label{subsec:met03}
+
+\begin{itemize}
+    \item \textbf{Categoría:} Calidad de Pruebas (QA).
+    \item \textbf{Descripción:} Determina la proporción de defectos nuevos o reintroducidos durante el mantenimiento que son capturados de manera interna por el equipo de pruebas antes de la entrega formal.
+    \item \textbf{Objetivo:} Medir el nivel de cobertura y confiabilidad de los casos de prueba de aceptación y regresión aplicados.
+    \item \textbf{Fórmula:}
+    \begin{equation}
+        \text{EPR} = \left( \frac{D_{\text{internos}}}{D_{\text{internos}} + D_{\text{externos}}} \right) \times 100
+    \end{equation}
+    Donde:
+    \begin{itemize}
+        \item $D_{\text{internos}}$: Cantidad de defectos de regresión detectados por el equipo durante las fases internas de testing del mantenimiento.
+        \item $D_{\text{externos}}$: Cantidad de defectos reportados por usuarios, profesores o el catedrático con posterioridad al despliegue de la versión modificada.
+    \end{itemize}
+    \item \textbf{Unidad de Medida:} Porcentaje (\%).
+    \item \textbf{Periodicidad:} Al finalizar cada entrega o hito de despliegue.
+    \item \textbf{Umbral de Aceptación:} 
+    \begin{itemize}
+        \item \textcolor{process}{\textbf{Excelente:}} $\ge 90\%$.
+        \item \textcolor{value}{\textbf{Aceptable:}} $75\% - 89\%$.
+        \item \textcolor{accentred}{\textbf{Crítico:}} $< 75\%$.
+    \end{itemize}
+\end{itemize}
+
+\vspace{1.5em}
+
+% --- MET-04 ---
+\subsection{MET-04: Porcentaje de Remediación de Deuda Técnica (PRDT)}
+\label{subsec:met04}
+
+\begin{itemize}
+    \item \textbf{Categoría:} Proceso / Producto.
+    \item \textbf{Descripción:} Mide la disminución de la deuda técnica estimada (en horas de remediación de SonarQube) lograda a través del mantenimiento correctivo y perfectivo.
+    \item \textbf{Objetivo:} Asegurar que las iteraciones dedicadas a la refactorización y resolución de Code Smells disminuyan efectivamente la deuda técnica inicial.
+    \item \textbf{Fórmula:}
+    \begin{equation}
+        \text{PRDT} = \left( \frac{\text{Deuda Inicial} - \text{Deuda Actual}}{\text{Deuda Inicial}} \right) \times 100
+    \end{equation}
+    Donde:
+    \begin{itemize}
+        \item $\text{Deuda Inicial}$: Deuda técnica acumulada en la línea base (medida inicial en SonarQube, equivalente a 6.9 horas).
+        \item $\text{Deuda Actual}$: Deuda técnica restante reportada por SonarQube tras las modificaciones del sprint.
+    \end{itemize}
+    \item \textbf{Unidad de Medida:} Porcentaje (\%).
+    \item \textbf{Periodicidad:} Al término de cada iteración o sprint.
+    \item \textbf{Umbral de Aceptación:} 
+    \begin{itemize}
+        \item \textcolor{process}{\textbf{Excelente:}} $\ge 80\%$ de remediación al final del proyecto.
+        \item \textcolor{value}{\textbf{Aceptable:}} $50\% - 79\%$.
+        \item \textcolor{accentred}{\textbf{Crítico:}} $< 50\%$.
+    \end{itemize}
+\end{itemize}
+
+\newpage
+
+% --- MET-05 ---
+\subsection{MET-05: Índice de Mantenibilidad (IM)}
+\label{subsec:met05}
+
+\begin{itemize}
+    \item \textbf{Categoría:} Producto.
+    \item \textbf{Descripción:} Es una métrica compuesta e indirecta calculada automáticamente a través del análisis estático. Evalúa la facilidad estructural de modificar el software en función del volumen de Halstead ($V$), la complejidad ciclomática de McCabe ($G$) y el número de líneas de código ($\text{LOC}$).
+    \item \textbf{Objetivo:} Prevenir la degradación de la arquitectura y la complejidad del código ante la inserción de nuevos módulos funcionales.
+    \item \textbf{Fórmula:}
+    \begin{equation}
+        \text{IM} = \max\left(0, \frac{171 - 5.2 \ln(V) - 0.23(G) - 16.2 \ln(\text{LOC})}{171} \times 100\right)
+    \end{equation}
+    Donde:
+    \begin{itemize}
+        \item $V$: Volumen de Halstead de los algoritmos del código fuente.
+        \item $G$: Complejidad ciclomática promedio de los métodos/funciones.
+        \item $\text{LOC}$: Número de líneas de código físicas promedio por archivo.
+    \end{itemize}
+    \item \textbf{Unidad de Medida:} Puntos de Mantenibilidad (Índice adimensional en escala de 0 a 100).
+    \item \textbf{Periodicidad:} Mensual o en cada hito importante de integración de ramas.
+    \item \textbf{Umbral de Aceptación:} 
+    \begin{itemize}
+        \item \textcolor{process}{\textbf{Excelente (Alta mantenibilidad):}} $65 - 100$ puntos.
+        \item \textcolor{value}{\textbf{Aceptable (Mantenibilidad moderada):}} $20 - 64$ puntos.
+        \item \textcolor{accentred}{\textbf{Crítico (Baja mantenibilidad/Complejo):}} $< 20$ puntos.
+    \end{itemize}
+\end{itemize}
+
+\newpage
+
+% ================================================================
+\section{Formatos y Bitácoras de Registro}
+
+Para posibilitar el cálculo exacto de las métricas anteriores, el equipo debe llevar un registro estructurado de las actividades de desarrollo, control de calidad y auditorías estáticas. A continuación, se detallan los tres formatos oficiales de bitácora diseñados para el proyecto.
+
+\subsection{Bitácora de Gestión de Cambios (Control de MR)}
+Esta bitácora alimenta directamente al cálculo de \textbf{MET-01 (MTTR-MR)}. Debe ser actualizada por el Gestor de Configuración (SCM) cada vez que se apruebe o resuelva una solicitud de modificación.
+
+\begin{table}[H]
+    \centering\footnotesize
+    \caption{Bitácora de Control de Solicitudes de Modificación (MR)}
+    \label{tab:bitacora_mr}
+    \begin{tabularx}{\textwidth}{llcccX}
+        \toprule
+        \textbf{ID MR} & \textbf{Tipo de Cambio} & \textbf{Fecha Aprob.} & \textbf{Fecha Resol.} & \textbf{Esfuerzo (h)} & \textbf{Responsable} \\
+        \midrule
+        MR-001 & Correctivo Urgente & 15/06/2026 09:00 & 16/06/2026 01:00 & 16.0 & E. Islas \\
+        MR-002 & Correctivo Planif. & 16/06/2026 10:00 & 16/06/2026 15:36 & 5.6  & B. Chavarría \\
+        MR-003 & Perfectivo          & 17/06/2026 08:30 & 17/06/2026 09:48 & 1.3  & K. Morán \\
+        MR-004 & Correctivo/Aditivo  & 18/06/2026 09:00 & 19/06/2026 17:00 & 8.0  & J. Sánchez \\
+        MR-005 & Correctivo/Aditivo  & 19/06/2026 10:00 & 20/06/2026 20:00 & 10.0 & E. Islas \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Bitácora de Auditorías Estáticas (SonarQube)}
+Esta bitácora se utiliza para capturar los datos de salida del analizador estático en cada compilación para calcular \textbf{MET-02 (DDR)}, \textbf{MET-04 (PRDT)} y \textbf{MET-05 (IM)}.
+
+\begin{table}[H]
+    \centering\footnotesize
+    \caption{Bitácora de Registro de Análisis Estático}
+    \label{tab:bitacora_estatico}
+    \begin{tabularx}{\textwidth}{lcccccX}
+        \toprule
+        \textbf{ID Comp.} & \textbf{Fecha} & \textbf{Líneas (LOC)} & \textbf{Bugs} & \textbf{Smells} & \textbf{Deuda (h)} & \textbf{Analista} \\
+        \midrule
+        AUD-01 & 14/06/2026 & 2,400 & 67 & 115 & 6.9 & B. Chavarría \\
+        AUD-02 & 16/06/2026 & 2,450 & 12 & 85  & 4.1 & B. Chavarría \\
+        AUD-03 & 20/06/2026 & 2,680 & 2  & 15  & 0.8 & K. Morán \\
+        AUD-04 & 30/06/2026 & 2,750 & 0  & 5   & 0.3 & J. Sánchez \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Bitácora de Aseguramiento de Calidad (Pruebas de Regresión)}
+Almacena el número de fallos encontrados por el equipo de QA antes del despliegue y los fallos reportados en post-producción, alimentando a \textbf{MET-03 (EPR)}.
+
+\begin{table}[H]
+    \centering\footnotesize
+    \caption{Bitácora de Incidentes de Validación y Pruebas}
+    \label{tab:bitacora_qa}
+    \begin{tabularx}{\textwidth}{lccccX}
+        \toprule
+        \textbf{Hito / Versión} & \textbf{Fecha Entrega} & \textbf{Defectos Internos} & \textbf{Defectos Externos} & \textbf{EPR (\%)} & \textbf{Estatus} \\
+        \midrule
+        v1.1.0-RC1 & 17/06/2026 & 8 & 2 & 80.0\% & Aceptado con reservas \\
+        v1.2.0-RC2 & 21/06/2026 & 12 & 1 & 92.3\% & Liberado \\
+        v2.0.0-Prod & 30/06/2026 & 15 & 0 & 100.0\% & Estable \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\newpage
+
+% ================================================================
+\section{Ejemplo de Aplicación con Datos Reales del Proyecto}
+
+Para demostrar la efectividad de las métricas descritas, se realiza una simulación de cálculo basada en las mediciones y el avance del equipo de mantenimiento de Yoliztli.
+
+\subsection{Cálculo de MET-01: Tiempo Medio de Resolución (MTTR-MR)}
+Tomando como base la Tabla~\ref{tab:bitacora_mr}, analizamos los tiempos de desarrollo neto del equipo:
+\begin{itemize}
+    \item \textbf{MR-001:} Aprobada el 15/06 a las 09:00, cerrada el 16/06 a las 01:00 $\rightarrow$ Duración = 16.0 horas.
+    \item \textbf{MR-002:} Aprobada el 16/06 a las 10:00, cerrada el 16/06 a las 15:36 $\rightarrow$ Duración = 5.6 horas.
+    \item \textbf{MR-003:} Aprobada el 17/06 a las 08:30, cerrada el 17/06 a las 09:48 $\rightarrow$ Duración = 1.3 horas.
+    \item \textbf{MR-004:} Aprobada el 18/06 a las 09:00, cerrada el 19/06 a las 17:00 $\rightarrow$ Duración = 32.0 horas (incluye tiempo no laborable/espera).
+    \item \textbf{MR-005:} Aprobada el 19/06 a las 10:00, cerrada el 20/06 a las 20:00 $\rightarrow$ Duración = 34.0 horas.
+\end{itemize}
+El cálculo del MTTR-MR del ciclo completo es:
+\begin{equation}
+    \text{MTTR-MR} = \frac{16.0 + 5.6 + 1.3 + 32.0 + 34.0}{5} = \frac{88.9}{5} = \mathbf{17.78\text{ horas}}
+\end{equation}
+\textbf{Interpretación:} Un tiempo promedio de 17.78 horas sitúa al proceso del equipo dentro del rango \textcolor{value}{\textbf{Aceptable}} ($8 - 24$ horas). Esto demuestra que el equipo tiene capacidad de resolver solicitudes complejas en un margen menor a dos días hábiles.
+
+\subsection{Cálculo de MET-02: Densidad de Defectos Residuales (DDR)}
+Evaluando el avance entre la línea base (AUD-01) y la última auditoría integrada (AUD-04):
+\begin{itemize}
+    \item \textbf{Línea Base (AUD-01):} Bugs = 67, LOC = 2,400.
+    \begin{equation}
+        \text{DDR}_{\text{inicial}} = \frac{67}{2.4} = \mathbf{27.92\text{ bugs/KLOC}}
+    \end{equation}
+    \item \textbf{Entrega Final (AUD-04):} Bugs = 0, LOC = 2,750.
+    \begin{equation}
+        \text{DDR}_{\text{final}} = \frac{0}{2.75} = \mathbf{0.0\text{ bugs/KLOC}}
+    \end{equation}
+\end{itemize}
+\textbf{Interpretación:} Inicialmente el sistema poseía una densidad crítica de 27.92 bugs/KLOC (rango \textcolor{accentred}{\textbf{Crítico}}), debido a la inoperatividad del frontend. Tras el ciclo correctivo, la densidad bajó a 0.0 bugs/KLOC, ubicándose en el rango \textcolor{process}{\textbf{Excelente}}.
+
+\subsection{Cálculo de MET-03: Eficacia de las Pruebas de Regresión (EPR)}
+Tomando la suma agregada de incidentes reportados en el ciclo de pruebas para la versión estable v2.0.0 (Tabla~\ref{tab:bitacora_qa}):
+\begin{itemize}
+    \item Defectos internos detectados por el equipo ($D_{\text{internos}}$) = 15.
+    \item Defectos reportados por usuarios externos post-despliegue ($D_{\text{externos}}$) = 0.
+\end{itemize}
+El cálculo es:
+\begin{equation}
+    \text{EPR} = \left( \frac{15}{15 + 0} \right) \times 100 = \mathbf{100\%}
+\end{equation}
+\textbf{Interpretación:} Una eficacia del 100\% demuestra que la suite de pruebas de regresión del equipo impidió cualquier fuga de defectos a producción (rango \textcolor{process}{\textbf{Excelente}}).
+
+\subsection{Cálculo de MET-04: Porcentaje de Remediación de Deuda Técnica (PRDT)}
+Con los datos de deuda técnica en horas de SonarQube:
+\begin{itemize}
+    \item Deuda Inicial = 6.9 horas (6 horas y 54 minutos).
+    \item Deuda Final (AUD-04) = 0.3 horas (18 minutos).
+\end{itemize}
+El cálculo es:
+\begin{equation}
+    \text{PRDT} = \left( \frac{6.9 - 0.3}{6.9} \right) \times 100 = \left( \frac{6.6}{6.9} \right) \times 100 = \mathbf{95.65\%}
+\end{equation}
+\textbf{Interpretación:} El equipo remediós el 95.65\% de la deuda técnica inicial, superando con creces la meta final del proyecto establecida en un $80\%$ (rango \textcolor{process}{\textbf{Excelente}}).
+
+\subsection{Cálculo de MET-05: Índice de Mantenibilidad (IM)}
+El analizador estático PHP-CS-Fixer y ESLint integrados determinan los parámetros tras el refactor. Para el archivo principal del ruteador React, con un volumen de Halstead de $V = 450.5$, complejidad ciclomática $G = 4$ y líneas de código $\text{LOC} = 45$:
+\begin{equation}
+    \text{IM} = \frac{171 - 5.2 \ln(450.5) - 0.23(4) - 16.2 \ln(45)}{171} \times 100
+\end{equation}
+\begin{equation}
+    \text{IM} = \frac{171 - 5.2 (6.110) - 0.920 - 16.2 (3.807)}{171} \times 100
+\end{equation}
+\begin{equation}
+    \text{IM} = \frac{171 - 31.774 - 0.920 - 61.669}{171} \times 100 = \frac{76.637}{171} \times 100 = \mathbf{44.82\text{ puntos}}
+\end{equation}
+\textbf{Interpretación:} Un índice de 44.82 puntos sitúa a este componente en el rango \textcolor{value}{\textbf{Aceptable}} ($20 - 64$ puntos). Esto indica que a pesar del refactor, el archivo conserva cierta complejidad inherente debido a su rol de ruteo, pero su mantenibilidad es estable.
+
+\newpage
+
+% ================================================================
+\section{Conclusión}
+
+La definición y aplicación de estas cinco métricas de calidad de mantenimiento (MTTR-MR, DDR, EPR, PRDT e IM) dota al equipo de Yoliztli de una base objetiva y cuantitativa para gobernar las decisiones sobre el código. 
+
+A través del uso de las bitácoras diseñadas, es posible rastrear el comportamiento del proceso de desarrollo en tiempo real, identificar cuellos de botella en la resolución de cambios y cuantificar la mejora de la calidad interna de la aplicación. Los resultados del ejemplo práctico demuestran que las intervenciones aplicadas por el equipo redujeron la densidad de defectos de un nivel crítico a uno excelente, saneando la deuda técnica de SonarQube en un 95.65\%, asegurando la sostenibilidad y escalabilidad futura del software Yoliztli.
+
+\end{document}

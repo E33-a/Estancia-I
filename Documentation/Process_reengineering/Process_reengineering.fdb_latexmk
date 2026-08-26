@@ -1,0 +1,21 @@
+# Fdb version 4
+["pdflatex"] 1787246770.03706 "/home/emmanuel/Desktop/Projects/Estancia-I/Documentation/Process_reengineering/Process_reengineering.tex" "Process_reengineering.pdf" "Process_reengineering" 1787246770.45717 2
+  "../config/preamble.tex" 1783095890.82387 3910 8396e7e8cf9ea2b4b5a2de836d2467fb ""
+  "/home/emmanuel/Desktop/Projects/Estancia-I/Documentation/Process_reengineering/Process_reengineering.tex" 1787246769.84244 26873 f84729b4852bfe68442995ea216af556 ""
+  "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1136768653 1288 655e228510b4c2a1abe905c368440826 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/article.cls" 1777593600 20144 b966087dda3b194755eb460d32e2ef75 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo" 1777593600 8449 8dc66c6c313c8eb2d774af83bca435dd ""
+  "/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.sty" 1759176595 3804 debc05110ffb506cef68ea4e72c7bcee ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1774899586 30909 7dedb28cb21a1e79c47a35a35ae3c507 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty" 1774899615 6558 f72ebe51bdca4990db99e72c8133397c ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty" 1761248321 10176 c2fc1c663b3f3899ddac6e6ed3fb1d7e ""
+  "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1777593600 43785 66587115382950aca692b5f6e3c2fb74 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1783145675 3520819 30aa3fc4de367c01cc8143f1df8be78d ""
+  "Process_reengineering.aux" 1787246762.03458 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "Process_reengineering.tex" 1787246769.84244 26873 f84729b4852bfe68442995ea216af556 ""
+  (generated)
+  "Process_reengineering.aux"
+  "Process_reengineering.log"
+  "Process_reengineering.pdf"
+  (rewritten before read)

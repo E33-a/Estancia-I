@@ -1,0 +1,384 @@
+% Process_reengineering.tex
+% ================================================================
+% AI11. Reingeniería de Procesos de Mantenimiento (ISO/IEC/IEEE 14764)
+% Proyecto Yoliztli - Sistema Educativo Infantil
+% Compilar con: lualatex Process_reengineering.tex
+% ================================================================
+
+\documentclass[12pt]{article}
+
+% --- Cargar configuración y paquetes globales ---
+\input{../config/preamble}
+
+% --- Colores Locales ---
+\definecolor{accentred}{RGB}{204, 0, 0}
+\definecolor{accentgreen}{RGB}{0, 153, 76}
+\definecolor{accentblue}{RGB}{0, 102, 204}
+\definecolor{darkcard}{RGB}{245, 247, 250}
+
+% --- Metadatos del PDF ---
+\hypersetup{
+    pdftitle={AI11. Reingeniería de Procesos de Mantenimiento --- Yoliztli},
+    pdfauthor={Islas Lozada Emmanuel},
+    pdfsubject={Reingeniería de Procesos basada en ISO/IEC/IEEE 14764},
+    colorlinks=true,
+    linkcolor=purpleUPP,
+    urlcolor=quality,
+    citecolor=purpleUPP
+}
+
+% ================================================================
+\begin{document}
+
+% --- Portada ---
+\input{cover/cover}
+
+% --- Tabla de contenidos ---
+\newpage
+{
+\hypersetup{linkcolor=black}
+\tableofcontents
+}
+\newpage
+
+% ================================================================
+\section{Introducción y Marco Normativo}
+
+El mantenimiento de software representa la fase más extensa y costosa dentro del ciclo de vida del desarrollo de sistemas, absorbiendo históricamente entre el 60\% y el 80\% de los recursos totales del proyecto. De acuerdo con la guía del cuerpo de conocimiento de ingeniería de software \textbf{SWEBOK v4.0} y el estándar internacional \textbf{ISO/IEC/IEEE 14764:2014}, el mantenimiento no debe concebirse como un esfuerzo reactivo e improvisado de corrección de errores, sino como un proceso disciplinado, repetible, medible y normado orientado a preservar y mejorar la calidad del software a lo largo del tiempo.
+
+El proyecto \textbf{Yoliztli} es una plataforma web interactiva diseñada para la enseñanza y preservación de lenguas originarias en niños de educación básica. El sistema está construido bajo una arquitectura monolítica híbrida que combina un backend en \textbf{Laravel 10} con un frontend dinámico en \textbf{React.js} enlazado mediante \textbf{Inertia.js}, respaldado por una base de datos relacional \textbf{PostgreSQL}. 
+
+En las etapas iniciales de la intervención de mantenimiento, el equipo operaba bajo un esquema informal y empírico. La falta de automatización, la inexistencia de puertas de calidad estáticas y la ausencia de una trazabilidad rigurosa entre fallos detectados y solicitudes de cambio derivaron en incidentes críticos en producción (como la falla de renderizado \textbf{PR-001}), la acumulación de deuda técnica y una tasa inicial de fallos del 25\% en las pruebas funcionales de caja negra.
+
+Para solventar estas deficiencias, la presente actividad documenta la aplicación de una \textbf{Reingeniería de Procesos de Negocio (BPR --- Business Process Reengineering)} al proceso de mantenimiento del sistema Yoliztli. Se toma como marco de referencia estructural el estándar \textbf{ISO/IEC/IEEE 14764:2014}, adaptándolo e integrándolo armónicamente con el marco ágil \textbf{SCRUM} y herramientas avanzadas de análisis estático y dinámico (\textbf{SonarQube}, \textbf{PHP-CS-Fixer}, \textbf{ESLint} y \textbf{Vite}).
+
+% ================================================================
+\section{Caracterización del Proceso Inicial (Estado AS-IS)}
+
+\subsection{Descripción del Flujo Empírico Previo}
+Antes de la intervención de reingeniería, la atención de mantenimientos dentro del proyecto Yoliztli se realizaba mediante un flujo reactivo e informal, carente de estandarización documental y controles de calidad automatizados. El proceso inicial (\textbf{Estado AS-IS}) se estructuraba en las siguientes fases operativas:
+
+\begin{enumerate}
+    \item \textbf{Reporte Verbal o Informal}: Los fallos o solicitudes de cambio se notificaban de manera verbal o por chat sin un formato normalizado (ausencia de un protocolo formal de Problem Reports --- PR).
+    \item \textbf{Modificación Directa en Código Source}: El desarrollador asignado realizaba cambios de manera directa en las ramas principales (\texttt{main} o \texttt{develop}) sin aislamiento en Sandbox ni pruebas previas de regresión.
+    \item \textbf{Ausencia de Análisis Estático Local}: No existían linters ni formateadores de código configurados en los entornos locales.
+    \item \textbf{Compilación Manual Implícita}: Los assets de React/Inertia no se compilaban de forma automatizada mediante scripts de integración continua, confiando en la ejecución manual del desarrollador.
+    \item \textbf{Despliegue Directo e Inspección Empírica}: Se desplegaba la aplicación y se probaba de manera visual directa sin matriz de casos de prueba formalizados.
+\end{enumerate}
+
+\subsection{Representación del Proceso Previo (AS-IS)}
+En la Figura~\ref{fig:process_asis} se ilustra el diagrama de flujo del proceso previo (AS-IS), evidenciando la falta de bucles de control de calidad y la ausencia de validaciones antes del despliegue.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.3cm and 0.8cm,
+        startstop/.style={rectangle, rounded corners, draw=accentred, fill=accentred!10, thick, align=center, minimum height=0.9cm, font=\small\bfseries},
+        process/.style={rectangle, draw=black!70, fill=darkcard, thick, align=center, minimum height=0.9cm, font=\small, text width=3.2cm},
+        decision/.style={diamond, draw=accentred, fill=accentred!5, thick, align=center, aspect=2, font=\small},
+        arrow/.style={->, >={Stealth[length=2.5mm]}, thick, color=black!80}
+    ]
+        % Nodos AS-IS
+        \node[startstop] (start) {Detección Informal de Fallo};
+        \node[process, right=of start] (p1) {Modificación Directa en Código Source};
+        \node[process, right=of p1] (p2) {Despliegue Directo a Producción};
+        \node[decision, below=of p2] (d1) {¿Fallo en\\Producción?};
+        \node[process, left=of d1] (p3) {Parche de Emergencia (Hotfix)};
+        \node[startstop, left=of p3] (end) {Fin de Corrección Improvista};
+
+        % Conexiones
+        \draw[arrow] (start) -- (p1);
+        \draw[arrow] (p1) -- (p2);
+        \draw[arrow] (p2) -- (d1);
+        \draw[arrow] (d1) -- node[anchor=south]{\scriptsize Sí (Falla)} (p3);
+        \draw[arrow] (p3) -- (end);
+        \draw[arrow] (d1.east) -- ++(0.5,0) |- node[anchor=west, pos=0.2]{\scriptsize No} ([yshift=0.5cm]p2.north) -- (p2.north);
+    \end{tikzpicture}
+    \caption{Diagrama de Flujo del Proceso de Mantenimiento Inicial (Estado AS-IS).}
+    \label{fig:process_asis}
+\end{figure}
+
+\subsection{Identificación de Ineficiencias e Incidentes Críticos}
+El diagnóstico realizado sobre el Estado AS-IS puso de manifiesto fallos severos que comprometían la confiabilidad del sistema Yoliztli:
+
+\begin{itemize}
+    \item \textbf{Incidente Crítico PR-001 (Ausencia de Vistas React)}: Debido a la falta de un proceso de compilación y verificación de artefactos, se desplegó una versión donde el directorio \path{resources/js/Pages/} estaba completamente omitido. Esto provocó una excepción 500 fatal e inoperabilidad total de las vistas React enlazadas por Inertia.js.
+    \item \textbf{Acumulación de Bugs de Confiabilidad}: El primer diagnóstico automático con \textbf{SonarQube v25.2.0} arrojó \textbf{67 bugs de confiabilidad} (Clasificación C) y \textbf{115 Code Smells}, representando una deuda técnica acumulada de \textbf{6 horas y 54 minutos}.
+    \item \textbf{Fallas en Pruebas Funcionales (CP007 y CP008)}: La primera ejecución de la matriz de pruebas de caja negra registró la falla del caso \textbf{CP007} (filtro de cuentos por categoría/edad inoperante) y del caso \textbf{CP008} (incapacidad de persistir el progreso del alumno en PostgreSQL), obteniendo una tasa de éxito de apenas el 75\%.
+    \item \textbf{Inexistencia de Trazabilidad}: Imposibilidad de auditar qué desarrollador realizó una modificación, bajo qué justificación y qué impacto tuvo sobre otros módulos.
+\end{itemize}
+
+% ================================================================
+\section{Diagnóstico y Análisis de Brecha (Gap Analysis)}
+
+Para fundamentar la reingeniería, se realizó un análisis de brecha comparando la práctica previa frente a los requisitos establecidos en el estándar \textbf{ISO/IEC/IEEE 14764:2014}. En la Tabla~\ref{tab:gap_analysis} se sintetizan los hallazgos principales.
+
+\begin{table}[H]
+    \centering
+    \caption{Matriz de Análisis de Brecha: Estado AS-IS vs. Estándar ISO/IEC/IEEE 14764.}
+    \label{tab:gap_analysis}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{p{3.2cm}XX}
+        \toprule
+        \textbf{Actividad IEEE 14764} & \textbf{Práctica Previa (AS-IS)} & \textbf{Brecha e Ineficiencia} \\
+        \midrule
+        \textbf{1. Implementación del Proceso} & Plan inexistente; sin linters locales ni ambiente Sandbox aislado. & Modificaciones directas en ramas principales; diferencias entre entornos. \\
+        \rowcolor{darkcard}
+        \textbf{2. Análisis de Problemas} & Reportes verbales; clasificación nula; ausencia de Problem Reports (PR). & Sin análisis de impacto ni priorización basada en severidad. \\
+        \textbf{3. Implementación del Cambio} & Codificación informal sin análisis de mantenibilidad ni estimación de horas. & Generación de deuda técnica (115 smells) y 67 bugs de confiabilidad. \\
+        \rowcolor{darkcard}
+        \textbf{4. Revisión y Aceptación} & Verificación visual rápida; sin pruebas de regresión ni auditoría estática. & Fuga de errores a producción (error 500 por PR-001 y fallas CP007/CP008). \\
+        \textbf{5. Migración} & Migraciones manuales ocasionales sin respaldos ni pruebas previas. & Riesgo de corrupción o pérdida de datos de progreso de alumnos. \\
+        \rowcolor{darkcard}
+        \textbf{6. Retiro} & Omitido; acumulación de código muerto o componentes deprecados. & Incremento innecesario en la complejidad del código (LOC). \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Objetivos Estratégicos de la Reingeniería}
+A partir del diagnóstico, se establecieron cuatro objetivos cuantitativos de reingeniería:
+\begin{enumerate}
+    \item \textbf{Garantía de Calidad Estática (Quality Gate A)}: Reducir los 67 bugs de confiabilidad a cero y resolver más del 90\% de los Code Smells.
+    \item \textbf{Eficacia en Pruebas de Regresión (EPR = 100\%)}: Lograr la remediación total de los casos CP007 y CP008 y asegurar cero fuga de errores a producción.
+    \item \textbf{Estabilización del MTTR}: Establecer un tiempo medio de resolución (MTTR-MR) inferior a 24 horas por modificación.
+    \item \textbf{Formalización Normada}: Documentar e implementar rigurosamente las 6 actividades del estándar ISO/IEC/IEEE 14764 integradas con SCRUM.
+\end{enumerate}
+
+% ================================================================
+\section{Diseño e Implementación del Proceso Reingenierizado (Estado TO-BE)}
+
+\subsection{Representación del Proceso Reingenierizado (TO-BE)}
+El nuevo proceso de mantenimiento (\textbf{Estado TO-BE}) transforma el flujo reactivo en una secuencia estructurada con puertas de calidad automatizadas, entornos Sandbox aislados y auditorías obligatorias. La Figura~\ref{fig:process_tobe} muestra el diagrama BPMN reingenierizado.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.1cm and 0.5cm,
+        startstop/.style={rectangle, rounded corners, draw=purpleUPP, fill=purpleUPP!10, thick, align=center, minimum height=0.8cm, font=\tiny\bfseries},
+        process/.style={rectangle, draw=black!70, fill=darkcard, thick, align=center, minimum height=0.8cm, font=\tiny, text width=2.4cm},
+        gate/.style={diamond, draw=accentblue, fill=accentblue!10, thick, align=center, aspect=1.8, font=\tiny},
+        arrow/.style={->, >={Stealth[length=2mm]}, thick, color=black!80}
+    ]
+        % Nodos TO-BE
+        \node[startstop] (start) {Emisión de PR\\(IEEE Std 1044)};
+        \node[process, right=of start] (p1) {Análisis de Impacto\\y Emisión de MR};
+        \node[process, right=of p1] (p2) {Sprint Planning\\Estimación SP};
+        \node[process, right=of p2] (p3) {Desarrollo Sandbox\\+ Linters Locales};
+        \node[gate, below=of p3] (g1) {¿Quality Gate\\SonarQube A?};
+        \node[process, left=of g1] (p4) {Pruebas Funcionales\\y Regresión (8 CP)};
+        \node[gate, left=of p4] (g2) {¿Aprobación\\PO y QA?};
+        \node[startstop, left=of g2] (end) {Despliegue y\\Cierre de MR};
+
+        % Conexiones
+        \draw[arrow] (start) -- (p1);
+        \draw[arrow] (p1) -- (p2);
+        \draw[arrow] (p2) -- (p3);
+        \draw[arrow] (p3) -- (g1);
+        \draw[arrow] (g1) -- node[anchor=south]{\scriptsize Sí (Pasa)} (p4);
+        \draw[arrow] (g1.east) -- ++(0.3,0) |- node[anchor=west, pos=0.25]{\scriptsize No (Refactor)} ([yshift=0.3cm]p3.north) -- (p3.north);
+        \draw[arrow] (p4) -- (g2);
+        \draw[arrow] (g2) -- node[anchor=south]{\scriptsize Aprobado} (end);
+        \draw[arrow] (g2.north) |- node[anchor=south, pos=0.2]{\scriptsize Rechazado} (p3.north);
+    \end{tikzpicture}
+    \caption{Diagrama de Flujo del Proceso Reingenierizado (Estado TO-BE basado en ISO/IEC/IEEE 14764).}
+    \label{fig:process_tobe}
+\end{figure}
+
+\subsection{Formalización de las 6 Actividades IEEE 14764}
+
+\subsubsection{Actividad 1: Implementación del Proceso (Process Implementation)}
+Se estableció la infraestructura y las reglas operativas del equipo de mantenimiento:
+\begin{itemize}
+    \item \textbf{Política de Ramas (GitFlow)}: Se prohibió la edición directa en la rama \texttt{main}. Todo cambio debe desarrollarse en ramas de tipo \texttt{feature/MR-XXX} o \texttt{fix/MR-XXX}.
+    \item \textbf{Herramientas de Linteo Automático}: Configuración local e integración pre-commit de \textbf{PHP-CS-Fixer} para el backend Laravel (estándar PSR-12) y \textbf{ESLint} para el frontend React.
+    \item \textbf{Entorno Sandbox Aislado}: Despliegue de servidores locales sincronizados con base de datos de pruebas en PostgreSQL.
+\end{itemize}
+
+\subsubsection{Actividad 2: Análisis de Problemas y Modificaciones (Problem and Modification Analysis)}
+\begin{itemize}
+    \item \textbf{Problem Reports (PR)}: Registro formal de cada anomalía detectada utilizando la clasificación del estándar \textbf{IEEE Std 1044-2009} (Campos: ID, Módulo, Descripción, Severidad, Prioridad).
+    \item \textbf{Solicitudes de Modificación (MR)}: Evaluación de factibilidad técnica y estimación de esfuerzo. Clasificación en 4 categorías:
+    \begin{enumerate}[label=\alph*)]
+        \item \textit{Mantenimiento Correctivo}: Solución inmediata de bugs (ej. MR-001 y MR-002).
+        \item \textit{Mantenimiento Preventivo}: Erradicación de deuda técnica y smells (ej. MR-003).
+        \item \textit{Mantenimiento Adaptativo}: Ajuste de lógica de negocio y controladores (ej. MR-004).
+        \item \textit{Mantenimiento Perfectivo}: Adición de persistencia de progreso del alumno (ej. MR-005).
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{Actividad 3: Implementación de la Modificación (Modification Implementation)}
+\begin{itemize}
+    \item Codificación modular respetando la separación de capas (Controladores Eloquent en Laravel, Vistas en React e Inertia Adapter).
+    \item Compilación automatizada de activos frontend utilizando \textbf{Vite} (\texttt{npm run build}) previniendo incidentes de ausencia de código compilado.
+\end{itemize}
+
+\subsubsection{Actividad 4: Revisión y Aceptación del Mantenimiento (Maintenance Review/Acceptance)}
+\begin{itemize}
+    \item \textbf{Auditoría Estática con SonarQube v25.2.0}: Evaluación obligatoria del repositorio. Ningún código se acepta en producción si no cumple con la clasificación \textbf{Rating A} en Confiabilidad, Seguridad y Mantenibilidad.
+    \item \textbf{Ejecución de Pruebas de Caja Negra}: Aplicación de la matriz de 8 casos de prueba funcionales (CP001 a CP008).
+    \item \textbf{Firma de Aprobación por Product Owner}: Validación funcional y de UX previa al merge.
+\end{itemize}
+
+\subsubsection{Actividad 5: Migración (Migration)}
+\begin{itemize}
+    \item Creación de scripts de migración versionados en Laravel (\path{database/migrations/}) para gestionar cambios estructurales en la base de datos PostgreSQL sin pérdida de información de usuarios existentes.
+\end{itemize}
+
+\subsubsection{Actividad 6: Retiro de Software (Software Retirement)}
+\begin{itemize}
+    \item Protocolo de deprecación formal para eliminar componentes React monolíticos redundantes o rutas obsoletas en \path{routes/web.php}.
+\end{itemize}
+
+% ================================================================
+\section{Integración del Proceso Reingenierizado con SCRUM}
+
+Para maximizar la agilidad y el control operacional, las 6 actividades del estándar ISO/IEC/IEEE 14764 se mapearon directamente a los artefactos, roles y eventos del marco \textbf{SCRUM}, operando en \textbf{Sprints de 2 semanas de duración}.
+
+\subsection{Mapeo Estándar IEEE 14764 vs. SCRUM}
+En la Tabla~\ref{tab:scrum_mapping} se detalla la correspondencia entre ambos marcos metodológicos.
+
+\begin{table}[H]
+    \centering
+    \caption{Mapeo de Actividades IEEE 14764 a Ceremonias y Artefactos SCRUM.}
+    \label{tab:scrum_mapping}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{XXp{4.5cm}}
+        \toprule
+        \textbf{Actividad IEEE 14764} & \textbf{Evento / Artefacto SCRUM} & \textbf{Responsable Principal} \\
+        \midrule
+        \textbf{Implementación del Proceso} & Sprint Planning / Setup de Entorno & Scrum Master / Dev Team \\
+        \rowcolor{darkcard}
+        \textbf{Análisis de Problemas y MR} & Product Backlog Refinement / PR Creation & Product Owner / QA Auditor \\
+        \textbf{Implementación del Cambio} & Sprint Execution (Daily Standups) & Development Team \\
+        \rowcolor{darkcard}
+        \textbf{Revisión y Aceptación} & Sprint Review \& Quality Gate Audit & Product Owner / Scrum Master \\
+        \textbf{Migración y Despliegue} & Increment Release / CI Pipeline & Development Team / DevOps \\
+        \rowcolor{darkcard}
+        \textbf{Retiro de Software} & Sprint Retrospective (Cleanup) & Scrum Team \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Estimación de Esfuerzo mediante Planning Poker y Story Points}
+En el proceso reingenierizado, el dimensionamiento de las solicitudes de modificación (MR) abandona la estimación intuitiva en horas directas y adopta la técnica ágil de \textbf{Planning Poker} basada en la secuencia modificada de Fibonacci (1, 2, 3, 5, 8, 13 Story Points).
+
+Se definió una constante empírica de conversión para el proyecto Yoliztli:
+\begin{equation}
+    1\text{ Story Point (SP)} \approx 2.0\text{ horas de desarrollo efectivo}
+\end{equation}
+
+El Backlog total de mantenimiento refinado sumó \textbf{20 Story Points (40.90 horas efectivas)} distribuidos en 2 Sprints, según la asignación técnica mostrada en la Tabla~\ref{tab:mr_estimation}.
+
+\begin{table}[H]
+    \centering
+    \caption{Desglose de Estimación y Asignación por Solicitud de Modificación (MR).}
+    \label{tab:mr_estimation}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{llccrr}
+        \toprule
+        \textbf{ID MR} & \textbf{Categoría IEEE 14764} & \textbf{Sprint} & \textbf{Puntos (SP)} & \textbf{Horas Base} & \textbf{Costo Neto (\$)} \\
+        \midrule
+        \textbf{MR-001} & Reconstitución (Correctivo) & Sprint 1 & 8 SP & 16.00 h & \$5,600.00 MXN \\
+        \rowcolor{darkcard}
+        \textbf{MR-002} & Remoción Bugs (Correctivo)  & Sprint 2 & 3 SP & 5.58 h  & \$1,953.00 MXN \\
+        \textbf{MR-003} & Deuda Técnica (Preventivo)  & Sprint 2 & 1 SP & 1.32 h  & \$462.00 MXN \\
+        \rowcolor{darkcard}
+        \textbf{MR-004} & Filtros Lógicos (Adaptativo) & Sprint 2 & 4 SP & 8.00 h  & \$2,800.00 MXN \\
+        \textbf{MR-005} & Persistencia (Perfectivo)   & Sprint 1 & 5 SP & 10.00 h & \$3,500.00 MXN \\
+        \midrule
+        \textbf{Total} & --- & \textbf{Sprints 1 y 2} & \textbf{20 SP} & \textbf{40.90 h} & \textbf{\$14,315.00 MXN} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% ================================================================
+\section{Evaluación de Impacto y Métricas Cuantitativas (Resultados)}
+
+Para validar la efectividad de la reingeniería aplicada, se monitorearon \textbf{cuatro métricas fundamentales de calidad y proceso} basadas en ISO/IEC/IEEE 14764 y SWEBOK v4.0.
+
+\subsection{Definición Matemática de Métricas}
+
+\begin{enumerate}
+    \item \textbf{Tiempo Medio de Resolución por Modificación (MTTR-MR)}:
+    Mide la eficiencia temporal del equipo desde la recepción de una MR hasta su despliegue verificado:
+    \begin{equation}
+        \text{MTTR-MR} = \frac{\sum_{i=1}^{N} (T_{\text{resolución}, i} - T_{\text{aprobación}, i})}{N} = \frac{88.9\text{ h}}{5\text{ MR}} = 17.78\text{ horas/MR}
+    \end{equation}
+
+    \item \textbf{Eficacia de Pruebas de Regresión (EPR)}:
+    Evalúa la capacidad del proceso para impedir la fuga de errores a producción:
+    \begin{equation}
+        \text{EPR} = \frac{B_{\text{detectados}}}{B_{\text{detectados}} + B_{\text{fuga}}} \times 100 = \frac{8}{8 + 0} \times 100 = 100\%
+    \end{equation}
+
+    \item \textbf{Porcentaje de Remediación de Deuda Técnica (PRDT)}:
+    Cuantifica el grado de saneamiento del código fuente respecto al diagnóstico inicial de SonarQube:
+    \begin{equation}
+        \text{PRDT} = \frac{D_{\text{removida}}}{D_{\text{inicial}}} \times 100 = \frac{110\text{ Code Smells}}{115\text{ Code Smells}} \times 100 = 95.65\%
+    \end{equation}
+
+    \item \textbf{Índice de Mantenibilidad de Software (IM)}:
+    Métrica ponderada estandarizada basada en el Volumen de Halstead ($V$), Complejidad Ciclomática ($G$) y Líneas de Código ($LOC$):
+    \begin{equation}
+        \text{IM} = 171 - 5.2 \ln(V) - 0.23(G) - 16.2 \ln(LOC) = 44.82\text{ pts (Clasificación Aceptable/Moderada)}
+    \end{equation}
+\end{enumerate}
+
+\subsection{Comparativa de Resultados: Estado AS-IS vs. Estado TO-BE}
+En la Tabla~\ref{tab:results_comparison} se demuestra el impacto directo de la reingeniería de procesos sobre la calidad del proyecto Yoliztli.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparativa Cuantitativa de Indicadores de Calidad (AS-IS vs. TO-BE).}
+    \label{tab:results_comparison}
+    \small
+    \color{black}
+    \begin{tabularx}{\textwidth}{XXXc}
+        \toprule
+        \textbf{Métrica / Indicador} & \textbf{Proceso Previo (AS-IS)} & \textbf{Proceso Reingenierizado (TO-BE)} & \textbf{Mejora Obtenida} \\
+        \midrule
+        \textbf{Bugs de Confiabilidad} & 67 bugs (Rating C) & 0 bugs (Rating A) & \textbf{100\% Erradicados} \\
+        \rowcolor{darkcard}
+        \textbf{Code Smells (Deuda)} & 115 smells (6h 54m) & 5 smells (Deuda $<$ 15m) & \textbf{95.65\% Remediado} \\
+        \textbf{Tasa de Éxito Pruebas} & 75.0\% (6/8 aprobados) & 100.0\% (8/8 aprobados) & \textbf{+25.0\% Incremental} \\
+        \rowcolor{darkcard}
+        \textbf{Fuga de Errores a Prod.} & Incidente Crítico PR-001 (Error 500) & 0 incidentes en producción & \textbf{Estabilidad Total} \\
+        \textbf{Linteo Automático} & Inexistente (manual) & Cobertura 100\% (PHP-CS/ESLint) & \textbf{Estandarizado} \\
+        \rowcolor{darkcard}
+        \textbf{Trazabilidad PR $\to$ MR} & 0\% (comunicación verbal) & 100\% trazable en Git/Backlog & \textbf{Formalizado} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% ================================================================
+\section{Conclusiones y Plan de Sostenibilidad}
+
+La reingeniería del proceso de mantenimiento aplicada al proyecto \textbf{Yoliztli} demostró ser una decisión estratégica de alto impacto. La transición desde un modelo empírico e informal hacia un proceso formalizado bajo el estándar \textbf{ISO/IEC/IEEE 14764:2014} e integrado con \textbf{SCRUM} permitió erradicar de forma sistemática la totalidad de los bugs de confiabilidad, recuperar la arquitectura monolítica híbrida (Laravel + React) y estabilizar la persistencia del progreso infantil en PostgreSQL.
+
+\subsection{Principales Aprendizajes y Lecciones Aprendidas}
+\begin{enumerate}
+    \item \textbf{La automatización previene el error humano}: La incorporación de linters locales y compilación automatizada con Vite eliminó de raíz la posibilidad de repetir incidentes críticos como la ausencia de activos (PR-001).
+    \item \textbf{Las puertas de calidad reducen costos}: El filtrado estático previo mediante SonarQube evitó que errores sintácticos o de tipado llegaran a fases avanzadas de prueba, reduciendo el costo de corrección.
+    \item \textbf{La estimación ágil mejora la predictibilidad}: La adopción de Planning Poker y Story Points permitió al equipo cumplir el plan de mantenimientos dentro del margen presupuestario (\$14,665.00 MXN consolidados con costos indirectos) sin sobrepasos temporales.
+\end{enumerate}
+
+\subsection{Plan de Sostenibilidad para la Fase de Desarrollo de Módulos}
+Con la estructura de mantenimiento formalizada y normada, el equipo se encuentra preparado para iniciar la siguiente fase del proyecto: la programación, despliegue y pruebas de integración del resto de los módulos funcionales del sistema Yoliztli (como la ampliación de catálogos de cuentos y nuevos minijuegos lúdicos). Se mantendrá el cumplimiento estricto del estándar IEEE 14764 y la supervisión continua en SonarQube para evitar la inyección de nueva deuda técnica en producción.
+
+\newpage
+% ================================================================
+\section*{Referencias Bibliográficas}
+\addcontentsline{toc}{section}{Referencias Bibliográficas}
+
+\begin{enumerate}[label={[\arabic*]}]
+    \item \textbf{ISO/IEC/IEEE 14764:2014}. \textit{Software Engineering --- Software Life Cycle Processes --- Maintenance}. International Organization for Standardization / IEEE Computer Society.
+    \item \textbf{IEEE Computer Society} (2024). \textit{Guide to the Software Engineering Body of Knowledge (SWEBOK Guide)}, Version 4.0. IEEE Computer Society Press.
+    \item \textbf{IEEE Std 1044-2009}. \textit{IEEE Standard Classification for Software Anomalies}. IEEE Computer Society.
+    \item \textbf{Pressman, R. S., \& Maxim, B. R.} (2020). \textit{Software Engineering: A Practitioner's Approach} (9th ed.). McGraw-Hill Education.
+    \item \textbf{Schwaber, K., \& Sutherland, J.} (2020). \textit{La Guía de Scrum: Las Reglas del Juego}. Scrum.org.
+\end{enumerate}
+
+\end{document}
